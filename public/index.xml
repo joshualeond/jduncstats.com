@@ -28,7 +28,7 @@ library(tidyverse) library(knitr) library(kableExtra) kung &amp;lt;- tibble::tri
       
       <guid>/2019/03/08/kernel-density-estimation-from-scratch/</guid>
       <description>KDE with KernelDensity.jl From the Kernel Density Estimation Wikipedia site we can take a look at reproducing the Example section.
-using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false)  Now applying the quick and easy solution: a package.
+using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false)    KDE   Now applying the quick and easy solution: a package.
 import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt; x -&amp;gt; plot!(x, legend = false)  KDE with Distributions.jl Creating individual distributions for each data point.</description>
     </item>
     

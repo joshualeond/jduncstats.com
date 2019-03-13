@@ -20,7 +20,9 @@ x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
 scatter(x, zeros(length(x)), legend = false)
 ```
 
-![](/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_1_1.svg)
+{{< figure 
+    src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_1_1.svg" 
+    title="KDE" >}}
 
 Now applying the quick and easy solution: a package.
 
