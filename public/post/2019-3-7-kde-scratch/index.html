@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Josh Duncan">
+    <meta name="description" content="My blog on data science">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Kernel Density Estimation from Scratch"/>
+<meta name="twitter:description" content="KDE with KernelDensity.jl From the Kernel Density Estimation Wikipedia site we can take a look at reproducing the Example section.
+using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false) Now applying the quick and easy solution: a package.
+import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&gt; x -&gt; plot!(x, legend = false) KDE with Distributions.jl Creating individual distributions for each data point.
+using Distributions dists = Normal."/>
+
+    <meta property="og:title" content="Kernel Density Estimation from Scratch" />
+<meta property="og:description" content="KDE with KernelDensity.jl From the Kernel Density Estimation Wikipedia site we can take a look at reproducing the Example section.
+using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false) Now applying the quick and easy solution: a package.
+import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&gt; x -&gt; plot!(x, legend = false) KDE with Distributions.jl Creating individual distributions for each data point.
+using Distributions dists = Normal." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/2019-3-7-kde-scratch/" />
+<meta property="article:published_time" content="2019-03-07T21:13:14-05:00"/>
+<meta property="article:modified_time" content="2019-03-07T21:13:14-05:00"/>
+
+
+    <base href="/post/2019-3-7-kde-scratch/">
+    <title>
+  Kernel Density Estimation from Scratch · Josh Duncan
+</title>
+
+    <link rel="canonical" href="/post/2019-3-7-kde-scratch/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.54.0" />
+  </head>
+
+  <body class=" ">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">
+      Josh Duncan
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container page">
+  <article>
+    <header>
+      <h1>Kernel Density Estimation from Scratch</h1>
+    </header>
+
+    
+
+<h2 id="kde-with-kerneldensity-jl">KDE with KernelDensity.jl</h2>
+
+<p>From the Kernel Density Estimation Wikipedia <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">site</a> we can take a look at reproducing the Example section.</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#fff;font-weight:bold">using</span> StatsPlots
+
+x = [-<span style="color:#ff0;font-weight:bold">2.1</span>; -<span style="color:#ff0;font-weight:bold">1.3</span>; -<span style="color:#ff0;font-weight:bold">0.4</span>; <span style="color:#ff0;font-weight:bold">1.9</span>; <span style="color:#ff0;font-weight:bold">5.1</span>; <span style="color:#ff0;font-weight:bold">6.2</span>];
+scatter(x, zeros(length(x)), legend = <span style="color:#fff;font-weight:bold">false</span>)</code></pre></div>
+<p><img src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_1_1.svg" alt="" /></p>
+
+<p>Now applying the quick and easy solution: a package.</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#fff;font-weight:bold">import</span> KernelDensity
+
+KernelDensity.kde(x, bandwidth = sqrt(<span style="color:#ff0;font-weight:bold">2.25</span>)) |&gt;
+  x -&gt; plot!(x, legend = <span style="color:#fff;font-weight:bold">false</span>)</code></pre></div>
+<p><img src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_2_1.svg" alt="" /></p>
+
+<h2 id="kde-with-distributions-jl">KDE with Distributions.jl</h2>
+
+<p>Creating individual distributions for each data point.</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#fff;font-weight:bold">using</span> Distributions
+
+dists = Normal.(x, sqrt(<span style="color:#ff0;font-weight:bold">2.25</span>))</code></pre></div><div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4">6-element Array{Distributions.Normal{Float64},1}:
+ Distributions.Normal{Float64}(μ=-2.1, σ=1.5)
+ Distributions.Normal{Float64}(μ=-1.3, σ=1.5)
+ Distributions.Normal{Float64}(μ=-0.4, σ=1.5)
+ Distributions.Normal{Float64}(μ=1.9, σ=1.5)
+ Distributions.Normal{Float64}(μ=5.1, σ=1.5)
+ Distributions.Normal{Float64}(μ=6.2, σ=1.5)</pre></div>
+<p>The <code>Normal</code> function above is vectorized by the use of the <code>.</code> operator. This creates an array of Normal distributions. Let&rsquo;s plot each of these distributions:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">plot(dists, legend = <span style="color:#fff;font-weight:bold">false</span>)</code></pre></div>
+<p><img src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_4_1.svg" alt="" /></p>
+
+<p>Summing up their probability densities across all of <code>x</code>.</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">x_d = range(-<span style="color:#ff0;font-weight:bold">7</span>, <span style="color:#ff0;font-weight:bold">11</span>, length = <span style="color:#ff0;font-weight:bold">100</span>)
+dens = sum(pdf.(eachdist, x_d) <span style="color:#fff;font-weight:bold">for</span> eachdist <span style="color:#fff;font-weight:bold">in</span> dists)
+
+plot!(x_d, dens)</code></pre></div>
+<p><img src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_5_1.svg" alt="" /></p>
+
+<p>Interject a little math:</p>
+
+<p><code>$$
+\hat f_h(x) = \frac{1}{n} \sum_{i=1}^n K_h(x - x_i)
+$$</code></p>
+
+<h2 id="kernel-density-from-scratch">Kernel Density from Scratch</h2>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">kde(z, ω, xv) =
+  sum(<span style="color:#f00">@</span>. exp(-<span style="color:#ff0;font-weight:bold">0.5</span> * ((z - xv) / ω)^<span style="color:#ff0;font-weight:bold">2</span>) / sqrt(<span style="color:#ff0;font-weight:bold">2</span><span style="color:#fff;font-weight:bold">π</span>*ω^<span style="color:#ff0;font-weight:bold">2</span>)) / length(xv)
+
+dens = []
+<span style="color:#fff;font-weight:bold">for</span> x_d <span style="color:#fff;font-weight:bold">in</span> range(-<span style="color:#ff0;font-weight:bold">7</span>, <span style="color:#ff0;font-weight:bold">10</span>, length = <span style="color:#ff0;font-weight:bold">100</span>)
+  push!(dens, kde(x_d, sqrt(<span style="color:#ff0;font-weight:bold">2.25</span>), x))
+<span style="color:#fff;font-weight:bold">end</span>
+
+plot(dens, legend = <span style="color:#fff;font-weight:bold">false</span>)</code></pre></div>
+<p><img src="/post/2019-3-7-kde-scratch_files/2019-3-7-kde-scratch_6_1.svg" alt="" /></p>
+
+  </article>
+</section>
+
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Enter a text here.</p>
+    
+     © 2019
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+       · 
+      [<a href="https://github.com/luizdepra/hugo-coder/tree/"></a>]
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>
