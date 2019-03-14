@@ -1,7 +1,7 @@
 ---
 active: true
 author: admin
-title: Biography
+title: Background
 weight: 20
 widget: about
 ---
