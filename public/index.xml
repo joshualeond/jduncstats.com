@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Josh Duncan on Josh Duncan</title>
-    <link>https://jduncstats.com/</link>
+    <link>/</link>
     <description>Recent content in Josh Duncan on Josh Duncan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
@@ -11,28 +11,28 @@
     
     <item>
       <title>Skills</title>
-      <link>https://jduncstats.com/bio/skills/</link>
+      <link>/bio/skills/</link>
       <pubDate>Wed, 20 Sep 2017 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/bio/skills/</guid>
+      <guid>/bio/skills/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Experience</title>
-      <link>https://jduncstats.com/bio/experience/</link>
+      <link>/bio/experience/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://jduncstats.com/bio/experience/</guid>
+      <guid>/bio/experience/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Example Talk</title>
-      <link>https://jduncstats.com/talk/example/</link>
+      <link>/talk/example/</link>
       <pubDate>Sat, 01 Jun 2030 13:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/talk/example/</guid>
+      <guid>/talk/example/</guid>
       <description>&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     &lt;p&gt;Click on the &lt;strong&gt;Slides&lt;/strong&gt; button above to view the built-in slides feature.&lt;/p&gt;
@@ -54,11 +54,363 @@
     </item>
     
     <item>
+      <title>Homework 2, Chapter 4</title>
+      <link>/post/hw2-ch-4/</link>
+      <pubDate>Sun, 10 Mar 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/post/hw2-ch-4/</guid>
+      <description>
+
+
+&lt;div id=&#34;hard-problems&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Hard Problems&lt;/h2&gt;
+&lt;div id=&#34;h1.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;4H1.&lt;/h3&gt;
+&lt;p&gt;The weights listed below were recorded in the !Kung census, but heights were not recorded for these individuals. Provide predicted heights and 89% intervals (either HPDI or PI) for each of these individuals. That is, fill in the table below, using model-based predictions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(knitr)
+library(kableExtra)
+
+kung &amp;lt;- tibble::tribble(
+  ~individual, ~weight,
+            1,   46.95,
+            2,   43.72,
+            3,   64.78,
+            4,   32.59,
+            5,   54.63
+  )
+
+# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;% 
+#   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Well it looks like first we need to estimate this model. In the book on page &lt;code&gt;96&lt;/code&gt; we see the MAP estimation of this model on the filtered dataset. I’m going to fit this one for predictions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rethinking)
+data(&amp;quot;Howell1&amp;quot;)
+
+d &amp;lt;- Howell1
+d2 &amp;lt;- d[d$age &amp;gt;= 18, ]
+
+# fit model
+m4.3 &amp;lt;- rethinking::map(
+  alist(
+    height ~ dnorm(mu, sigma), # likelihood
+    mu &amp;lt;- a + b * weight, # linear model
+    a ~ dnorm(156, 100), # prior
+    b ~ dnorm(0, 10), # prior
+    sigma ~ dunif(0, 50) # prior
+  ),
+  data = d2
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now the model is fit and we can estimate the predictions in two ways:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Collect posterior samples of the parameters of the estimated model and for each weight in the above dataframe sample from a Normal distribution with our posterior samples as parameters&lt;/li&gt;
+&lt;li&gt;Use the convenience function in the &lt;code&gt;rethinking&lt;/code&gt; package called &lt;code&gt;sim()&lt;/code&gt; to do the above giving it only the new weights&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
+head(post)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          a         b    sigma
+## 1 113.7408 0.9095870 4.959496
+## 2 111.6879 0.9528688 5.084729
+## 3 112.1307 0.9451627 4.881780
+## 4 110.5573 0.9799125 4.719272
+## 5 115.8249 0.8658878 5.396271
+## 6 115.6779 0.8712057 4.823661&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
+  rnorm(
+    n = nrow(post),
+    mean = post$a + post$b * weight,
+    sd = post$sigma
+    )
+  )
+
+(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
+## 5%  148.2683 145.3246 164.1582 135.3318 155.1840
+## 94% 164.5381 161.6728 180.7672 151.5420 171.3938&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And the convenient way:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
+## 5%  148.2444 145.3628 164.1953 135.4119 154.5845
+## 94% 164.4218 161.5799 180.5108 150.7268 171.4270&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;kung$exp_height &amp;lt;- sim.mean
+kung$lo_89 &amp;lt;- sim.PI[1,]
+kung$hi_89 &amp;lt;- sim.PI[2,]
+
+# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;% 
+#   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;h2.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;4H2.&lt;/h2&gt;
+&lt;p&gt;Select out all the rows in the &lt;code&gt;Howell1&lt;/code&gt; data with ages below 18 years of age. If you do it right you should end up with a new data frame with 192 rows in it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;d3 &amp;lt;- d[d$age &amp;lt; 18,]&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;a&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;(a)&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Fit a linear regression to these data, using &lt;code&gt;map&lt;/code&gt;. Present and interpret the estimates. For every 10 units of increase in weight, how much taller does the model predict a child gets?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fit &amp;lt;- rethinking::map(
+  alist(
+    height ~ dnorm(mu, sigma), # likelihood
+    mu &amp;lt;- a + b * weight, # linear model
+    a ~ dnorm(156, 100), # prior
+    b ~ dnorm(0, 10), # prior
+    sigma ~ dunif(0, 50) # prior
+  ),
+  data = d3
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s look at the results of this model:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
+precis(post_early)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
+## a     58.26   1.39 55.96 60.38
+## b      2.72   0.07  2.61  2.83
+## sigma  8.43   0.43  7.76  9.11&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;(b)&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Plot the raw data, with height on the vertical axis and weight on the horizontal axis. Superimpose the MAP regression line and 89% HPDI for the mean. Also superimpose the 89% HPDI for predicted heights.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(height ~ weight, d3, col = col.alpha(rangi2, 0.5))
+
+# get index for calculations
+weight.seq &amp;lt;- seq(0, 50, by = 1)
+
+# extract samples of parameters and calculate expected mu
+mu &amp;lt;- link(fit, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mu.mean &amp;lt;- apply(mu, 2, mean)
+lines(weight.seq, mu.mean)
+mu.HPDI &amp;lt;- apply(mu, 2, HPDI)
+shade(mu.HPDI, weight.seq)
+
+# simulate posterior observations of the model fit
+sim.height &amp;lt;- sim(fit, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;height.HPDI &amp;lt;- apply(sim.height, 2, HPDI)
+shade(height.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;c&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;(c)&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;What aspects of the model fit concern you? Describe the kinds of assumptions you would change, if any, to improve the model. You don’t have to write any new code. Just explain what the model appears to be doing a bad job of, and what you hypothesize would be a better model.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Well the model appears to be doing good job with the data at hand. The prior’s were set for persons age &amp;gt; 18 so these should be adjusted. Something of conrern is that you see a non-linear structure in this data. So the two tails of the data are not covered well by the model. This non-linearity could be accounted for with a polynomial regression or with splines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;h3.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;4H3.&lt;/h2&gt;
+&lt;p&gt;Suppose a colleague of yours, who works on allometry, glances at the practice problems just above. Your colleague exclaims, “That’s silly. Everyone knows that it’s only the &lt;strong&gt;logarithm&lt;/strong&gt; of body weight that scales with height!” Let’s take your colleague’s advice and see what happens.&lt;/p&gt;
+&lt;div id=&#34;a-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;(a)&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Model the relationship between height(cm) and the natural logarithm of weight (log-kg). Use the entire &lt;code&gt;Howell1&lt;/code&gt; data frame, all 544 rows, adults and non-adults. Fit this model, using quadratic approximation:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\begin{aligned}
+h_i \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i = \alpha + \beta \text{log}(w_i) \\
+\alpha \sim \text{Normal}(178, 100) \\
+\beta \sim \text{Normal}(0, 100) \\
+\sigma \sim \text{Uniform}(0, 50)
+\end{aligned}
+\]&lt;/span&gt;
+where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height of individual &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(w_i\)&lt;/span&gt; is the weight (in kg) of individual &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt;. The function for computing a natural log in R is just &lt;code&gt;log&lt;/code&gt;. Can you interpret the resulting estimates?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fit_all &amp;lt;- rethinking::map(
+  alist(
+    height ~ dnorm(mu, sigma),
+    mu &amp;lt;- a + b * log(weight), # linear model
+    a ~ dnorm(178, 100),
+    b ~ dnorm(0, 100),
+    sigma ~ dunif(0, 50)
+  ),
+  data = d
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now the model is fit let’s review the coefficients.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;precis(fit_all)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         Mean StdDev   5.5%  94.5%
+## a     -23.78   1.34 -25.92 -21.65
+## b      47.08   0.38  46.46  47.69
+## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;When the weight is low or equivalent to &lt;code&gt;1&lt;/code&gt; then the height would be &lt;code&gt;-23&lt;/code&gt; which is not insightful. Given that this is a log-level model we can &lt;a href=&#34;https://stats.stackexchange.com/questions/18480/interpretation-of-log-transformed-predictor&#34;&gt;interpret&lt;/a&gt; our &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; as a one percent increase in weight corresponds to a &lt;span class=&#34;math inline&#34;&gt;\(\beta/100 = 47.08/100\)&lt;/span&gt; unit increase in height.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;b-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;(b)&lt;/h3&gt;
+&lt;p&gt;Begin with this plot:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Then use the samples from the quadratic approximate posterior of the model in (a) to superimpose on the plot: (1) the predicted mean height as a function of weight, (2) the 97% HPDI for the mean, and (3) the 97% HPDI for predicted heights.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;weight.seq &amp;lt;- seq(2, 65, by = 1)
+all_samp &amp;lt;- link(fit_all, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_mu &amp;lt;- apply(all_samp, 2, mean)
+all_mu.HPDI &amp;lt;- apply(all_samp, 2, HPDI, prob = 0.97)
+
+all_sim &amp;lt;- sim(fit_all, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_sim.HPDI &amp;lt;- apply(all_sim, 2, HPDI, prob = 0.97)
+
+plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))
+# the predicted mean height
+lines(weight.seq, all_mu)
+# the 97% HPDI of the mean
+shade(all_mu.HPDI, weight.seq)
+# the 97% HPDI for predictions
+shade(all_sim.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Kernel Density Estimation from Scratch</title>
+      <link>/post/2019-3-7-kde-scratch/</link>
+      <pubDate>Thu, 07 Mar 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2019-3-7-kde-scratch/</guid>
+      <description>
+
+&lt;h2 id=&#34;kde-with-kerneldensity-jl&#34;&gt;KDE with KernelDensity.jl&lt;/h2&gt;
+
+&lt;p&gt;From the Kernel Density Estimation Wikipedia &lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_density_estimation&#34; target=&#34;_blank&#34;&gt;site&lt;/a&gt; we can take a look at reproducing the Example section.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using StatsPlots
+
+x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
+scatter(x, zeros(length(x)), legend = false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-3-7-kde-scratch_1_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now applying the quick and easy solution: a package.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;import KernelDensity
+
+KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt;
+  x -&amp;gt; plot!(x, legend = false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-3-7-kde-scratch_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;kde-with-distributions-jl&#34;&gt;KDE with Distributions.jl&lt;/h2&gt;
+
+&lt;p&gt;Creating individual distributions for each data point.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Distributions
+
+dists = Normal.(x, sqrt(2.25))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;6-element Array{Distributions.Normal{Float64},1}:
+ Distributions.Normal{Float64}(μ=-2.1, σ=1.5)
+ Distributions.Normal{Float64}(μ=-1.3, σ=1.5)
+ Distributions.Normal{Float64}(μ=-0.4, σ=1.5)
+ Distributions.Normal{Float64}(μ=1.9, σ=1.5)
+ Distributions.Normal{Float64}(μ=5.1, σ=1.5)
+ Distributions.Normal{Float64}(μ=6.2, σ=1.5)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;Normal&lt;/code&gt; function above is vectorized by the use of the &lt;code&gt;.&lt;/code&gt; operator. This creates an array of Normal distributions. Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;plot(dists, legend = false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-3-7-kde-scratch_4_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Summing up their probability densities across all of &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;x_d = range(-7, 11, length = 100)
+dens = sum(pdf.(eachdist, x_d) for eachdist in dists)
+
+plot!(x_d, dens)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-3-7-kde-scratch_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Interject a little math:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;$$
+\hat f_h(x) = \frac{1}{n} \sum_{i=1}^n K_h(x - x_i)
+$$&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;kernel-density-from-scratch&#34;&gt;Kernel Density from Scratch&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;kde(z, ω, xv) =
+  sum(@. exp(-0.5 * ((z - xv) / ω)^2) / sqrt(2π*ω^2)) / length(xv)
+
+dens = []
+for x_d in range(-7, 10, length = 100)
+  push!(dens, kde(x_d, sqrt(2.25), x))
+end
+
+plot(dens, legend = false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-3-7-kde-scratch_6_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Display Jupyter Notebooks with Academic</title>
-      <link>https://jduncstats.com/post/jupyter/</link>
+      <link>/post/jupyter/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jduncstats.com/post/jupyter/</guid>
+      <guid>/post/jupyter/</guid>
       <description>
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from IPython.core.display import Image
@@ -118,10 +470,10 @@ rm Untitled.md
     
     <item>
       <title>Example Page</title>
-      <link>https://jduncstats.com/tutorial/example/</link>
+      <link>/tutorial/example/</link>
       <pubDate>Sun, 09 Sep 2018 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/tutorial/example/</guid>
+      <guid>/tutorial/example/</guid>
       <description>
 
 &lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
@@ -137,20 +489,30 @@ rm Untitled.md
     </item>
     
     <item>
+      <title>Privacy Policy</title>
+      <link>/privacy/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 -0500</pubDate>
+      
+      <guid>/privacy/</guid>
+      <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>External Project</title>
-      <link>https://jduncstats.com/project/external-project/</link>
+      <link>/project/external-project/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/project/external-project/</guid>
+      <guid>/project/external-project/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Internal Project</title>
-      <link>https://jduncstats.com/project/internal-project/</link>
+      <link>/project/internal-project/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/project/internal-project/</guid>
+      <guid>/project/internal-project/</guid>
       <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
 
 &lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
@@ -165,10 +527,10 @@ rm Untitled.md
     
     <item>
       <title>Academic: the website designer for Hugo</title>
-      <link>https://jduncstats.com/post/getting-started/</link>
+      <link>/post/getting-started/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/post/getting-started/</guid>
+      <guid>/post/getting-started/</guid>
       <description>
 
 &lt;p&gt;&lt;strong&gt;Academic&lt;/strong&gt; makes it easy to create a beautiful website for free using Markdown. Customize anything on your site with widgets, themes, and language packs.&lt;/p&gt;
@@ -241,8 +603,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-1950s.png&#34; data-caption=&#34;1950s&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-1950s_huaf5482f8cea0c5a703a328640e3b7509_21614_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-1950s.png&#34; data-caption=&#34;1950s&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-1950s_huaf5482f8cea0c5a703a328640e3b7509_21614_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -268,8 +630,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-apogee.png&#34; data-caption=&#34;Apogee&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-apogee_hu4b45d99db97150df01464c393bfd17d4_24119_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-apogee.png&#34; data-caption=&#34;Apogee&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-apogee_hu4b45d99db97150df01464c393bfd17d4_24119_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -295,8 +657,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-coffee-playfair.png&#34; data-caption=&#34;Coffee theme with Playfair font&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-coffee-playfair_hu446a8f670cc5622adcc77b97ba95f6c5_22462_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-coffee-playfair.png&#34; data-caption=&#34;Coffee theme with Playfair font&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-coffee-playfair_hu446a8f670cc5622adcc77b97ba95f6c5_22462_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -322,8 +684,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-cupcake.png&#34; data-caption=&#34;Cupcake&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-cupcake_hueba8cfa8cfbc7543924fcbf387a99e92_23986_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-cupcake.png&#34; data-caption=&#34;Cupcake&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-cupcake_hueba8cfa8cfbc7543924fcbf387a99e92_23986_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -349,8 +711,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-dark.png&#34; data-caption=&#34;Dark&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-dark_hu1e8601ecc47f58eada7743fdcd709d3d_21456_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-dark.png&#34; data-caption=&#34;Dark&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-dark_hu1e8601ecc47f58eada7743fdcd709d3d_21456_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -376,8 +738,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-default.png&#34; data-caption=&#34;Default&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-default_huba6228b7bdf30e2f03f12ea91b2cba0d_21751_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-default.png&#34; data-caption=&#34;Default&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-default_huba6228b7bdf30e2f03f12ea91b2cba0d_21751_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -403,8 +765,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-forest.png&#34; data-caption=&#34;Forest&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-forest_hu4f093a1c683134431456584193ea41ee_21797_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-forest.png&#34; data-caption=&#34;Forest&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-forest_hu4f093a1c683134431456584193ea41ee_21797_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
     
@@ -430,8 +792,8 @@ rm Untitled.md
       
     
     
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;https://jduncstats.com/post/getting-started/gallery/theme-ocean.png&#34; data-caption=&#34;Ocean&#34;&gt;
-  &lt;img src=&#34;https://jduncstats.com/post/getting-started/gallery/theme-ocean_hu14831ccafc2219f30a7a096fa7617e01_21760_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
+  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-ocean.png&#34; data-caption=&#34;Ocean&#34;&gt;
+  &lt;img src=&#34;/post/getting-started/gallery/theme-ocean_hu14831ccafc2219f30a7a096fa7617e01_21760_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
   &lt;/a&gt;
   
 
@@ -547,20 +909,20 @@ git submodule update --init --recursive
     
     <item>
       <title>A Person Re-Identification System For Mobile Devices</title>
-      <link>https://jduncstats.com/publication/person-re-id/</link>
+      <link>/publication/person-re-id/</link>
       <pubDate>Tue, 01 Sep 2015 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/publication/person-re-id/</guid>
+      <guid>/publication/person-re-id/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Hello R Markdown</title>
-      <link>https://jduncstats.com/post/2015-07-23-r-rmarkdown/</link>
+      <link>/post/2015-07-23-r-rmarkdown/</link>
       <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
       
-      <guid>https://jduncstats.com/post/2015-07-23-r-rmarkdown/</guid>
+      <guid>/post/2015-07-23-r-rmarkdown/</guid>
       <description>
 
 
@@ -601,7 +963,7 @@ pie(
   init.angle = -50, border = NA
 )&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:pie&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://jduncstats.com/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png&#34; alt=&#34;A fancy pie chart.&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png&#34; alt=&#34;A fancy pie chart.&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
 Figure 1: A fancy pie chart.
 &lt;/p&gt;
@@ -612,20 +974,20 @@ Figure 1: A fancy pie chart.
     
     <item>
       <title>Mobile visual clothing search</title>
-      <link>https://jduncstats.com/publication/clothing-search/</link>
+      <link>/publication/clothing-search/</link>
       <pubDate>Mon, 01 Jul 2013 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/publication/clothing-search/</guid>
+      <guid>/publication/clothing-search/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Slides</title>
-      <link>https://jduncstats.com/slides/example-slides/</link>
+      <link>/slides/example-slides/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://jduncstats.com/slides/example-slides/</guid>
+      <guid>/slides/example-slides/</guid>
       <description>
 
 &lt;h1 id=&#34;welcome-to-slides&#34;&gt;Welcome to Slides&lt;/h1&gt;
