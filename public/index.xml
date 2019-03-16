@@ -108,12 +108,12 @@ m4.3 &amp;lt;- rethinking::map(
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
 head(post)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 113.7408 0.9095870 4.959496
-## 2 111.6879 0.9528688 5.084729
-## 3 112.1307 0.9451627 4.881780
-## 4 110.5573 0.9799125 4.719272
-## 5 115.8249 0.8658878 5.396271
-## 6 115.6779 0.8712057 4.823661&lt;/code&gt;&lt;/pre&gt;
+## 1 116.6485 0.8601264 4.872989
+## 2 117.3391 0.8267747 4.883204
+## 3 112.1998 0.9492084 4.964832
+## 4 114.4651 0.8819569 5.217148
+## 5 113.9703 0.8963154 4.780714
+## 6 113.6470 0.9059172 5.127858&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -124,8 +124,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 
 (sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.2683 145.3246 164.1582 135.3318 155.1840
-## 94% 164.5381 161.6728 180.7672 151.5420 171.3938&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.0890 145.3381 164.3675 135.1096 155.0579
+## 94% 164.4546 161.5292 180.6668 151.4699 171.3093&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the convenient way:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
@@ -140,8 +140,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.2444 145.3628 164.1953 135.4119 154.5845
-## 94% 164.4218 161.5799 180.5108 150.7268 171.4270&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.3873 145.3212 163.6115 134.8595 155.0755
+## 94% 165.2942 161.2539 180.8131 151.6336 171.4202&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
@@ -176,9 +176,9 @@ kung$hi_89 &amp;lt;- sim.PI[2,]
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
 precis(post_early)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.26   1.39 55.96 60.38
+## a     58.24   1.39 56.09 60.54
 ## b      2.72   0.07  2.61  2.83
-## sigma  8.43   0.43  7.76  9.11&lt;/code&gt;&lt;/pre&gt;
+## sigma  8.43   0.43  7.72  9.09&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
@@ -222,7 +222,7 @@ sim.height &amp;lt;- sim(fit, data = data.frame(weight = weight.seq))&lt;/code&g
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;height.HPDI &amp;lt;- apply(sim.height, 2, HPDI)
 shade(height.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;c&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;(c)&lt;/h3&gt;
@@ -267,14 +267,14 @@ where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height
 ## b      47.08   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;When the weight is low or equivalent to &lt;code&gt;1&lt;/code&gt; then the height would be &lt;code&gt;-23&lt;/code&gt; which is not insightful. Given that this is a log-level model we can &lt;a href=&#34;https://stats.stackexchange.com/questions/18480/interpretation-of-log-transformed-predictor&#34;&gt;interpret&lt;/a&gt; our &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; as a one percent increase in weight corresponds to a &lt;span class=&#34;math inline&#34;&gt;\(\beta/100 = 47.08/100\)&lt;/span&gt; unit increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b-1&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;(b)&lt;/h3&gt;
 &lt;p&gt;Begin with this plot:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Then use the samples from the quadratic approximate posterior of the model in (a) to superimpose on the plot: (1) the predicted mean height as a function of weight, (2) the 97% HPDI for the mean, and (3) the 97% HPDI for predicted heights.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;weight.seq &amp;lt;- seq(2, 65, by = 1)
 all_samp &amp;lt;- link(fit_all, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
@@ -311,7 +311,7 @@ lines(weight.seq, all_mu)
 shade(all_mu.HPDI, weight.seq)
 # the 97% HPDI for predictions
 shade(all_sim.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

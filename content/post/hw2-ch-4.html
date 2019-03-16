@@ -3,7 +3,7 @@ title: "Homework 2, Chapter 4"
 author: "J. Duncan"
 date: 2019-03-10T21:13:14-05:00
 output: 
-  github_document:
+  blogdown::html_page:
     dev: "svg"
 ---
 
@@ -55,12 +55,12 @@ m4.3 &lt;- rethinking::map(
 <pre class="r"><code>post &lt;- extract.samples(m4.3)
 head(post)</code></pre>
 <pre><code>##          a         b    sigma
-## 1 113.7408 0.9095870 4.959496
-## 2 111.6879 0.9528688 5.084729
-## 3 112.1307 0.9451627 4.881780
-## 4 110.5573 0.9799125 4.719272
-## 5 115.8249 0.8658878 5.396271
-## 6 115.6779 0.8712057 4.823661</code></pre>
+## 1 116.6485 0.8601264 4.872989
+## 2 117.3391 0.8267747 4.883204
+## 3 112.1998 0.9492084 4.964832
+## 4 114.4651 0.8819569 5.217148
+## 5 113.9703 0.8963154 4.780714
+## 6 113.6470 0.9059172 5.127858</code></pre>
 <pre class="r"><code>sim.height &lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -71,8 +71,8 @@ head(post)</code></pre>
 
 (sim.PI &lt;- apply(sim.height, 2, PI, prob = 0.89))</code></pre>
 <pre><code>##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.2683 145.3246 164.1582 135.3318 155.1840
-## 94% 164.5381 161.6728 180.7672 151.5420 171.3938</code></pre>
+## 5%  148.0890 145.3381 164.3675 135.1096 155.0579
+## 94% 164.4546 161.5292 180.6668 151.4699 171.3093</code></pre>
 <p>And the convenient way:</p>
 <pre class="r"><code>sim.height &lt;- sim(m4.3, data = list(weight = kung$weight))</code></pre>
 <pre><code>## [ 100 / 1000 ]
@@ -87,8 +87,8 @@ head(post)</code></pre>
 [ 1000 / 1000 ]</code></pre>
 <pre class="r"><code>(sim.PI &lt;- apply(sim.height, 2, PI, prob = 0.89))</code></pre>
 <pre><code>##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.2444 145.3628 164.1953 135.4119 154.5845
-## 94% 164.4218 161.5799 180.5108 150.7268 171.4270</code></pre>
+## 5%  148.3873 145.3212 163.6115 134.8595 155.0755
+## 94% 165.2942 161.2539 180.8131 151.6336 171.4202</code></pre>
 <p>We have relatively the same results here which is expected. Let’s get the mean values as well:</p>
 <pre class="r"><code>sim.mean &lt;- apply(sim.height, 2, mean)</code></pre>
 <p>Now let’s put all of this in the dataframe:</p>
@@ -123,9 +123,9 @@ kung$hi_89 &lt;- sim.PI[2,]
 <pre class="r"><code>post_early &lt;- extract.samples(fit)
 precis(post_early)</code></pre>
 <pre><code>##        Mean StdDev |0.89 0.89|
-## a     58.26   1.39 55.96 60.38
+## a     58.24   1.39 56.09 60.54
 ## b      2.72   0.07  2.61  2.83
-## sigma  8.43   0.43  7.76  9.11</code></pre>
+## sigma  8.43   0.43  7.72  9.09</code></pre>
 <p>So we see for every <code>1</code> unit increase in weight a child should be <code>2.72</code> cm taller. Or as the question has asked <code>10</code> unit increase is a <code>27.2</code> cm increase in height. For every <code>22</code> lb increase there is a corresponding ~<code>1</code> foot increase in height.</p>
 </div>
 <div id="b" class="section level3">
@@ -169,7 +169,7 @@ sim.height &lt;- sim(fit, data = data.frame(weight = weight.seq))</code></pre>
 [ 1000 / 1000 ]</code></pre>
 <pre class="r"><code>height.HPDI &lt;- apply(sim.height, 2, HPDI)
 shade(height.HPDI, weight.seq)</code></pre>
-<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.svg" width="672" /></p>
 </div>
 <div id="c" class="section level3">
 <h3>(c)</h3>
@@ -214,14 +214,14 @@ where <span class="math inline">\(h_i\)</span> is the height of individual <span
 ## b      47.08   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38</code></pre>
 <pre class="r"><code>plot(precis(fit_all))</code></pre>
-<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg" width="672" /></p>
 <p>When the weight is low or equivalent to <code>1</code> then the height would be <code>-23</code> which is not insightful. Given that this is a log-level model we can <a href="https://stats.stackexchange.com/questions/18480/interpretation-of-log-transformed-predictor">interpret</a> our <span class="math inline">\(\beta\)</span> as a one percent increase in weight corresponds to a <span class="math inline">\(\beta/100 = 47.08/100\)</span> unit increase in height.</p>
 </div>
 <div id="b-1" class="section level3">
 <h3>(b)</h3>
 <p>Begin with this plot:</p>
 <pre class="r"><code>plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))</code></pre>
-<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.svg" width="672" /></p>
 <p>Then use the samples from the quadratic approximate posterior of the model in (a) to superimpose on the plot: (1) the predicted mean height as a function of weight, (2) the 97% HPDI for the mean, and (3) the 97% HPDI for predicted heights.</p>
 <pre class="r"><code>weight.seq &lt;- seq(2, 65, by = 1)
 all_samp &lt;- link(fit_all, data = data.frame(weight = weight.seq))</code></pre>
@@ -258,6 +258,6 @@ lines(weight.seq, all_mu)
 shade(all_mu.HPDI, weight.seq)
 # the 97% HPDI for predictions
 shade(all_sim.HPDI, weight.seq)</code></pre>
-<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.svg" width="672" /></p>
 </div>
 </div>
