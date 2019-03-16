@@ -72,22 +72,6 @@
     
     <url>
     
-      <loc>/project/external-project/</loc>
-      <lastmod>2016-04-27T00:00:00-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/project/internal-project/</loc>
-      <lastmod>2016-04-27T00:00:00-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
       <loc>/post/getting-started/</loc>
       <lastmod>2018-01-13T00:00:00-06:00</lastmod>
     </url>
@@ -178,24 +162,6 @@
     
     <url>
     
-      <loc>/tags/deep-learning/</loc>
-      <lastmod>2016-04-27T00:00:00-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/demo/</loc>
-      <lastmod>2016-04-27T00:00:00-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
       <loc>/authors/ga-cushen/</loc>
       <lastmod>2015-09-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
@@ -225,15 +191,6 @@
     
       <loc>/post/</loc>
       <lastmod>2019-03-10T21:13:14-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/project/</loc>
-      <lastmod>2016-04-27T00:00:00-05:00</lastmod>
-      <priority>0</priority>
     </url>
     
   
