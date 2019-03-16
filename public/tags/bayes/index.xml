@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>bayes on Josh Duncan</title>
+    <link>/tags/bayes/</link>
+    <description>Recent content in bayes on Josh Duncan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Mar 2019 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/bayes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Homework 2, Chapter 4</title>
+      <link>/post/hw2-ch-4/</link>
+      <pubDate>Sun, 10 Mar 2019 21:13:14 -0500</pubDate>
+      
+      <guid>/post/hw2-ch-4/</guid>
+      <description>Hard Problems 4H1. The weights listed below were recorded in the !Kung census, but heights were not recorded for these individuals. Provide predicted heights and 89% intervals (either HPDI or PI) for each of these individuals. That is, fill in the table below, using model-based predictions.
+library(tidyverse) library(knitr) library(kableExtra) kung &amp;lt;- tibble::tribble( ~individual, ~weight, 1, 46.95, 2, 43.72, 3, 64.78, 4, 32.59, 5, 54.63 ) # kable(kung, digits = 3, row.</description>
+    </item>
+    
+  </channel>
+</rss>

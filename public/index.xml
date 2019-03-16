@@ -80,7 +80,7 @@ kung &amp;lt;- tibble::tribble(
             5,   54.63
   )
 
-# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;% 
+# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;%
 #   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Well it looks like first we need to estimate this model. In the book on page &lt;code&gt;96&lt;/code&gt; we see the MAP estimation of this model on the filtered dataset. I’m going to fit this one for predictions.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rethinking)
@@ -108,12 +108,12 @@ m4.3 &amp;lt;- rethinking::map(
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
 head(post)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 116.6485 0.8601264 4.872989
-## 2 117.3391 0.8267747 4.883204
-## 3 112.1998 0.9492084 4.964832
-## 4 114.4651 0.8819569 5.217148
-## 5 113.9703 0.8963154 4.780714
-## 6 113.6470 0.9059172 5.127858&lt;/code&gt;&lt;/pre&gt;
+## 1 114.7920 0.8914361 4.774709
+## 2 116.0199 0.8612333 5.208432
+## 3 114.6111 0.8868710 4.720326
+## 4 110.7553 0.9762771 4.985877
+## 5 113.5189 0.9088681 5.098407
+## 6 113.9040 0.9020421 4.920037&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -124,8 +124,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 
 (sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.0890 145.3381 164.3675 135.1096 155.0579
-## 94% 164.4546 161.5292 180.6668 151.4699 171.3093&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.2462 145.1509 164.2517 135.3070 155.2256
+## 94% 164.4480 161.4587 180.4960 151.5562 171.4342&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the convenient way:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
@@ -140,8 +140,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.3873 145.3212 163.6115 134.8595 155.0755
-## 94% 165.2942 161.2539 180.8131 151.6336 171.4202&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.2063 145.7373 164.0947 135.3289 155.4972
+## 94% 164.5507 161.7029 180.9483 150.7625 171.4972&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
@@ -149,7 +149,7 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 kung$lo_89 &amp;lt;- sim.PI[1,]
 kung$hi_89 &amp;lt;- sim.PI[2,]
 
-# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;% 
+# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;%
 #   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -176,9 +176,9 @@ kung$hi_89 &amp;lt;- sim.PI[2,]
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
 precis(post_early)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.24   1.39 56.09 60.54
-## b      2.72   0.07  2.61  2.83
-## sigma  8.43   0.43  7.72  9.09&lt;/code&gt;&lt;/pre&gt;
+## a     58.27   1.40 56.07 60.49
+## b      2.72   0.07  2.60  2.82
+## sigma  8.44   0.43  7.71  9.08&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
@@ -263,7 +263,7 @@ where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height
 &lt;p&gt;Now the model is fit let’s review the coefficients.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;precis(fit_all)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         Mean StdDev   5.5%  94.5%
-## a     -23.78   1.34 -25.92 -21.65
+## a     -23.79   1.34 -25.92 -21.65
 ## b      47.08   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;

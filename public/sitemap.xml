@@ -273,6 +273,15 @@
     
     <url>
     
+      <loc>/tags/bayes/</loc>
+      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    <url>
+    
       <loc>/tags/julia/</loc>
       <lastmod>2019-03-07T21:13:14-05:00</lastmod>
       <priority>0</priority>
@@ -293,6 +302,15 @@
     
       <loc>/tags/regression/</loc>
       <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    <url>
+    
+      <loc>/tags/rstats/</loc>
+      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
       <priority>0</priority>
     </url>
     

@@ -2,7 +2,10 @@
 title: "Homework 2, Chapter 4"
 author: "J. Duncan"
 date: 2019-03-10T21:13:14-05:00
-output: 
+tags:
+- rstats
+- bayes
+output:
   blogdown::html_page:
     dev: "svg"
 ---
@@ -31,7 +34,7 @@ kung <- tibble::tribble(
             5,   54.63
   )
 
-# kable(kung, digits = 3, row.names = FALSE, align = "c", caption = NULL) %>% 
+# kable(kung, digits = 3, row.names = FALSE, align = "c", caption = NULL) %>%
 #   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
 
@@ -97,7 +100,7 @@ kung$exp_height <- sim.mean
 kung$lo_89 <- sim.PI[1,]
 kung$hi_89 <- sim.PI[2,]
 
-# kable(kung, digits = 3, row.names = FALSE, align = "c", caption = NULL) %>% 
+# kable(kung, digits = 3, row.names = FALSE, align = "c", caption = NULL) %>%
 #   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
 
@@ -109,7 +112,7 @@ Select out all the rows in the `Howell1` data with ages below 18 years of age. I
 d3 <- d[d$age < 18,]
 ```
 
-### (a) 
+### (a)
 > Fit a linear regression to these data, using `map`. Present and interpret the estimates. For every 10 units of increase in weight, how much taller does the model predict a child gets?
 
 ```{r}
@@ -134,7 +137,7 @@ precis(post_early)
 
 So we see for every `1` unit increase in weight a child should be `2.72` cm taller. Or as the question has asked `10` unit increase is a `27.2` cm increase in height. For every `22` lb increase there is a corresponding ~`1` foot increase in height.
 
-### (b) 
+### (b)
 > Plot the raw data, with height on the vertical axis and weight on the horizontal axis. Superimpose the MAP regression line and 89% HPDI for the mean. Also superimpose the 89% HPDI for predicted heights.
 
 ```{r}
@@ -159,7 +162,7 @@ shade(height.HPDI, weight.seq)
 ### (c)
 > What aspects of the model fit concern you? Describe the kinds of assumptions you would change, if any, to improve the model. You don't have to write any new code. Just explain what the model appears to be doing a bad job of, and what you hypothesize would be a better model.
 
-Well the model appears to be doing good job with the data at hand. The prior's were set for persons age > 18 so these should be adjusted. Something of conrern is that you see a non-linear structure in this data. So the two tails of the data are not covered well by the model. This non-linearity could be accounted for with a polynomial regression or with splines. 
+Well the model appears to be doing good job with the data at hand. The prior's were set for persons age > 18 so these should be adjusted. Something of conrern is that you see a non-linear structure in this data. So the two tails of the data are not covered well by the model. This non-linearity could be accounted for with a polynomial regression or with splines.
 
 ## 4H3.
 Suppose a colleague of yours, who works on allometry, glances at the practice problems just above. Your colleague exclaims, "That's silly. Everyone knows that it's only the **logarithm** of body weight that scales with height!" Let's take your colleague's advice and see what happens.
@@ -226,6 +229,3 @@ shade(all_mu.HPDI, weight.seq)
 # the 97% HPDI for predictions
 shade(all_sim.HPDI, weight.seq)
 ```
-
-
-
