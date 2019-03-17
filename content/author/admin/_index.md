@@ -1,8 +1,7 @@
 ---
 authors:
 - admin
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+bio: Just exploring the model space.
 education:
   courses:
   - course: MS in Analytics
