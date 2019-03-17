@@ -2,24 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>julia on Josh Duncan</title>
-    <link>https://jduncstats.com/tags/julia/</link>
+    <link>/tags/julia/</link>
     <description>Recent content in julia on Josh Duncan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Mar 2019 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 16 Mar 2019 00:00:00 -0500</lastBuildDate>
     
-	<atom:link href="https://jduncstats.com/tags/julia/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/julia/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Kernel Density Estimation from Scratch</title>
-      <link>https://jduncstats.com/post/2019-3-7-kde-scratch/</link>
-      <pubDate>Thu, 07 Mar 2019 21:13:14 -0500</pubDate>
+      <link>/post/2019-03-16_kde-scratch/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/post/2019-3-7-kde-scratch/</guid>
-      <description>KDE with KernelDensity.jl From the Kernel Density Estimation Wikipedia site we can take a look at reproducing the Example section.
-using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false)  Now applying the quick and easy solution: a package.
-import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt; x -&amp;gt; plot!(x, legend = false)  KDE with Distributions.jl Creating individual distributions for each data point.</description>
+      <guid>/post/2019-03-16_kde-scratch/</guid>
+      <description>Motivation Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s probability blog I&amp;rsquo;ve been reading a great book by Phillip K. Jannert:
+This book has a great overview of KDE&amp;rsquo;s that explain the motivation. My own abbreviated version is that KDE&amp;rsquo;s are a visualization technique to view a variables distribution. It&amp;rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation.</description>
     </item>
     
   </channel>

@@ -31,7 +31,7 @@ weight = 1
   icon = "laptop-code"
   icon_pack = "fas"
   name = "Programming Languages"
-  description = "I've enjoyed programming since my undergrad `C++` days although now I spend all of my time in high level languages. Professionally, I use `R` because of its great package [ecosystem](https://www.tidyverse.org/). However, I'm a complete fanboy of the [`Julia`](https://julialang.org/) programming language and am blown away by its promise."
+  description = "I've enjoyed programming since my undergrad `C++` days although now I spend all of my time in high level languages. Professionally, I use `R` because of its great package [ecosystem](https://www.tidyverse.org/). However, I'm a complete fanboy of the [`Julia Programming Language`](https://julialang.org/) and am blown away by its promise."
 
 [[feature]]
   icon = "guitar"

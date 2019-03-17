@@ -2,38 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Josh Duncan</title>
-    <link>https://jduncstats.com/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Josh Duncan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Wed, 20 Apr 2016 00:00:00 -0500</lastBuildDate>
     
-	<atom:link href="https://jduncstats.com/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Academic</title>
+      <link>/tags/academic/</link>
+      <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
+      
+      <guid>/tags/academic/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>R Markdown</title>
+      <link>/tags/r-markdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/r-markdown/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>bayes</title>
-      <link>https://jduncstats.com/tags/bayes/</link>
+      <link>/tags/bayes/</link>
       <pubDate>Sun, 10 Mar 2019 21:13:14 -0500</pubDate>
       
-      <guid>https://jduncstats.com/tags/bayes/</guid>
+      <guid>/tags/bayes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>julia</title>
-      <link>https://jduncstats.com/tags/julia/</link>
-      <pubDate>Thu, 07 Mar 2019 21:13:14 -0500</pubDate>
+      <link>/tags/julia/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/tags/julia/</guid>
+      <guid>/tags/julia/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>plot</title>
+      <link>/tags/plot/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/plot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>regression</title>
+      <link>/tags/regression/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/tags/regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rstats</title>
-      <link>https://jduncstats.com/tags/rstats/</link>
+      <link>/tags/rstats/</link>
       <pubDate>Sun, 10 Mar 2019 21:13:14 -0500</pubDate>
       
-      <guid>https://jduncstats.com/tags/rstats/</guid>
+      <guid>/tags/rstats/</guid>
       <description></description>
     </item>
     

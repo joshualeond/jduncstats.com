@@ -33,7 +33,7 @@
   <meta name="description" content="Business Analyst">
 
   
-  <link rel="alternate" hreflang="en-us" href="https://jduncstats.com/tags/julia/">
+  <link rel="alternate" hreflang="en-us" href="/tags/julia/">
 
   
 
@@ -97,15 +97,15 @@
   
 
   
-  <link rel="alternate" href="https://jduncstats.com/tags/julia/index.xml" type="application/rss+xml" title="Josh Duncan">
-  <link rel="feed" href="https://jduncstats.com/tags/julia/index.xml" type="application/rss+xml" title="Josh Duncan">
+  <link rel="alternate" href="/tags/julia/index.xml" type="application/rss+xml" title="Josh Duncan">
+  <link rel="feed" href="/tags/julia/index.xml" type="application/rss+xml" title="Josh Duncan">
   
 
   <link rel="manifest" href="/site.webmanifest">
   <link rel="icon" type="image/png" href="/img/icon.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="https://jduncstats.com/tags/julia/">
+  <link rel="canonical" href="/tags/julia/">
 
   
   
@@ -117,12 +117,12 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Josh Duncan">
-  <meta property="og:url" content="https://jduncstats.com/tags/julia/">
+  <meta property="og:url" content="/tags/julia/">
   <meta property="og:title" content="julia | Josh Duncan">
-  <meta property="og:description" content="Business Analyst"><meta property="og:image" content="https://jduncstats.com/img/icon-192.png">
+  <meta property="og:description" content="Business Analyst"><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2019-03-07T21:13:14-05:00">
+  <meta property="og:updated_time" content="2019-03-16T00:00:00-05:00">
   
 
   
@@ -321,12 +321,11 @@
   
   
   <div>
-    <h2><a href="/post/2019-3-7-kde-scratch/">Kernel Density Estimation from Scratch</a></h2>
+    <h2><a href="/post/2019-03-16_kde-scratch/">Kernel Density Estimation from Scratch</a></h2>
     <div class="article-style">
       
-      KDE with KernelDensity.jl From the Kernel Density Estimation Wikipedia site we can take a look at reproducing the Example section.
-using StatsPlots x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2]; scatter(x, zeros(length(x)), legend = false)  Now applying the quick and easy solution: a package.
-import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&gt; x -&gt; plot!(x, legend = false)  KDE with Distributions.jl Creating individual distributions for each data point.
+      Motivation Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s probability blog I&rsquo;ve been reading a great book by Phillip K. Jannert:
+This book has a great overview of KDE&rsquo;s that explain the motivation. My own abbreviated version is that KDE&rsquo;s are a visualization technique to view a variables distribution. It&rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation.
       
     </div>
   </div>
@@ -337,6 +336,10 @@ import KernelDensity KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&gt; x -&gt; 
 </div>
 <div class="container">
   <footer class="site-footer">
+  
+  <p class="powered-by">
+    <a href="/privacy/">Privacy Policy</a>
+  </p>
   
 
   <p class="powered-by">

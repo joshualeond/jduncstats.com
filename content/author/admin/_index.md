@@ -14,7 +14,8 @@ email: ""
 interests:
 - Data Science
 - Bayesian Statistics
-- Julia Language
+- Julia Programming Language
+- Time Series Analysis
 name: Josh Duncan
 organizations:
 - name: CF Industries
@@ -36,6 +37,4 @@ user_groups:
 - Visitors
 ---
 
-Hey there, I'm Josh Duncan, a former controls engineer that found a passion in data science and statistics.
-
- Statistical modeling and uncertainty fascinate me. I'm currently on a Bayesian modeling journey so you'll likely see posts on learning bayes.
+Hey, I'm Josh Duncan, a former controls engineer that found a passion in data science and statistics. Statistical modeling and uncertainty fascinate me. I'm currently on a Bayesian modeling journey so you'll likely see posts on learning bayes.
