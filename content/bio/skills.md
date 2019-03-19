@@ -25,13 +25,13 @@ weight = 1
   icon = "lightbulb"
   icon_pack = "far"
   name = "Data Science"
-  description = "I became hooked on the field of data science in `2015`. At the moment I'd say I'm more of a data science generalist but am especially intrigued by probabilistic modeling and probabilistic programming languages (à la [Stan](https://mc-stan.org/)). I have mixed feelings on the promise of deep learning but am excited to see innovations like *transfer learning*, *deep probabilistic modeling*, [*neural ODEs*](https://arxiv.org/abs/1806.07366), and [*differentiable programming*](https://fluxml.ai/2019/03/05/dp-vs-rl.html)."
+  description = "I became hooked on the field of data science in `2015`. At the moment I'd say I'm more of a data science generalist but am especially intrigued by probabilistic modeling and probabilistic programming languages (à la [Stan](https://mc-stan.org/)). I'm skeptical of the promise of deep learning but am excited to see innovations like *transfer learning*, *deep probabilistic modeling*, [*neural ODEs*](https://arxiv.org/abs/1806.07366), and [*differentiable programming*](https://fluxml.ai/2019/03/05/dp-vs-rl.html)."
 
 [[feature]]
   icon = "laptop-code"
   icon_pack = "fas"
   name = "Programming Languages"
-  description = "I've enjoyed programming since my undergrad `C++` days although now I spend all of my time in high level languages. Professionally, I use `R` because of its great package [ecosystem](https://www.tidyverse.org/). However, I'm a complete fanboy of the [`Julia Programming Language`](https://julialang.org/) and am blown away by its promise."
+  description = "I've enjoyed programming since my undergrad intro `C++` days. Now I spend all of my time in high level languages. Professionally, I use `R` because of its great package [ecosystem](https://www.tidyverse.org/). However, I'm a complete fanboy of the [`Julia Programming Language`](https://julialang.org/)."
 
 [[feature]]
   icon = "guitar"

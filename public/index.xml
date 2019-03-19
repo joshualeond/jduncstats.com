@@ -65,7 +65,7 @@
 
 &lt;p&gt;Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s &lt;a href=&#34;https://www.countbayesie.com/&#34; target=&#34;_blank&#34;&gt;probability blog&lt;/a&gt; I&amp;rsquo;ve been reading a great book by Phillip K. Jannert:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/janert.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/janert.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
 
 &lt;p&gt;This book has a great overview of KDE&amp;rsquo;s that explain the motivation. My own abbreviated version is that KDE&amp;rsquo;s are a visualization technique to view a variables distribution. It&amp;rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation. It&amp;rsquo;s important because these measures are assuming that your data is &lt;code&gt;unimodal&lt;/code&gt; (having a single peak). If your data doesn&amp;rsquo;t have this structure then these measures may be misleading.&lt;/p&gt;
 
@@ -124,7 +124,7 @@ x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
 scatter(x, zeros(length(x)), legend = false)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;kde-with-kerneldensity-jl&#34;&gt;KDE with KernelDensity.jl&lt;/h2&gt;
 
@@ -136,7 +136,7 @@ KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt;
   x -&amp;gt; plot!(x, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;There we go, we&amp;rsquo;ve applied KDE to these data points and we can see the &lt;code&gt;bimodal&lt;/code&gt; nature of this data. We could stop here but let&amp;rsquo;s keep going.&lt;/p&gt;
 
@@ -145,17 +145,23 @@ KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt;
 &lt;p&gt;What is the &lt;code&gt;kernel&lt;/code&gt; part of this about? The &lt;code&gt;kde&lt;/code&gt; function from the package uses a default &lt;code&gt;kernel&lt;/code&gt; associated with the &lt;code&gt;Normal&lt;/code&gt; distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;$$
-D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{h} K(\frac{x - x_i}{h})
+D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
 $$&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;Breaking down this formula a bit: The &lt;code&gt;kernel&lt;/code&gt; is the function shown above as &lt;code&gt;$K$&lt;/code&gt;. Jannert describes it as a &amp;ldquo;highly&amp;rdquo; peaked function. For every point along the x-axis we take the distance between that point and an individual data point from our example. That set of distances are fed into the kernel function. Then the results of these evaluations for each individual data point are summed together and divided by the number of observations of our variable.&lt;/p&gt;
+&lt;p&gt;Breaking down this formula a bit: The &lt;code&gt;kernel&lt;/code&gt; is the function shown above as &lt;code&gt;$K$&lt;/code&gt; and Jannert describes it like so:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;To form a KDE, we place a *kernel*—that is, a smooth, strongly peaked function—at the
+position of each data point. We then add up the contributions from all kernels to obtain a
+smooth curve, which we can evaluate at any point along the &lt;em&gt;x&lt;/em&gt; axis&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;There is a great demonstration of how kernel functions work &lt;a href=&#34;https://mathisonian.github.io/kde/&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. It is a very elegant and interactive interface where you can test different bandwidths/kernels and see the results of the KDE.&lt;/p&gt;
 
 &lt;p&gt;As I mentioned before, the default &lt;code&gt;kernel&lt;/code&gt; for this package is the &lt;code&gt;Normal&lt;/code&gt; (or Gaussian) probability density function (pdf):&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;$$
-K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}(-\frac{1}{2}x^2)
+K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
 $$&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;We can get an idea of what the KDE should look like by using the &lt;a href=&#34;https://github.com/JuliaStats/Distributions.jl&#34; target=&#34;_blank&#34;&gt;Distributions.jl&lt;/a&gt; package. We can create individual normal distributions for each data point and then calculate the &lt;code&gt;pdf&lt;/code&gt; of each distribution across the x-axis and sum these results.&lt;/p&gt;
@@ -174,12 +180,12 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about this feature. The &lt;code&gt;Normal&lt;/code&gt; function above is vectorized by the use of the &lt;code&gt;.&lt;/code&gt; operator. This creates an array of Normal distributions. Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
+&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (using broadcasting). See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. The &lt;code&gt;Normal&lt;/code&gt; function above is vectorized by the use of the &lt;code&gt;.&lt;/code&gt; operator. This creates an array of Normal distributions. Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;plot(dists, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Summing up their probability densities across all of &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
 
@@ -189,24 +195,31 @@ dens = sum(pdf.(eachdist, x_d) for eachdist in dists)
 plot!(x_d, dens)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the Normal kernel. Let&amp;rsquo;s go a bit deeper.&lt;/p&gt;
 
 &lt;h2 id=&#34;kernel-density-from-scratch&#34;&gt;Kernel Density from Scratch&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;kde(z, ω, xv) =
-  sum(@. exp(-0.5 * ((z - xv) / ω)^2) / sqrt(2π*ω^2)) / length(xv)
+&lt;p&gt;We&amp;rsquo;re not that far away from writing this code ourselves. Let&amp;rsquo;s write the kernel function separate and then the KDE function after. I&amp;rsquo;ll be using the gaussian kernel definition but we could easily write separate kernel functions here. Then all we would need to do is swap out the &lt;code&gt;K&lt;/code&gt; function in the &lt;code&gt;kde&lt;/code&gt; function below to try out different kernels.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# gaussian kernel
+K(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+
+# define the KDE function
+kde(x, h, x_i) =
+  1/(length(x_i) * h) * sum(K.((x .- x_i) / h))
+
+# evaluate KDE along the x-axis
 dens = []
-for x_d in range(-7, 10, length = 100)
-  push!(dens, kde(x_d, sqrt(2.25), x))
+for x_i in x_d
+  push!(dens, kde(x_i, sqrt(2.25), x))
 end
 
-plot(dens, legend = false)
+plot(x_d, dens, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
