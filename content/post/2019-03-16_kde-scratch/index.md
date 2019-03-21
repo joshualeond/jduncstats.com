@@ -109,7 +109,7 @@ dists = Normal.(x, sqrt(2.25))
 
 
 
-Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the `.` (or "dot") operator. See [this](https://julialang.org/blog/2018/05/extensible-broadcast-fusion) blog post if you want to learn more about it. Above we applied the `Normal` method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (`2.25`). Let's plot each of these distributions:
+Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the `.` (or "dot") operator. See [this](https://julialang.org/blog/2018/05/extensible-broadcast-fusion) blog post if you want to learn more about it. Above we applied the `Normal` method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of `2.25`). Let's plot each of these distributions:
 
 ````julia
 plot(dists, legend = false)
@@ -170,7 +170,7 @@ function foo(x)
 end
 ````
 
-Then we could add a `kernel` argument to our function, `D` or declare [types](https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1) for cleaner code.
+Then we could add a `kernel` argument to our function `D` or declare [types](https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1) for cleaner code.
 
 ## What's next?
 

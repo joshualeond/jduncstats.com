@@ -180,7 +180,7 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (&lt;code&gt;2.25&lt;/code&gt;). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
+&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of &lt;code&gt;2.25&lt;/code&gt;). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;plot(dists, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
@@ -231,7 +231,7 @@ plot(x_d, dens, legend = false)
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Then we could add a &lt;code&gt;kernel&lt;/code&gt; argument to our function, &lt;code&gt;D&lt;/code&gt; or declare &lt;a href=&#34;https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1&#34; target=&#34;_blank&#34;&gt;types&lt;/a&gt; for cleaner code.&lt;/p&gt;
+&lt;p&gt;Then we could add a &lt;code&gt;kernel&lt;/code&gt; argument to our function &lt;code&gt;D&lt;/code&gt; or declare &lt;a href=&#34;https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1&#34; target=&#34;_blank&#34;&gt;types&lt;/a&gt; for cleaner code.&lt;/p&gt;
 
 &lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next?&lt;/h2&gt;
 

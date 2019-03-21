@@ -675,7 +675,7 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 </code></pre>
 
-<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or &ldquo;dot&rdquo;) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (<code>2.25</code>). Let&rsquo;s plot each of these distributions:</p>
+<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or &ldquo;dot&rdquo;) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of <code>2.25</code>). Let&rsquo;s plot each of these distributions:</p>
 
 <pre><code class="language-julia">plot(dists, legend = false)
 </code></pre>
@@ -726,7 +726,7 @@ plot(x_d, dens, legend = false)
 end
 </code></pre>
 
-<p>Then we could add a <code>kernel</code> argument to our function, <code>D</code> or declare <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1" target="_blank">types</a> for cleaner code.</p>
+<p>Then we could add a <code>kernel</code> argument to our function <code>D</code> or declare <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1" target="_blank">types</a> for cleaner code.</p>
 
 <h2 id="what-s-next">What&rsquo;s next?</h2>
 
