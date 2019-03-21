@@ -2,6 +2,9 @@
 title : Kernel Density Estimation from Scratch
 author : J. Duncan
 date: 2019-03-16T00:00:00-05:00
+image:
+  focal_point: ""
+  preview_only: false
 tags:
   - julia
 options:
@@ -15,7 +18,7 @@ Why am I writing about KDE's? At the recommendation of Will Kurt's [probability 
 
 This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage. In fact, there are many metrics that we commonly use to understand a variable that have an implicit assumption that your data are `unimodal` (having a single peak). If your data doesn't have this structure then you may be mislead by measures of central tendency (mean/median/mode), outliers, or other statistical methods (linear regression, t-tests, etc.).
 
-This posts structure follows closely with how I commonly learn topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what's going on underneath.
+This post's structure follows closely with how I commonly learn topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what's going on underneath.
 
 I use a small example I discovered on the [Wikipedia page](https://en.wikipedia.org/wiki/Kernel_density_estimation) for KDEs. It uses a handful of data points for a single variable:
 
@@ -40,7 +43,7 @@ scatter(x, zeros(length(x)), legend = false)
 ````
 
 
-![](/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg)
+![](/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg)
 
 
 ## KDE with KernelDensity.jl
@@ -63,13 +66,13 @@ There we go, we've applied KDE to these data points and we can now see the `bimo
 
 ## KDE with Distributions.jl
 
-What is the `kernel` part of this about? What was the default kernel we used in the previous section? The `kde` function from the package used a default `kernel` associated with the `Normal` distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:
+What is the `kernel` part of this about? What was the default kernel we used in the previous section? The `kde` function from the package used a default kernel associated with the Normal distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:
 
 `$$
 D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
 $$`
 
-Breaking down this formula a bit: The `kernel` is the function shown above as `$K$` and Janert describes it like so:
+Breaking down this formula a bit: The kernel is the function shown above as `$K$` and Janert describes it like so:
 
 > To form a KDE, we place a *kernel* —that is, a smooth, strongly peaked function—at the
 position of each data point. We then add up the contributions from all kernels to obtain a
@@ -77,13 +80,13 @@ smooth curve, which we can evaluate at any point along the *x* axis
 
 We are effectively calculating weighted distances from our data points to points along the *x* axis. There is a great interactive introduction to kernel density estimation [here](https://mathisonian.github.io/kde/). I highly recommend it because you can play with bandwidth, select different kernel methods, and check out the resulting effects.
 
-As I mentioned before, the default `kernel` for this package is the `Normal` (or Gaussian) probability density function (pdf):
+As I mentioned before, the default `kernel` for this package is the Normal (or Gaussian) probability density function (pdf):
 
 `$$
 K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
 $$`
 
-Since we are calculating `pdf`s I'll use the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package to create each distribution, calculate the densities, and sum the results.
+Since we are calculating pdfs I'll use the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package to create each distribution, calculate the densities, and sum the results.
 
 ````julia
 using Distributions
@@ -137,7 +140,7 @@ The resulting shape of the KDE is identical to the one we first calculated. We c
 
 ## Kernel Density from Scratch
 
-To apply a new kernel method we can just write the KDE code from scratch. Below I've defined the gaussian kernel as `K(x)` and the KDE function as `D(x)` to mimic the math above.
+To apply a new kernel method we can just write the KDE code from scratch. Below I've defined the gaussian kernel as `K(x)` and the KDE function as `D` to mimic the math above.
 
 ````julia
 # gaussian kernel
@@ -156,12 +159,9 @@ end
 plot(x_d, dens, legend = false)
 ````
 
-
 ![](/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg)
 
-
-
-I've defined these functions using Julia's "assignment form". I did this because of the compact nature of this particular implementation. To generalize the kernel function, `D(x)`, to be close to the `kde` function that we used in the first step we would want to use the traditional function definition like so:
+I've defined these functions using Julia's "assignment form". I did this because of the compact nature of this particular implementation. To generalize the kernel function, `D`, to be close to the `kde` function that we used in the first step we would want to use the traditional function definition like so:
 
 ````julia
 function foo(x)
@@ -170,8 +170,8 @@ function foo(x)
 end
 ````
 
-Then we could add a `kernel` argument to our function, `D(x)` or declare [types](https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1) for cleaner code.
+Then we could add a `kernel` argument to our function, `D` or declare [types](https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1) for cleaner code.
 
 ## What's next?
 
-A short post on cumulative distribution functions (`cdf`) using Julia will likely follow this one. Janert introduces both `kde`s and `cdf`s in his chapter **A Single Variable: Shape and Distribution** and they complement each other really well. Thanks for reading!
+A short post on cumulative distribution functions (cdf) using Julia will likely follow this one. Janert introduces both kdes and cdfs in his chapter **A Single Variable: Shape and Distribution** and they complement each other really well. Thanks for reading!
