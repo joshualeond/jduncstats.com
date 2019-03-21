@@ -17,8 +17,8 @@
       <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
       
       <guid>/post/2019-03-16_kde-scratch/</guid>
-      <description>Motivation Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s probability blog I&amp;rsquo;ve been reading a great book by Phillip K. Jannert:
-This book has a great overview of KDE&amp;rsquo;s that explain the motivation. My own abbreviated version is that KDE&amp;rsquo;s are a visualization technique to view a variables distribution. It&amp;rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation.</description>
+      <description>Motivation Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s probability blog I&amp;rsquo;ve been reading a great book on data analysis by Philipp K. Janert:
+This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage.</description>
     </item>
     
   </channel>

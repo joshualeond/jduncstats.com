@@ -28,8 +28,8 @@
   
     
   
-  <meta name="description" content="Motivation Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s probability blog I&rsquo;ve been reading a great book by Phillip K. Jannert:
-This book has a great overview of KDE&rsquo;s that explain the motivation. My own abbreviated version is that KDE&rsquo;s are a visualization technique to view a variables distribution. It&rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation.">
+  <meta name="description" content="Motivation Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s probability blog I&rsquo;ve been reading a great book on data analysis by Philipp K. Janert:
+This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/2019-03-16_kde-scratch/">
@@ -93,6 +93,20 @@ This book has a great overview of KDE&rsquo;s that explain the motivation. My ow
 
   
   
+    <script>
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-136620931-1', 'auto');
+      
+      ga('require', 'eventTracker');
+      ga('require', 'outboundLinkTracker');
+      ga('require', 'urlChangeTracker');
+      ga('send', 'pageview');
+    </script>
+    <script async src="//www.google-analytics.com/analytics.js"></script>
+    
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" integrity="sha512-HUmooslVKj4m6OBu0OgzjXXr+QuFYy/k7eLI5jdeEy/F4RSgMn6XRWRGkFi5IFaFgy7uFTkegp3Z0XnJf3Jq+g==" crossorigin="anonymous"></script>
+    
+  
   
 
   
@@ -118,8 +132,8 @@ This book has a great overview of KDE&rsquo;s that explain the motivation. My ow
   <meta property="og:site_name" content="Josh Duncan">
   <meta property="og:url" content="/post/2019-03-16_kde-scratch/">
   <meta property="og:title" content="Kernel Density Estimation from Scratch | Josh Duncan">
-  <meta property="og:description" content="Motivation Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s probability blog I&rsquo;ve been reading a great book by Phillip K. Jannert:
-This book has a great overview of KDE&rsquo;s that explain the motivation. My own abbreviated version is that KDE&rsquo;s are a visualization technique to view a variables distribution. It&rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation."><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:description" content="Motivation Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s probability blog I&rsquo;ve been reading a great book on data analysis by Philipp K. Janert:
+This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage."><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-03-16T00:00:00-05:00">
@@ -340,7 +354,7 @@ This book has a great overview of KDE&rsquo;s that explain the motivation. My ow
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    4 min read
+    5 min read
   </span>
   
 
@@ -423,15 +437,15 @@ This book has a great overview of KDE&rsquo;s that explain the motivation. My ow
 
 <h2 id="motivation">Motivation</h2>
 
-<p>Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s <a href="https://www.countbayesie.com/" target="_blank">probability blog</a> I&rsquo;ve been reading a great book by Phillip K. Jannert:</p>
+<p>Why am I writing about KDE&rsquo;s? At the recommendation of Will Kurt&rsquo;s <a href="https://www.countbayesie.com/" target="_blank">probability blog</a> I&rsquo;ve been reading a great book on data analysis by Philipp K. Janert:</p>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/janert.jpg" alt="drawing" width="50%"/></p>
+<p><img src="/post/2019-03-16-kde-scratch_files/janert.jpg" alt="drawing" width="50%"/></p>
 
-<p>This book has a great overview of KDE&rsquo;s that explain the motivation. My own abbreviated version is that KDE&rsquo;s are a visualization technique to view a variables distribution. It&rsquo;s best to visualize a variable prior to calculating measures of central tendency (means/modes/medians) and other statistics like variance and standard deviation. It&rsquo;s important because these measures are assuming that your data is <code>unimodal</code> (having a single peak). If your data doesn&rsquo;t have this structure then these measures may be misleading.</p>
+<p>This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage. In fact, there are many metrics that we commonly use to understand a variable that have an implicit assumption that your data are <code>unimodal</code> (having a single peak). If your data doesn&rsquo;t have this structure then you may be mislead by measures of central tendency (mean/median/mode), outliers, or other statistical methods (linear regression, t-tests, etc.).</p>
 
-<p>This post follows closely with how I commonly learn about topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what&rsquo;s going on underneath.</p>
+<p>This posts structure follows closely with how I commonly learn topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what&rsquo;s going on underneath.</p>
 
-<p>I use a small example I discovered on the <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation" target="_blank">Wikipedia page</a>) for KDEs. It uses a handful of data points for a single variable:</p>
+<p>I use a small example I discovered on the <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation" target="_blank">Wikipedia page</a> for KDEs. It uses a handful of data points for a single variable:</p>
 
 <table>
 <thead>
@@ -474,7 +488,7 @@ This book has a great overview of KDE&rsquo;s that explain the motivation. My ow
 </tbody>
 </table>
 
-<p>I&rsquo;ll be using the <code>Julia Programming Language</code> for this example. Let&rsquo;s start with a basic <code>dot</code> plot of these points.</p>
+<p>Let&rsquo;s start with a basic <code>dot</code> plot of these points. I&rsquo;ll be using the <code>Julia Programming Language</code> for these examples.</p>
 
 <pre><code class="language-julia">using StatsPlots
 
@@ -484,7 +498,7 @@ x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
 scatter(x, zeros(length(x)), legend = false)
 </code></pre>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg" alt="" /></p>
+<p><img src="/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg" alt="" /></p>
 
 <h2 id="kde-with-kerneldensity-jl">KDE with KernelDensity.jl</h2>
 
@@ -496,27 +510,27 @@ KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&gt;
   x -&gt; plot!(x, legend = false)
 </code></pre>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg" alt="" /></p>
+<p><img src="/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg" alt="" /></p>
 
-<p>There we go, we&rsquo;ve applied KDE to these data points and we can see the <code>bimodal</code> nature of this data. We could stop here but let&rsquo;s keep going.</p>
+<p>There we go, we&rsquo;ve applied KDE to these data points and we can now see the <code>bimodal</code> nature of this data. If all we wanted to do was visualize the distribution then we&rsquo;re done. I&rsquo;d like to dig a bit deeper though.</p>
 
 <h2 id="kde-with-distributions-jl">KDE with Distributions.jl</h2>
 
-<p>What is the <code>kernel</code> part of this about? The <code>kde</code> function from the package uses a default <code>kernel</code> associated with the <code>Normal</code> distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:</p>
+<p>What is the <code>kernel</code> part of this about? What was the default kernel we used in the previous section? The <code>kde</code> function from the package used a default <code>kernel</code> associated with the <code>Normal</code> distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:</p>
 
 <p><code>$$
 D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
 $$</code></p>
 
-<p>Breaking down this formula a bit: The <code>kernel</code> is the function shown above as <code>$K$</code> and Jannert describes it like so:</p>
+<p>Breaking down this formula a bit: The <code>kernel</code> is the function shown above as <code>$K$</code> and Janert describes it like so:</p>
 
 <blockquote>
-<p>To form a KDE, we place a *kernel*—that is, a smooth, strongly peaked function—at the
+<p>To form a KDE, we place a <em>kernel</em> —that is, a smooth, strongly peaked function—at the
 position of each data point. We then add up the contributions from all kernels to obtain a
 smooth curve, which we can evaluate at any point along the <em>x</em> axis</p>
 </blockquote>
 
-<p>There is a great demonstration of how kernel functions work <a href="https://mathisonian.github.io/kde/" target="_blank">here</a>. It is a very elegant and interactive interface where you can test different bandwidths/kernels and see the results of the KDE.</p>
+<p>We are effectively calculating weighted distances from our data points to points along the <em>x</em> axis. There is a great interactive introduction to kernel density estimation <a href="https://mathisonian.github.io/kde/" target="_blank">here</a>. I highly recommend it because you can play with bandwidth, select different kernel methods, and check out the resulting effects.</p>
 
 <p>As I mentioned before, the default <code>kernel</code> for this package is the <code>Normal</code> (or Gaussian) probability density function (pdf):</p>
 
@@ -524,7 +538,7 @@ smooth curve, which we can evaluate at any point along the <em>x</em> axis</p>
 K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
 $$</code></p>
 
-<p>We can get an idea of what the KDE should look like by using the <a href="https://github.com/JuliaStats/Distributions.jl" target="_blank">Distributions.jl</a> package. We can create individual normal distributions for each data point and then calculate the <code>pdf</code> of each distribution across the x-axis and sum these results.</p>
+<p>Since we are calculating <code>pdf</code>s I&rsquo;ll use the <a href="https://github.com/JuliaStats/Distributions.jl" target="_blank">Distributions.jl</a> package to create each distribution, calculate the densities, and sum the results.</p>
 
 <pre><code class="language-julia">using Distributions
 
@@ -540,46 +554,62 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 </code></pre>
 
-<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (using broadcasting). See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. The <code>Normal</code> function above is vectorized by the use of the <code>.</code> operator. This creates an array of Normal distributions. Let&rsquo;s plot each of these distributions:</p>
+<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or &ldquo;dot&rdquo;) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (<code>2.25</code>). Let&rsquo;s plot each of these distributions:</p>
 
 <pre><code class="language-julia">plot(dists, legend = false)
 </code></pre>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg" alt="" /></p>
+<p><img src="/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg" alt="" /></p>
 
 <p>Summing up their probability densities across all of <code>x</code>.</p>
 
-<pre><code class="language-julia">x_d = range(-7, 11, length = 100)
+<pre><code class="language-julia"># create an iterator
+x_d = range(-7, 11, length = 100)
+# find the kde with a gaussian kernel
 dens = sum(pdf.(eachdist, x_d) for eachdist in dists)
 
 plot!(x_d, dens)
 </code></pre>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg" alt="" /></p>
+<p><img src="/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg" alt="" /></p>
 
-<p>The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the Normal kernel. Let&rsquo;s go a bit deeper.</p>
+<p>The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the gaussian kernel. Let&rsquo;s extrapolate a bit so we could use different kernels.</p>
 
 <h2 id="kernel-density-from-scratch">Kernel Density from Scratch</h2>
 
-<p>We&rsquo;re not that far away from writing this code ourselves. Let&rsquo;s write the kernel function separate and then the KDE function after. I&rsquo;ll be using the gaussian kernel definition but we could easily write separate kernel functions here. Then all we would need to do is swap out the <code>K</code> function in the <code>kde</code> function below to try out different kernels.</p>
+<p>To apply a new kernel method we can just write the KDE code from scratch. Below I&rsquo;ve defined the gaussian kernel as <code>K(x)</code> and the KDE function as <code>D(x)</code> to mimic the math above.</p>
 
 <pre><code class="language-julia"># gaussian kernel
 K(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
 
 # define the KDE function
-kde(x, h, x_i) =
+D(x, h, x_i) =
   1/(length(x_i) * h) * sum(K.((x .- x_i) / h))
 
 # evaluate KDE along the x-axis
 dens = []
-for x_i in x_d
-  push!(dens, kde(x_i, sqrt(2.25), x))
+for xstep in x_d
+  push!(dens, D(xstep, sqrt(2.25), x))
 end
 
 plot(x_d, dens, legend = false)
 </code></pre>
 
-<p><img src="/post/2019-03-07-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg" alt="" /></p>
+<p><img src="/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg" alt="" /></p>
+
+<p>I&rsquo;ve defined these functions using Julia&rsquo;s &ldquo;assignment form&rdquo;. I did this because of the compact nature of this particular implementation. To generalize the kernel function, <code>D(x)</code>, to be close to the <code>kde</code> function that we used in the first step we would want to use the traditional function definition like so:</p>
+
+<pre><code class="language-julia">function foo(x)
+  ...
+  return y
+end
+</code></pre>
+
+<p>Then we could add a <code>kernel</code> argument to our function, <code>D(x)</code> or declare <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1" target="_blank">types</a> for cleaner code.</p>
+
+<h2 id="what-s-next">What&rsquo;s next?</h2>
+
+<p>A short post on cumulative distribution functions (<code>cdf</code>) using Julia will likely follow this one. Janert introduces both <code>kde</code>s and <code>cdf</code>s in his chapter <strong>A Single Variable: Shape and Distribution</strong> and they complement each other really well. Thanks for reading!</p>
 
     </div>
 
