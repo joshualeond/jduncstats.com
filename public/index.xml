@@ -294,12 +294,12 @@ m4.3 &amp;lt;- rethinking::map(
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
 head(post)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 112.2954 0.9491699 5.000737
-## 2 113.0658 0.9153298 4.843345
-## 3 113.0045 0.9264236 5.104805
-## 4 109.1693 0.9956567 5.036712
-## 5 110.9276 0.9727692 4.944080
-## 6 113.6316 0.9208830 5.085948&lt;/code&gt;&lt;/pre&gt;
+## 1 110.7704 0.9672466 5.114049
+## 2 115.4276 0.8692995 5.008825
+## 3 113.4877 0.9208355 5.075455
+## 4 115.8457 0.8572660 4.915356
+## 5 115.0800 0.8802520 5.080428
+## 6 116.4855 0.8560609 5.176174&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -310,8 +310,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 
 (sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.1800 145.1733 164.2963 135.4308 155.3258
-## 94% 164.4171 161.4956 180.7816 151.6542 171.5112&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.3987 145.2771 164.1870 135.1863 155.1855
+## 94% 164.5697 161.6688 180.6209 151.5113 171.4574&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the convenient way:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
@@ -326,8 +326,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  147.7267 145.3358 164.4972 135.5728 155.2548
-## 94% 164.1712 161.6233 180.5642 151.1673 171.6732&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.2912 145.3511 164.0450 135.9590 155.2435
+## 94% 164.4697 161.6858 180.4589 151.3162 171.4148&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
@@ -362,9 +362,9 @@ kung$hi_89 &amp;lt;- sim.PI[2,]
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
 precis(post_early)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.26   1.38 55.97 60.35
-## b      2.72   0.07  2.61  2.82
-## sigma  8.44   0.43  7.77  9.13&lt;/code&gt;&lt;/pre&gt;
+## a     58.24   1.39 56.09 60.50
+## b      2.72   0.07  2.61  2.83
+## sigma  8.44   0.43  7.76  9.14&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;

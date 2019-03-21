@@ -2,6 +2,7 @@
 title: "Homework 2, Chapter 4"
 author: "J. Duncan"
 date: 2019-03-10T21:13:14-05:00
+draft: true
 tags:
 - rstats
 - bayes
