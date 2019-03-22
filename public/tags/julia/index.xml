@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>julia on Josh Duncan</title>
-    <link>https://jduncstats.com/tags/julia/</link>
+    <link>/tags/julia/</link>
     <description>Recent content in julia on Josh Duncan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 16 Mar 2019 00:00:00 -0500</lastBuildDate>
     
-	<atom:link href="https://jduncstats.com/tags/julia/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/julia/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Kernel Density Estimation from Scratch</title>
-      <link>https://jduncstats.com/post/2019-03-16_kde-scratch/</link>
+      <link>/post/2019-03-16_kde-scratch/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
       
-      <guid>https://jduncstats.com/post/2019-03-16_kde-scratch/</guid>
+      <guid>/post/2019-03-16_kde-scratch/</guid>
       <description>Motivation Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s probability blog I&amp;rsquo;ve been reading a great book on data analysis by Philipp K. Janert:
 This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage.</description>
     </item>
