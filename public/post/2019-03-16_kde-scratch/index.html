@@ -675,7 +675,7 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 </code></pre>
 
-<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or &ldquo;dot&rdquo;) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of <code>2.25</code>). Let&rsquo;s plot each of these distributions:</p>
+<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or &ldquo;dot&rdquo;) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion" target="_blank">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of <code>2.25</code> (aka our chosen bandwidth). Let&rsquo;s plot each of these distributions:</p>
 
 <pre><code class="language-julia">plot(dists, legend = false)
 </code></pre>
@@ -698,35 +698,40 @@ plot!(x_d, dens)
 
 <h2 id="kernel-density-from-scratch">Kernel Density from Scratch</h2>
 
-<p>To apply a new kernel method we can just write the KDE code from scratch. Below I&rsquo;ve defined the gaussian kernel as <code>K(x)</code> and the KDE function as <code>D</code> to mimic the math above.</p>
+<p>To apply a new kernel method we can just write the KDE code from scratch. Below I&rsquo;ve defined the KDE function as <code>D</code> and the kernel argument as <code>K</code> to mimic the math above.</p>
 
-<pre><code class="language-julia"># gaussian kernel
-K(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+<pre><code class="language-julia"># define some kernels:
+# gaussian kernel
+kgauss(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+# boxcar
+kbox(x) = abs(x) &lt;= 1 ? 1/2 : 0
+# triangular
+ktri(x) = abs(x) &lt;= 1 ? 1 - abs(x) : 0
 
 # define the KDE function
-D(x, h, x_i) =
-  1/(length(x_i) * h) * sum(K.((x .- x_i) / h))
+D(x, h, xi, K) =
+  1/(length(xi) * h) * sum(K.((x .- xi) / h))
 
-# evaluate KDE along the x-axis
-dens = []
-for xstep in x_d
-  push!(dens, D(xstep, sqrt(2.25), x))
-end
+# evaluate KDE along the x-axis using comprehensions
+dens = [D(xstep, sqrt(2.25), x, K) for xstep in x_d, K in (kgauss, kbox, ktri)]
 
-plot(x_d, dens, legend = false)
+# visualize the kernels
+plot(x_d, dens, label = [&quot;Gaussian&quot;, &quot;Box&quot;, &quot;Triangular&quot;])
 </code></pre>
 
 <p><img src="/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg" alt="" /></p>
 
-<p>I&rsquo;ve defined these functions using Julia&rsquo;s &ldquo;assignment form&rdquo;. I did this because of the compact nature of this particular implementation. To generalize the kernel function, <code>D</code>, to be close to the <code>kde</code> function that we used in the first step we would want to use the traditional function definition like so:</p>
+<p>In my example above I used some shorthand Julia syntax. The <code>?:</code> syntax is called a ternary operator and makes a conditional <code>if-else</code> statement more compact. I also used Julia&rsquo;s <code>Assignment</code> form for my function definitions above because it looks a lot more like the math involved. You could have easily defined each of these functions to look more like so:</p>
 
 <pre><code class="language-julia">function foo(x)
-  ...
-  return y
+  if ...
+    ...
+  else
+    ...
+  end
+  return ...
 end
 </code></pre>
-
-<p>Then we could add a <code>kernel</code> argument to our function <code>D</code> or declare <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1" target="_blank">types</a> for cleaner code.</p>
 
 <h2 id="what-s-next">What&rsquo;s next?</h2>
 

@@ -42,9 +42,7 @@ x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
 scatter(x, zeros(length(x)), legend = false)
 ````
 
-
 ![](/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg)
-
 
 ## KDE with KernelDensity.jl
 
@@ -109,7 +107,7 @@ dists = Normal.(x, sqrt(2.25))
 
 
 
-Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the `.` (or "dot") operator. See [this](https://julialang.org/blog/2018/05/extensible-broadcast-fusion) blog post if you want to learn more about it. Above we applied the `Normal` method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of `2.25`). Let's plot each of these distributions:
+Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the `.` (or "dot") operator. See [this](https://julialang.org/blog/2018/05/extensible-broadcast-fusion) blog post if you want to learn more about it. Above we applied the `Normal` method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of `2.25` (aka our chosen bandwidth). Let's plot each of these distributions:
 
 ````julia
 plot(dists, legend = false)
@@ -131,46 +129,49 @@ dens = sum(pdf.(eachdist, x_d) for eachdist in dists)
 plot!(x_d, dens)
 ````
 
-
 ![](/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg)
-
 
 
 The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the gaussian kernel. Let's extrapolate a bit so we could use different kernels.
 
 ## Kernel Density from Scratch
 
-To apply a new kernel method we can just write the KDE code from scratch. Below I've defined the gaussian kernel as `K(x)` and the KDE function as `D` to mimic the math above.
+To apply a new kernel method we can just write the KDE code from scratch. Below I've defined the KDE function as `D` and the kernel argument as `K` to mimic the math above.
 
 ````julia
+# define some kernels:
 # gaussian kernel
-K(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+kgauss(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+# boxcar
+kbox(x) = abs(x) <= 1 ? 1/2 : 0
+# triangular
+ktri(x) = abs(x) <= 1 ? 1 - abs(x) : 0
 
 # define the KDE function
-D(x, h, x_i) =
-  1/(length(x_i) * h) * sum(K.((x .- x_i) / h))
+D(x, h, xi, K) =
+  1/(length(xi) * h) * sum(K.((x .- xi) / h))
 
-# evaluate KDE along the x-axis
-dens = []
-for xstep in x_d
-  push!(dens, D(xstep, sqrt(2.25), x))
-end
+# evaluate KDE along the x-axis using comprehensions
+dens = [D(xstep, sqrt(2.25), x, K) for xstep in x_d, K in (kgauss, kbox, ktri)]
 
-plot(x_d, dens, legend = false)
+# visualize the kernels
+plot(x_d, dens, label = ["Gaussian", "Box", "Triangular"])
 ````
 
 ![](/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg)
 
-I've defined these functions using Julia's "assignment form". I did this because of the compact nature of this particular implementation. To generalize the kernel function, `D`, to be close to the `kde` function that we used in the first step we would want to use the traditional function definition like so:
+In my example above I used some shorthand Julia syntax. The `?:` syntax is called a ternary operator and makes a conditional `if-else` statement more compact. I also used Julia's `Assignment` form for my function definitions above because it looks a lot more like the math involved. You could have easily defined each of these functions to look more like so:
 
 ````julia
 function foo(x)
-  ...
-  return y
+  if ...
+    ...
+  else
+    ...
+  end
+  return ...
 end
 ````
-
-Then we could add a `kernel` argument to our function `D` or declare [types](https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1) for cleaner code.
 
 ## What's next?
 

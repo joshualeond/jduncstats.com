@@ -180,7 +180,7 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and the standard deviation being our chosen bandwidth (a variance of &lt;code&gt;2.25&lt;/code&gt;). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
+&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of &lt;code&gt;2.25&lt;/code&gt; (aka our chosen bandwidth). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;plot(dists, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
@@ -203,35 +203,40 @@ plot!(x_d, dens)
 
 &lt;h2 id=&#34;kernel-density-from-scratch&#34;&gt;Kernel Density from Scratch&lt;/h2&gt;
 
-&lt;p&gt;To apply a new kernel method we can just write the KDE code from scratch. Below I&amp;rsquo;ve defined the gaussian kernel as &lt;code&gt;K(x)&lt;/code&gt; and the KDE function as &lt;code&gt;D&lt;/code&gt; to mimic the math above.&lt;/p&gt;
+&lt;p&gt;To apply a new kernel method we can just write the KDE code from scratch. Below I&amp;rsquo;ve defined the KDE function as &lt;code&gt;D&lt;/code&gt; and the kernel argument as &lt;code&gt;K&lt;/code&gt; to mimic the math above.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# gaussian kernel
-K(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# define some kernels:
+# gaussian kernel
+kgauss(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
+# boxcar
+kbox(x) = abs(x) &amp;lt;= 1 ? 1/2 : 0
+# triangular
+ktri(x) = abs(x) &amp;lt;= 1 ? 1 - abs(x) : 0
 
 # define the KDE function
-D(x, h, x_i) =
-  1/(length(x_i) * h) * sum(K.((x .- x_i) / h))
+D(x, h, xi, K) =
+  1/(length(xi) * h) * sum(K.((x .- xi) / h))
 
-# evaluate KDE along the x-axis
-dens = []
-for xstep in x_d
-  push!(dens, D(xstep, sqrt(2.25), x))
-end
+# evaluate KDE along the x-axis using comprehensions
+dens = [D(xstep, sqrt(2.25), x, K) for xstep in x_d, K in (kgauss, kbox, ktri)]
 
-plot(x_d, dens, legend = false)
+# visualize the kernels
+plot(x_d, dens, label = [&amp;quot;Gaussian&amp;quot;, &amp;quot;Box&amp;quot;, &amp;quot;Triangular&amp;quot;])
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;I&amp;rsquo;ve defined these functions using Julia&amp;rsquo;s &amp;ldquo;assignment form&amp;rdquo;. I did this because of the compact nature of this particular implementation. To generalize the kernel function, &lt;code&gt;D&lt;/code&gt;, to be close to the &lt;code&gt;kde&lt;/code&gt; function that we used in the first step we would want to use the traditional function definition like so:&lt;/p&gt;
+&lt;p&gt;In my example above I used some shorthand Julia syntax. The &lt;code&gt;?:&lt;/code&gt; syntax is called a ternary operator and makes a conditional &lt;code&gt;if-else&lt;/code&gt; statement more compact. I also used Julia&amp;rsquo;s &lt;code&gt;Assignment&lt;/code&gt; form for my function definitions above because it looks a lot more like the math involved. You could have easily defined each of these functions to look more like so:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;function foo(x)
-  ...
-  return y
+  if ...
+    ...
+  else
+    ...
+  end
+  return ...
 end
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Then we could add a &lt;code&gt;kernel&lt;/code&gt; argument to our function &lt;code&gt;D&lt;/code&gt; or declare &lt;a href=&#34;https://docs.julialang.org/en/v1/manual/performance-tips/#Type-declarations-1&#34; target=&#34;_blank&#34;&gt;types&lt;/a&gt; for cleaner code.&lt;/p&gt;
 
 &lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next?&lt;/h2&gt;
 
