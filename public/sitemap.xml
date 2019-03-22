@@ -8,7 +8,7 @@
     
     <url>
     
-      <loc>/talk/example/</loc>
+      <loc>https://jduncstats.com/talk/example/</loc>
       <lastmod>2030-06-01T13:00:00-05:00</lastmod>
     </url>
     
@@ -16,7 +16,7 @@
     
     <url>
     
-      <loc>/post/2019-03-16_kde-scratch/</loc>
+      <loc>https://jduncstats.com/post/2019-03-16_kde-scratch/</loc>
       <lastmod>2019-03-16T00:00:00-05:00</lastmod>
     </url>
     
@@ -24,23 +24,7 @@
     
     <url>
     
-      <loc>/post/hw2-ch-4/</loc>
-      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/post/jupyter/</loc>
-      <lastmod>2019-02-05T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tutorial/example/</loc>
+      <loc>https://jduncstats.com/tutorial/example/</loc>
       <lastmod>2018-09-09T00:00:00-05:00</lastmod>
     </url>
     
@@ -48,7 +32,7 @@
     
     <url>
     
-      <loc>/tutorial/</loc>
+      <loc>https://jduncstats.com/tutorial/</loc>
       <lastmod>2018-09-09T00:00:00-05:00</lastmod>
     </url>
     
@@ -56,15 +40,7 @@
     
     <url>
     
-      <loc>/privacy/</loc>
-      <lastmod>2018-06-28T00:00:00-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/bio/</loc>
+      <loc>https://jduncstats.com/bio/</loc>
       <lastmod>2017-01-01T00:00:00-06:00</lastmod>
     </url>
     
@@ -72,15 +48,7 @@
     
     <url>
     
-      <loc>/post/getting-started/</loc>
-      <lastmod>2018-01-13T00:00:00-06:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/publication/person-re-id/</loc>
+      <loc>https://jduncstats.com/publication/person-re-id/</loc>
       <lastmod>2015-09-01T00:00:00-05:00</lastmod>
     </url>
     
@@ -88,15 +56,7 @@
     
     <url>
     
-      <loc>/post/2015-07-23-r-rmarkdown/</loc>
-      <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/publication/clothing-search/</loc>
+      <loc>https://jduncstats.com/publication/clothing-search/</loc>
       <lastmod>2013-07-01T00:00:00-05:00</lastmod>
     </url>
     
@@ -104,14 +64,14 @@
     
     <url>
     
-      <loc>/author/admin/</loc>
+      <loc>https://jduncstats.com/author/admin/</loc>
     </url>
     
   
     
     <url>
     
-      <loc>/publication_types/1/</loc>
+      <loc>https://jduncstats.com/publication_types/1/</loc>
       <lastmod>2013-07-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -120,7 +80,7 @@
     
     <url>
     
-      <loc>/publication_types/2/</loc>
+      <loc>https://jduncstats.com/publication_types/2/</loc>
       <lastmod>2015-09-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -129,8 +89,7 @@
     
     <url>
     
-      <loc>/tags/academic/</loc>
-      <lastmod>2018-01-13T00:00:00-06:00</lastmod>
+      <loc>https://jduncstats.com/author/</loc>
       <priority>0</priority>
     </url>
     
@@ -138,7 +97,7 @@
     
     <url>
     
-      <loc>/author/</loc>
+      <loc>https://jduncstats.com/authors/</loc>
       <priority>0</priority>
     </url>
     
@@ -146,7 +105,7 @@
     
     <url>
     
-      <loc>/authors/</loc>
+      <loc>https://jduncstats.com/categories/</loc>
       <priority>0</priority>
     </url>
     
@@ -154,15 +113,7 @@
     
     <url>
     
-      <loc>/categories/</loc>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/authors/ga-cushen/</loc>
+      <loc>https://jduncstats.com/authors/ga-cushen/</loc>
       <lastmod>2015-09-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -171,7 +122,7 @@
     
     <url>
     
-      <loc>/</loc>
+      <loc>https://jduncstats.com/</loc>
       <lastmod>2017-09-20T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -180,7 +131,7 @@
     
     <url>
     
-      <loc>/authors/ms-nixon/</loc>
+      <loc>https://jduncstats.com/authors/ms-nixon/</loc>
       <lastmod>2013-07-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -189,7 +140,7 @@
     
     <url>
     
-      <loc>/post/</loc>
+      <loc>https://jduncstats.com/post/</loc>
       <lastmod>2019-03-16T00:00:00-05:00</lastmod>
     </url>
     
@@ -197,7 +148,7 @@
     
     <url>
     
-      <loc>/publication_types/</loc>
+      <loc>https://jduncstats.com/publication_types/</loc>
       <lastmod>2013-07-01T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
@@ -206,7 +157,7 @@
     
     <url>
     
-      <loc>/publication/</loc>
+      <loc>https://jduncstats.com/publication/</loc>
       <lastmod>2015-09-01T00:00:00-05:00</lastmod>
     </url>
     
@@ -214,25 +165,7 @@
     
     <url>
     
-      <loc>/categories/r/</loc>
-      <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/r-markdown/</loc>
-      <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/talk/</loc>
+      <loc>https://jduncstats.com/talk/</loc>
       <lastmod>2030-06-01T13:00:00-05:00</lastmod>
     </url>
     
@@ -240,7 +173,7 @@
     
     <url>
     
-      <loc>/slides/</loc>
+      <loc>https://jduncstats.com/slides/</loc>
       <priority>0</priority>
     </url>
     
@@ -248,15 +181,14 @@
     
     <url>
     
-      <loc>/slides/example-slides/</loc>
+      <loc>https://jduncstats.com/slides/example-slides/</loc>
     </url>
     
   
     
     <url>
     
-      <loc>/tags/</loc>
-      <lastmod>2018-01-13T00:00:00-06:00</lastmod>
+      <loc>https://jduncstats.com/tags/</loc>
       <priority>0</priority>
     </url>
     
@@ -264,8 +196,7 @@
     
     <url>
     
-      <loc>/authors/admin/</loc>
-      <lastmod>2019-02-05T00:00:00+00:00</lastmod>
+      <loc>https://jduncstats.com/authors/admin/</loc>
       <priority>0</priority>
     </url>
     
@@ -273,44 +204,8 @@
     
     <url>
     
-      <loc>/tags/bayes/</loc>
-      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/julia/</loc>
+      <loc>https://jduncstats.com/tags/julia/</loc>
       <lastmod>2019-03-16T00:00:00-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/plot/</loc>
-      <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/regression/</loc>
-      <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-      <priority>0</priority>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/tags/rstats/</loc>
-      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
       <priority>0</priority>
     </url>
     
