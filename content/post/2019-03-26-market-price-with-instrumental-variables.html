@@ -1,0 +1,271 @@
+---
+title: Market Demand with Instrumental Variables
+author: J. Duncan
+date: '2019-03-26'
+draft: true
+slug: market-demand-with-instrumental-variables
+categories: []
+tags:
+  - rstats
+  - econometrics
+  - bayes
+image:
+  caption: ''
+  focal_point: ''
+output:
+  blogdown::html_page:
+    dev: "svg"
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>I was listening to the <a href="https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science">DataFramed</a> podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. One of the techniques he mentioned was <em>Instrumental Variables</em>. He gave an example of a study on the <strong>Fulton Fish Market</strong> in New York City:</p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/></p>
+<p>The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it’s not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.</p>
+<p>The original study can be found on the American Economic Association <a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">website</a>. Here is the abstract from the paper:</p>
+<blockquote>
+<p>This feature explores the operation of individual markets. Patterns of behavior
+in markets for specific goods and services offer lessons about the determinants and
+effects of supply and demand, market structure, strategic behavior, and government regulation.</p>
+</blockquote>
+<p>This post will be for reproducing a portion of this analysis using the <a href="https://github.com/paul-buerkner/brms">brms</a> package in R.</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>I discovered the data for this study at the following website:
+<a href="http://people.brandeis.edu/~kgraddy/data.html" class="uri">http://people.brandeis.edu/~kgraddy/data.html</a></p>
+<p>Bringing this data into R is extremely easy. The data is what was used to perform the original estimation so it is already prepared for us. All we need to do is read it into our R environment:</p>
+<pre class="r"><code>library(tidyverse)
+
+fulton &lt;- read_tsv(&quot;http://people.brandeis.edu/~kgraddy/datasets/fish.out&quot;)
+fulton</code></pre>
+<pre><code>## # A tibble: 111 x 16
+##     day1  day2  day3  day4   date stormy mixed   price   qty rainy  cold
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1     1     0     0     0 911202      1     0 -0.431   8.99     1     0
+##  2     0     1     0     0 911203      1     0  0       7.71     0     0
+##  3     0     0     1     0 911204      0     1  0.0723  8.35     1     1
+##  4     0     0     0     1 911205      1     0  0.247   8.66     0     1
+##  5     0     0     0     0 911206      1     0  0.664   7.84     0     1
+##  6     1     0     0     0 911209      0     0 -0.207   9.30     0     0
+##  7     0     1     0     0 911210      0     1 -0.116   8.92     0     0
+##  8     0     0     1     0 911211      0     0 -0.260   9.11     1     0
+##  9     0     0     0     1 911212      0     1 -0.117   8.31     0     0
+## 10     0     0     0     0 911213      0     0 -0.342   9.21     0     0
+## # … with 101 more rows, and 5 more variables: windspd &lt;dbl&gt;,
+## #   windspd2 &lt;dbl&gt;, pricelevel &lt;dbl&gt;, totr &lt;dbl&gt;, tots &lt;dbl&gt;</code></pre>
+<p>Here is a description of the variables we will be using for this analysis:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Units</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>qty</td>
+<td>log(pounds)</td>
+<td>The total amount of fish sold on a day</td>
+</tr>
+<tr class="even">
+<td>price</td>
+<td>log($/lb)</td>
+<td>Average price for the day</td>
+</tr>
+<tr class="odd">
+<td>day1-day4</td>
+<td>dummy var</td>
+<td>Monday-Thurs</td>
+</tr>
+<tr class="even">
+<td>cold</td>
+<td>dummy var</td>
+<td>Weather on shore</td>
+</tr>
+<tr class="odd">
+<td>rainy</td>
+<td>dummy var</td>
+<td>Rain on shore</td>
+</tr>
+<tr class="even">
+<td>stormy</td>
+<td>dummy var</td>
+<td>Wind and waves off shore (a 3-day moving average)</td>
+</tr>
+</tbody>
+</table>
+<p>The paper informs the reader that transactions recorded are really around a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure <code>2</code> from the paper:</p>
+<pre class="r"><code># fixing the date column 
+fulton %&gt;% 
+  mutate(
+    date = as.character(date),
+    date = parse_date(date, format = &quot;%y%m%d&quot;)
+  ) %&gt;% 
+  ggplot(aes(x = date, y = exp(qty))) +
+    geom_col() +
+    labs(
+      title = &quot;Figure 2&quot;,
+      subtitle = &quot;Daily Volumes of Whiting&quot;,
+      x = &quot;Date (December 2, 1991-May 8, 1992)&quot;,
+      y = &quot;Quantity (pounds)&quot;
+      )</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-2-1.svg" width="672" /></p>
+</div>
+<div id="demand-curve" class="section level2">
+<h2>Demand Curve</h2>
+<p>The naive way to attempt to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:</p>
+<pre class="r"><code>ggplot(fulton, aes(x = price, y = qty)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;)</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-3-1.svg" width="672" /></p>
+<p>But would this be the demand curve? It actually wouldn’t be. Going back to intro economics each one of the points in the plot is the intersection of both a supply and demand curve. Something like <a href="https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/">this</a>:</p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png" alt="drawing" width="80%"/></p>
+</div>
+<div id="regressions" class="section level2">
+<h2>Regressions</h2>
+<p>So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post. We’ll be using <strong>Instrumental Variables</strong> (or IV).</p>
+<p>The paper includes a table of coefficients like so:</p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png" alt="drawing" width="80%"/></p>
+<div id="ols-reproduced" class="section level3">
+<h3>OLS Reproduced</h3>
+<p>First let’s perform the linear regression without IV. We can use the <code>brm</code> function as a drop in replacement of <code>lm</code> to get distributions of our parameter estimates. Here the <code>brms</code> package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.</p>
+<pre class="r"><code>library(brms)
+library(tidybayes)
+library(ggridges)
+
+# column 1 in table 2
+fit1 &lt;- brm(qty ~ price, data = fulton, refresh = 0)
+
+fit1 %&gt;% 
+  posterior_samples() %&gt;% 
+  ggplot(aes(x = b_price)) +
+    geom_density_line()</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-1.svg" width="672" /></p>
+<pre class="r"><code># column 2 in table 2
+fit1_full &lt;- brm(
+  qty ~ price + day1 + day2 + day3 + day4 + cold + rainy,
+  data = fulton,
+  refresh = 0
+)
+
+# a plot of parameter estimates
+fit1_full %&gt;% 
+  posterior_samples() %&gt;% 
+  gather(b_price:b_rainy, key = &quot;coef&quot;, value = &quot;est&quot;) %&gt;% 
+  ggplot(aes(x = est, y = coef)) +
+    geom_density_ridges()</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-2.svg" width="672" /></p>
+<p>We can see that the estimated coefficient for price in this context is the same for both the simple linear regression and the regression accounting for weekday and onshore weather.</p>
+</div>
+<div id="iv-reproduced" class="section level3">
+<h3>IV Reproduced</h3>
+<p>Now let’s move on to using IV. This is possible with the <code>brms</code> package and multivariate models. We’ll piece it together with two separate formulas defined in the <code>bf</code> function calls below.</p>
+<pre class="r"><code># measure variation in price attributable to stormy weather
+fit2a &lt;- bf(price ~ stormy)
+# estimate demand
+fit2b &lt;- bf(qty ~ price)
+
+# column 3 in table 2
+fit2 &lt;- brm(fit2a + fit2b, data = fulton, refresh = 0)
+
+fit2 %&gt;% 
+  posterior_samples() %&gt;% 
+  ggplot(aes(x = b_qty_price)) +
+    geom_density_line()</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-5-1.svg" width="672" /></p>
+<p>And lastly we’ll estimate the IV with the remaining variables:</p>
+<pre class="r"><code># add additional demand specific variables
+fit2b_full &lt;- bf(qty ~ price + day1 + day2 + day3 + day4 + cold + rainy)
+
+# column 4 in table 2
+fit2_full &lt;- brm(fit2a + fit2b_full, data = fulton, refresh = 0)
+
+fit2_full %&gt;% 
+  posterior_samples() %&gt;% 
+  gather(b_qty_price:b_qty_rainy, key = &quot;coef&quot;, value = &quot;est&quot;) %&gt;% 
+  ggplot(aes(x = est, y = coef)) +
+    geom_density_ridges()</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-6-1.svg" width="672" /></p>
+<p>Now we can plot the demand curve with isolated demand effects:</p>
+<pre class="r"><code>fulton %&gt;% 
+  add_predicted_draws(fit2) %&gt;% 
+  filter(.category == &quot;qty&quot;) %&gt;% 
+  ggplot(aes(x = price, y = qty)) +
+  stat_lineribbon(
+    aes(y = .prediction), 
+    .width = c(.99, .95, .8, .5), 
+    color = &quot;#08519C&quot;
+    ) +
+  geom_point(data = fulton, size = 2) +
+  scale_fill_brewer()</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg" width="672" /></p>
+<p>The prediction is downward trending as the original curve except with a steeper slope (<code>-0.54</code> vs <code>-1.08</code>).</p>
+</div>
+</div>
+<div id="elasticities" class="section level2">
+<h2>Elasticities</h2>
+<p>The paper breaks down the interpretation of the estimated coefficients in terms of elasticities. Given that we have taken the <code>log</code> of both our quantity and price the coefficients can be interpreted in a clever way. Let’s take a look at why this is the case:</p>
+<p>If we take the log of both <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[
+\text{log}(y) = \beta_0 + \beta_1\text{log}(x) + \epsilon
+\]</span>
+Now solve for <span class="math inline">\(y\)</span> to find the marginal effects:</p>
+<p><span class="math display">\[
+y = e^{\beta_o + \beta_1\text{log}(x) + \epsilon}
+\]</span>
+Then differentiate with respect to <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[
+\frac{dy}{dx} = \frac{\beta_1}{x}e^{\beta_o + \beta_1\text{log}(x) + \epsilon} = \beta_1 \frac{y}{x}
+\]</span></p>
+<p>If you then solve for <span class="math inline">\(\beta_1\)</span> you find:</p>
+<p><span class="math display">\[
+\beta_1 = \frac{dy}{dx} \frac{x}{y}
+\]</span>
+So here <span class="math inline">\(\beta_1\)</span> is an elasticity. For a unit increase in <span class="math inline">\(x\)</span> there is a <span class="math inline">\(\beta_1 \%\)</span> increase in <span class="math inline">\(y\)</span>.</p>
+<p>Elasticities are commonly summarized in a table like this:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Elasticity</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Elastic</td>
+<td>| <em>E</em> | &gt; 1</td>
+<td>% change in <em>Q</em> &gt; % change in <em>P</em></td>
+</tr>
+<tr class="even">
+<td>Unitary Elastic</td>
+<td>| <em>E</em> | = 1</td>
+<td>% change in <em>Q</em> = %change in <em>P</em></td>
+</tr>
+<tr class="odd">
+<td>Inelastic</td>
+<td>| <em>E</em> | &lt; 1</td>
+<td>% change in <em>Q</em> &lt; % change in <em>P</em></td>
+</tr>
+</tbody>
+</table>
+<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.9, -0.19]. With the IV estimation our elasticity is <code>-1.08</code> [-2.18, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.</p>
+<p>Some interesting interpretations of this unit elasticity from the paper include:</p>
+<blockquote>
+<p>First, it is consistent with pricing power on the part of the
+fish dealers. A price-setting firm will raise price to the point where the percentage change in the quantity demanded is at least as large as the percentage change in price; otherwise, it would make sense to raise the price even more</p>
+</blockquote>
+<blockquote>
+<p>Second, when demand has a unitary elasticity, it means that the percentage change in quantity would always equal the percentage change in price, and the weather would therefore not have much effect on a seller’s revenue, keeping fishermen’s incomes relatively constant.</p>
+</blockquote>
+<blockquote>
+<p>Third, unit elasticities could also result from budget constraints on the part of some buyers.</p>
+</blockquote>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+</div>

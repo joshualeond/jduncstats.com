@@ -54,6 +54,268 @@
     </item>
     
     <item>
+      <title>Market Demand with Instrumental Variables</title>
+      <link>/post/market-demand-with-instrumental-variables/</link>
+      <pubDate>Tue, 26 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/market-demand-with-instrumental-variables/</guid>
+      <description>
+
+
+&lt;div id=&#34;overview&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Overview&lt;/h2&gt;
+&lt;p&gt;I was listening to the &lt;a href=&#34;https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science&#34;&gt;DataFramed&lt;/a&gt; podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. One of the techniques he mentioned was &lt;em&gt;Instrumental Variables&lt;/em&gt;. He gave an example of a study on the &lt;strong&gt;Fulton Fish Market&lt;/strong&gt; in New York City:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it’s not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.&lt;/p&gt;
+&lt;p&gt;The original study can be found on the American Economic Association &lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;website&lt;/a&gt;. Here is the abstract from the paper:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This feature explores the operation of individual markets. Patterns of behavior
+in markets for specific goods and services offer lessons about the determinants and
+effects of supply and demand, market structure, strategic behavior, and government regulation.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This post will be for reproducing a portion of this analysis using the &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; package in R.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data&lt;/h2&gt;
+&lt;p&gt;I discovered the data for this study at the following website:
+&lt;a href=&#34;http://people.brandeis.edu/~kgraddy/data.html&#34; class=&#34;uri&#34;&gt;http://people.brandeis.edu/~kgraddy/data.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Bringing this data into R is extremely easy. The data is what was used to perform the original estimation so it is already prepared for us. All we need to do is read it into our R environment:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+fulton &amp;lt;- read_tsv(&amp;quot;http://people.brandeis.edu/~kgraddy/datasets/fish.out&amp;quot;)
+fulton&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 111 x 16
+##     day1  day2  day3  day4   date stormy mixed   price   qty rainy  cold
+##    &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1     1     0     0     0 911202      1     0 -0.431   8.99     1     0
+##  2     0     1     0     0 911203      1     0  0       7.71     0     0
+##  3     0     0     1     0 911204      0     1  0.0723  8.35     1     1
+##  4     0     0     0     1 911205      1     0  0.247   8.66     0     1
+##  5     0     0     0     0 911206      1     0  0.664   7.84     0     1
+##  6     1     0     0     0 911209      0     0 -0.207   9.30     0     0
+##  7     0     1     0     0 911210      0     1 -0.116   8.92     0     0
+##  8     0     0     1     0 911211      0     0 -0.260   9.11     1     0
+##  9     0     0     0     1 911212      0     1 -0.117   8.31     0     0
+## 10     0     0     0     0 911213      0     0 -0.342   9.21     0     0
+## # … with 101 more rows, and 5 more variables: windspd &amp;lt;dbl&amp;gt;,
+## #   windspd2 &amp;lt;dbl&amp;gt;, pricelevel &amp;lt;dbl&amp;gt;, totr &amp;lt;dbl&amp;gt;, tots &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is a description of the variables we will be using for this analysis:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;Variable&lt;/th&gt;
+&lt;th&gt;Units&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;qty&lt;/td&gt;
+&lt;td&gt;log(pounds)&lt;/td&gt;
+&lt;td&gt;The total amount of fish sold on a day&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;price&lt;/td&gt;
+&lt;td&gt;log($/lb)&lt;/td&gt;
+&lt;td&gt;Average price for the day&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;day1-day4&lt;/td&gt;
+&lt;td&gt;dummy var&lt;/td&gt;
+&lt;td&gt;Monday-Thurs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;cold&lt;/td&gt;
+&lt;td&gt;dummy var&lt;/td&gt;
+&lt;td&gt;Weather on shore&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;rainy&lt;/td&gt;
+&lt;td&gt;dummy var&lt;/td&gt;
+&lt;td&gt;Rain on shore&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;stormy&lt;/td&gt;
+&lt;td&gt;dummy var&lt;/td&gt;
+&lt;td&gt;Wind and waves off shore (a 3-day moving average)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The paper informs the reader that transactions recorded are really around a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure &lt;code&gt;2&lt;/code&gt; from the paper:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fixing the date column 
+fulton %&amp;gt;% 
+  mutate(
+    date = as.character(date),
+    date = parse_date(date, format = &amp;quot;%y%m%d&amp;quot;)
+  ) %&amp;gt;% 
+  ggplot(aes(x = date, y = exp(qty))) +
+    geom_col() +
+    labs(
+      title = &amp;quot;Figure 2&amp;quot;,
+      subtitle = &amp;quot;Daily Volumes of Whiting&amp;quot;,
+      x = &amp;quot;Date (December 2, 1991-May 8, 1992)&amp;quot;,
+      y = &amp;quot;Quantity (pounds)&amp;quot;
+      )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-2-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;demand-curve&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Demand Curve&lt;/h2&gt;
+&lt;p&gt;The naive way to attempt to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(fulton, aes(x = price, y = qty)) + 
+  geom_point() + 
+  geom_smooth(method = &amp;quot;lm&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-3-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But would this be the demand curve? It actually wouldn’t be. Going back to intro economics each one of the points in the plot is the intersection of both a supply and demand curve. Something like &lt;a href=&#34;https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/&#34;&gt;this&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;regressions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Regressions&lt;/h2&gt;
+&lt;p&gt;So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post. We’ll be using &lt;strong&gt;Instrumental Variables&lt;/strong&gt; (or IV).&lt;/p&gt;
+&lt;p&gt;The paper includes a table of coefficients like so:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
+&lt;div id=&#34;ols-reproduced&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;OLS Reproduced&lt;/h3&gt;
+&lt;p&gt;First let’s perform the linear regression without IV. We can use the &lt;code&gt;brm&lt;/code&gt; function as a drop in replacement of &lt;code&gt;lm&lt;/code&gt; to get distributions of our parameter estimates. Here the &lt;code&gt;brms&lt;/code&gt; package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(brms)
+library(tidybayes)
+library(ggridges)
+
+# column 1 in table 2
+fit1 &amp;lt;- brm(qty ~ price, data = fulton, refresh = 0)
+
+fit1 %&amp;gt;% 
+  posterior_samples() %&amp;gt;% 
+  ggplot(aes(x = b_price)) +
+    geom_density_line()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# column 2 in table 2
+fit1_full &amp;lt;- brm(
+  qty ~ price + day1 + day2 + day3 + day4 + cold + rainy,
+  data = fulton,
+  refresh = 0
+)
+
+# a plot of parameter estimates
+fit1_full %&amp;gt;% 
+  posterior_samples() %&amp;gt;% 
+  gather(b_price:b_rainy, key = &amp;quot;coef&amp;quot;, value = &amp;quot;est&amp;quot;) %&amp;gt;% 
+  ggplot(aes(x = est, y = coef)) +
+    geom_density_ridges()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-2.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that the estimated coefficient for price in this context is the same for both the simple linear regression and the regression accounting for weekday and onshore weather.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;iv-reproduced&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;IV Reproduced&lt;/h3&gt;
+&lt;p&gt;Now let’s move on to using IV. This is possible with the &lt;code&gt;brms&lt;/code&gt; package and multivariate models. We’ll piece it together with two separate formulas defined in the &lt;code&gt;bf&lt;/code&gt; function calls below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# measure variation in price attributable to stormy weather
+fit2a &amp;lt;- bf(price ~ stormy)
+# estimate demand
+fit2b &amp;lt;- bf(qty ~ price)
+
+# column 3 in table 2
+fit2 &amp;lt;- brm(fit2a + fit2b, data = fulton, refresh = 0)
+
+fit2 %&amp;gt;% 
+  posterior_samples() %&amp;gt;% 
+  ggplot(aes(x = b_qty_price)) +
+    geom_density_line()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-5-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And lastly we’ll estimate the IV with the remaining variables:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add additional demand specific variables
+fit2b_full &amp;lt;- bf(qty ~ price + day1 + day2 + day3 + day4 + cold + rainy)
+
+# column 4 in table 2
+fit2_full &amp;lt;- brm(fit2a + fit2b_full, data = fulton, refresh = 0)
+
+fit2_full %&amp;gt;% 
+  posterior_samples() %&amp;gt;% 
+  gather(b_qty_price:b_qty_rainy, key = &amp;quot;coef&amp;quot;, value = &amp;quot;est&amp;quot;) %&amp;gt;% 
+  ggplot(aes(x = est, y = coef)) +
+    geom_density_ridges()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-6-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now we can plot the demand curve with isolated demand effects:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fulton %&amp;gt;% 
+  add_predicted_draws(fit2) %&amp;gt;% 
+  filter(.category == &amp;quot;qty&amp;quot;) %&amp;gt;% 
+  ggplot(aes(x = price, y = qty)) +
+  stat_lineribbon(
+    aes(y = .prediction), 
+    .width = c(.99, .95, .8, .5), 
+    color = &amp;quot;#08519C&amp;quot;
+    ) +
+  geom_point(data = fulton, size = 2) +
+  scale_fill_brewer()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The prediction is downward trending as the original curve except with a steeper slope (&lt;code&gt;-0.54&lt;/code&gt; vs &lt;code&gt;-1.08&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;elasticities&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Elasticities&lt;/h2&gt;
+&lt;p&gt;The paper breaks down the interpretation of the estimated coefficients in terms of elasticities. Given that we have taken the &lt;code&gt;log&lt;/code&gt; of both our quantity and price the coefficients can be interpreted in a clever way. Let’s take a look at why this is the case:&lt;/p&gt;
+&lt;p&gt;If we take the log of both &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\text{log}(y) = \beta_0 + \beta_1\text{log}(x) + \epsilon
+\]&lt;/span&gt;
+Now solve for &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; to find the marginal effects:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+y = e^{\beta_o + \beta_1\text{log}(x) + \epsilon}
+\]&lt;/span&gt;
+Then differentiate with respect to &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\frac{dy}{dx} = \frac{\beta_1}{x}e^{\beta_o + \beta_1\text{log}(x) + \epsilon} = \beta_1 \frac{y}{x}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;If you then solve for &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; you find:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\beta_1 = \frac{dy}{dx} \frac{x}{y}
+\]&lt;/span&gt;
+So here &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; is an elasticity. For a unit increase in &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; there is a &lt;span class=&#34;math inline&#34;&gt;\(\beta_1 \%\)&lt;/span&gt; increase in &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Elasticities are commonly summarized in a table like this:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;Elasticity&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Elastic&lt;/td&gt;
+&lt;td&gt;| &lt;em&gt;E&lt;/em&gt; | &amp;gt; 1&lt;/td&gt;
+&lt;td&gt;% change in &lt;em&gt;Q&lt;/em&gt; &amp;gt; % change in &lt;em&gt;P&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Unitary Elastic&lt;/td&gt;
+&lt;td&gt;| &lt;em&gt;E&lt;/em&gt; | = 1&lt;/td&gt;
+&lt;td&gt;% change in &lt;em&gt;Q&lt;/em&gt; = %change in &lt;em&gt;P&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Inelastic&lt;/td&gt;
+&lt;td&gt;| &lt;em&gt;E&lt;/em&gt; | &amp;lt; 1&lt;/td&gt;
+&lt;td&gt;% change in &lt;em&gt;Q&lt;/em&gt; &amp;lt; % change in &lt;em&gt;P&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.9, -0.19]. With the IV estimation our elasticity is &lt;code&gt;-1.08&lt;/code&gt; [-2.18, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.&lt;/p&gt;
+&lt;p&gt;Some interesting interpretations of this unit elasticity from the paper include:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;First, it is consistent with pricing power on the part of the
+fish dealers. A price-setting firm will raise price to the point where the percentage change in the quantity demanded is at least as large as the percentage change in price; otherwise, it would make sense to raise the price even more&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Second, when demand has a unitary elasticity, it means that the percentage change in quantity would always equal the percentage change in price, and the weather would therefore not have much effect on a seller’s revenue, keeping fishermen’s incomes relatively constant.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Third, unit elasticities could also result from budget constraints on the part of some buyers.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Kernel Density Estimation from Scratch</title>
       <link>/post/2019-03-16_kde-scratch/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
@@ -299,12 +561,12 @@ m4.3 &amp;lt;- rethinking::map(
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
 head(post)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 113.6956 0.9154309 5.011107
-## 2 115.0506 0.8812709 5.427758
-## 3 112.8011 0.9216419 4.805793
-## 4 115.9607 0.8540439 5.305788
-## 5 114.3698 0.8854425 4.910398
-## 6 111.4223 0.9584993 5.117844&lt;/code&gt;&lt;/pre&gt;
+## 1 109.5334 0.9847427 5.363808
+## 2 113.8250 0.9084143 5.073332
+## 3 113.6425 0.9046196 4.906409
+## 4 113.5360 0.9093099 4.959741
+## 5 112.3385 0.9381905 4.983009
+## 6 118.3293 0.8067628 4.862465&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -315,8 +577,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 
 (sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.2153 145.4894 164.3553 135.4624 155.2110
-## 94% 164.5639 161.5867 180.7691 151.3474 171.5148&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.3151 145.5653 164.2520 135.1919 155.1972
+## 94% 164.3939 161.5401 180.6822 151.4706 171.5836&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the convenient way:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
@@ -330,9 +592,9 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 [ 900 / 1000 ]
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  147.7139 145.2670 164.5236 135.6439 154.5712
-## 94% 164.5067 161.7989 180.9684 151.8588 171.7454&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]    [,3]     [,4]     [,5]
+## 5%  148.1699 144.9660 164.416 135.2258 155.3972
+## 94% 164.3760 162.0217 181.244 151.5659 171.5512&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
@@ -367,9 +629,9 @@ kung$hi_89 &amp;lt;- sim.PI[2,]
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
 precis(post_early)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.25   1.40 55.97 60.44
-## b      2.72   0.07  2.61  2.83
-## sigma  8.43   0.43  7.72  9.08&lt;/code&gt;&lt;/pre&gt;
+## a     58.26   1.40 56.03 60.52
+## b      2.72   0.07  2.61  2.82
+## sigma  8.44   0.43  7.75  9.14&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
@@ -454,8 +716,8 @@ where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height
 &lt;p&gt;Now the model is fit let’s review the coefficients.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;precis(fit_all)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         Mean StdDev   5.5%  94.5%
-## a     -23.80   1.33 -25.93 -21.67
-## b      47.08   0.38  46.47  47.69
+## a     -23.78   1.34 -25.92 -21.65
+## b      47.08   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
@@ -509,69 +771,6 @@ shade(all_sim.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
-      <title>Display Jupyter Notebooks with Academic</title>
-      <link>/post/jupyter/</link>
-      <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/post/jupyter/</guid>
-      <description>
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from IPython.core.display import Image
-Image(&#39;https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./academic_0_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;print(&amp;quot;Welcome to Academic!&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;Welcome to Academic!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;install-python-and-jupyter&#34;&gt;Install Python and Jupyter&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.anaconda.com/distribution/#download-section&#34; target=&#34;_blank&#34;&gt;Install Anaconda&lt;/a&gt; which includes Python 3 and Jupyter notebook.&lt;/p&gt;
-
-&lt;p&gt;Otherwise, for advanced users, install Jupyter notebook with &lt;code&gt;pip3 install jupyter&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;create-a-new-blog-post-as-usual-https-sourcethemes-com-academic-docs-managing-content-create-a-blog-post&#34;&gt;Create a new blog post &lt;a href=&#34;https://sourcethemes.com/academic/docs/managing-content/#create-a-blog-post&#34; target=&#34;_blank&#34;&gt;as usual&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Run the following commands in your Terminal, substituting &lt;code&gt;&amp;lt;MY_WEBSITE_FOLDER&amp;gt;&lt;/code&gt; and &lt;code&gt;my-post&lt;/code&gt; with the file path to your Academic website folder and a name for your blog post (without spaces), respectively:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd &amp;lt;MY_WEBSITE_FOLDER&amp;gt;
-hugo new  --kind post post/my-post
-cd &amp;lt;MY_WEBSITE_FOLDER&amp;gt;/content/post/my-post/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;create-or-upload-a-jupyter-notebook&#34;&gt;Create or upload a Jupyter notebook&lt;/h2&gt;
-
-&lt;p&gt;Run the following command to start Jupyter within your new blog post folder. Then create a new Jupyter notebook (&lt;em&gt;New &amp;gt; Python Notebook&lt;/em&gt;) or upload a notebook.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;jupyter notebook
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;convert-notebook-to-markdown&#34;&gt;Convert notebook to Markdown&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;jupyter nbconvert Untitled.ipynb --to markdown --NbConvertApp.output_files_dir=.
-
-# Copy the contents of Untitled.md and append it to index.md:
-cat Untitled.md | tee -a index.md
-
-# Remove the temporary file:
-rm Untitled.md
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;edit-your-post-metadata&#34;&gt;Edit your post metadata&lt;/h2&gt;
-
-&lt;p&gt;Open &lt;code&gt;index.md&lt;/code&gt; in your text editor and edit the title etc. in the &lt;a href=&#34;https://sourcethemes.com/academic/docs/front-matter/&#34; target=&#34;_blank&#34;&gt;front matter&lt;/a&gt; according to your preference.&lt;/p&gt;
-
-&lt;p&gt;To set a &lt;a href=&#34;https://sourcethemes.com/academic/docs/managing-content/#featured-image&#34; target=&#34;_blank&#34;&gt;featured image&lt;/a&gt;, place an image named &lt;code&gt;featured&lt;/code&gt; into your post&amp;rsquo;s folder.&lt;/p&gt;
-
-&lt;p&gt;For other tips, such as using math, see the guide on &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;writing content with Academic&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Example Page</title>
       <link>/tutorial/example/</link>
       <pubDate>Sun, 09 Sep 2018 00:00:00 -0500</pubDate>
@@ -602,449 +801,12 @@ rm Untitled.md
     </item>
     
     <item>
-      <title>Academic: the website designer for Hugo</title>
-      <link>/post/getting-started/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
-      
-      <guid>/post/getting-started/</guid>
-      <description>
-
-&lt;p&gt;&lt;strong&gt;Academic&lt;/strong&gt; makes it easy to create a beautiful website for free using Markdown. Customize anything on your site with widgets, themes, and language packs.&lt;/p&gt;
-
-&lt;p&gt;Follow our easy &lt;a href=&#34;https://sourcethemes.com/academic/docs/install/&#34; target=&#34;_blank&#34;&gt;step by step guide&lt;/a&gt; to learn how to build your own free website with Academic. &lt;a href=&#34;https://academic-demo.netlify.com/&#34; target=&#34;_blank&#34;&gt;Check out the personal demo&lt;/a&gt; or the &lt;a href=&#34;https://sourcethemes.com/academic/&#34; target=&#34;_blank&#34;&gt;business demo&lt;/a&gt; of what you&amp;rsquo;ll get in less than 10 minutes.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;View the documentation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://discuss.gohugo.io/&#34; target=&#34;_blank&#34;&gt;Ask a question&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/gcushen/hugo-academic/issues&#34; target=&#34;_blank&#34;&gt;Request a feature or report a bug&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Updating? View the &lt;a href=&#34;https://sourcethemes.com/academic/docs/update/&#34; target=&#34;_blank&#34;&gt;Update Guide&lt;/a&gt; and &lt;a href=&#34;https://sourcethemes.com/academic/updates/&#34; target=&#34;_blank&#34;&gt;Release Notes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Support development of Academic:
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://paypal.me/cushen&#34; target=&#34;_blank&#34;&gt;Donate a coffee&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.patreon.com/cushen&#34; target=&#34;_blank&#34;&gt;Become a backer on Patreon&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.redbubble.com/people/neutreno/works/34387919-academic&#34; target=&#34;_blank&#34;&gt;Decorate your laptop or journal with an Academic sticker&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://academic.threadless.com/&#34; target=&#34;_blank&#34;&gt;Wear the T-shirt&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/gcushen/hugo-academic/&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/academic.png&#34; alt=&#34;Screenshot&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Key features:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Easily manage various content including homepage, blog posts, publications, talks, and projects&lt;/li&gt;
-&lt;li&gt;Extensible via &lt;strong&gt;color themes&lt;/strong&gt; and &lt;strong&gt;widgets/plugins&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Write in &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;Markdown&lt;/a&gt; for easy formatting and code highlighting, with &lt;a href=&#34;https://en.wikibooks.org/wiki/LaTeX/Mathematics&#34; target=&#34;_blank&#34;&gt;LaTeX&lt;/a&gt; for mathematical expressions&lt;/li&gt;
-&lt;li&gt;Social/academic network linking, &lt;a href=&#34;https://analytics.google.com&#34; target=&#34;_blank&#34;&gt;Google Analytics&lt;/a&gt;, and &lt;a href=&#34;https://disqus.com&#34; target=&#34;_blank&#34;&gt;Disqus&lt;/a&gt; comments&lt;/li&gt;
-&lt;li&gt;Responsive and mobile friendly&lt;/li&gt;
-&lt;li&gt;Simple and refreshing one page design&lt;/li&gt;
-&lt;li&gt;Multilingual and easy to customize&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;color-themes&#34;&gt;Color Themes&lt;/h2&gt;
-
-&lt;p&gt;Academic is available in different color themes and font themes.&lt;/p&gt;
-
-
-
-
-
-&lt;div class=&#34;gallery&#34;&gt;
-
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-1950s.png&#34; data-caption=&#34;1950s&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-1950s_huaf5482f8cea0c5a703a328640e3b7509_21614_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-apogee.png&#34; data-caption=&#34;Apogee&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-apogee_hu4b45d99db97150df01464c393bfd17d4_24119_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-coffee-playfair.png&#34; data-caption=&#34;Coffee theme with Playfair font&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-coffee-playfair_hu446a8f670cc5622adcc77b97ba95f6c5_22462_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-cupcake.png&#34; data-caption=&#34;Cupcake&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-cupcake_hueba8cfa8cfbc7543924fcbf387a99e92_23986_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-dark.png&#34; data-caption=&#34;Dark&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-dark_hu1e8601ecc47f58eada7743fdcd709d3d_21456_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-default.png&#34; data-caption=&#34;Default&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-default_huba6228b7bdf30e2f03f12ea91b2cba0d_21751_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-forest.png&#34; data-caption=&#34;Forest&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-forest_hu4f093a1c683134431456584193ea41ee_21797_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-    
-    
-    
-    
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-    
-  &lt;a data-fancybox=&#34;gallery-gallery&#34; href=&#34;/post/getting-started/gallery/theme-ocean.png&#34; data-caption=&#34;Ocean&#34;&gt;
-  &lt;img src=&#34;/post/getting-started/gallery/theme-ocean_hu14831ccafc2219f30a7a096fa7617e01_21760_0x190_resize_lanczos_2.png&#34; alt=&#34;&#34;&gt;
-  &lt;/a&gt;
-  
-
-  
-&lt;/div&gt;
-
-&lt;h2 id=&#34;ecosystem&#34;&gt;Ecosystem&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-admin&#34; target=&#34;_blank&#34;&gt;Academic Admin&lt;/a&gt;:&lt;/strong&gt; An admin tool to import publications from BibTeX or import assets for an offline site&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-scripts&#34; target=&#34;_blank&#34;&gt;Academic Scripts&lt;/a&gt;:&lt;/strong&gt; Scripts to help migrate content to new versions of Academic&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;install&#34;&gt;Install&lt;/h2&gt;
-
-&lt;p&gt;You can choose from one of the following four methods to install:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;one-click install using your web browser (recommended)&lt;/li&gt;
-&lt;li&gt;install on your computer using Git with the Command Prompt/Terminal app&lt;/li&gt;
-&lt;li&gt;install on your computer by downloading the ZIP files&lt;/li&gt;
-&lt;li&gt;install on your computer with RStudio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;quick-install-using-your-web-browser&#34;&gt;Quick install using your web browser&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://app.netlify.com/start/deploy?repository=https://github.com/sourcethemes/academic-kickstart&#34; target=&#34;_blank&#34;&gt;Install Academic with Netlify&lt;/a&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Netlify will provide you with a customizable URL to access your new site&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;On GitHub, go to your newly created &lt;code&gt;academic-kickstart&lt;/code&gt; repository and edit &lt;code&gt;config.toml&lt;/code&gt; to personalize your site. Shortly after saving the file, your site will automatically update&lt;/li&gt;
-&lt;li&gt;Read the &lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Quick Start Guide&lt;/a&gt; to learn how to add Markdown content. For inspiration, refer to the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/tree/master/exampleSite&#34; target=&#34;_blank&#34;&gt;Markdown content&lt;/a&gt; which powers the &lt;a href=&#34;https://academic-demo.netlify.com/&#34; target=&#34;_blank&#34;&gt;Demo&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-git&#34;&gt;Install with Git&lt;/h3&gt;
-
-&lt;p&gt;Prerequisites:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://git-scm.com/downloads&#34; target=&#34;_blank&#34;&gt;Download and install Git&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://gohugo.io/getting-started/installing/#quick-install&#34; target=&#34;_blank&#34;&gt;Download and install Hugo&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-kickstart#fork-destination-box&#34; target=&#34;_blank&#34;&gt;Fork&lt;/a&gt; the &lt;em&gt;Academic Kickstart&lt;/em&gt; repository and clone your fork with Git:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;git clone https://github.com/sourcethemes/academic-kickstart.git My_Website
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;em&gt;Note that if you forked Academic Kickstart, the above command should be edited to clone your fork, i.e. replace &lt;code&gt;sourcethemes&lt;/code&gt; with your GitHub username.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Initialize the theme:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd My_Website
-git submodule update --init --recursive
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-zip&#34;&gt;Install with ZIP&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-kickstart/archive/master.zip&#34; target=&#34;_blank&#34;&gt;Download&lt;/a&gt; and extract &lt;em&gt;Academic Kickstart&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/gcushen/hugo-academic/archive/master.zip&#34; target=&#34;_blank&#34;&gt;Download&lt;/a&gt; and extract the &lt;em&gt;Academic theme&lt;/em&gt; to the &lt;code&gt;themes/academic/&lt;/code&gt; folder from the above step&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-rstudio&#34;&gt;Install with RStudio&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/install/#install-with-rstudio&#34; target=&#34;_blank&#34;&gt;View the guide to installing Academic with RStudio&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;quick-start&#34;&gt;Quick start&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;If you installed on your computer, view your new website by running the following command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hugo server
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now visit &lt;a href=&#34;http://localhost:1313&#34; target=&#34;_blank&#34;&gt;localhost:1313&lt;/a&gt; and your new Academic powered website will appear. Otherwise, if using Netlify, they will provide you with your URL.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Read the &lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Quick Start Guide&lt;/a&gt; to learn how to add Markdown content, customize your site, and deploy it. For inspiration, refer to the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/tree/master/exampleSite&#34; target=&#34;_blank&#34;&gt;Markdown content&lt;/a&gt; which powers the &lt;a href=&#34;https://academic-demo.netlify.com/&#34; target=&#34;_blank&#34;&gt;Demo&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Build your site by running the &lt;code&gt;hugo&lt;/code&gt; command. Then &lt;a href=&#34;https://georgecushen.com/create-your-website-with-hugo/&#34; target=&#34;_blank&#34;&gt;host it for free using Github Pages&lt;/a&gt; or Netlify (refer to the first installation method). Alternatively, copy the generated &lt;code&gt;public/&lt;/code&gt; directory (by FTP, Rsync, etc.) to your production web server (such as a university&amp;rsquo;s hosting service).&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;updating&#34;&gt;Updating&lt;/h2&gt;
-
-&lt;p&gt;Feel free to &lt;em&gt;star&lt;/em&gt; the project on &lt;a href=&#34;https://github.com/gcushen/hugo-academic/&#34; target=&#34;_blank&#34;&gt;Github&lt;/a&gt; to help keep track of updates and check out the &lt;a href=&#34;https://sourcethemes.com/academic/updates&#34; target=&#34;_blank&#34;&gt;release notes&lt;/a&gt; prior to updating your site.&lt;/p&gt;
-
-&lt;p&gt;Before updating the framework, it is recommended to make a backup of your entire website directory (or at least your &lt;code&gt;themes/academic&lt;/code&gt; directory) and record your current version number.&lt;/p&gt;
-
-&lt;p&gt;By default, Academic is installed as a Git submodule which can be updated by running the following command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git submodule update --remote --merge
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/update/&#34; target=&#34;_blank&#34;&gt;Check out the update guide&lt;/a&gt; for full instructions and alternative methods.&lt;/p&gt;
-
-&lt;h2 id=&#34;feedback-contributing&#34;&gt;Feedback &amp;amp; Contributing&lt;/h2&gt;
-
-&lt;p&gt;Please use the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/issues&#34; target=&#34;_blank&#34;&gt;issue tracker&lt;/a&gt; to let me know about any bugs or feature requests, or alternatively make a pull request.&lt;/p&gt;
-
-&lt;p&gt;For support, head over to the &lt;a href=&#34;http://discuss.gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo discussion forum&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;license&#34;&gt;License&lt;/h2&gt;
-
-&lt;p&gt;Copyright 2016-present &lt;a href=&#34;https://georgecushen.com&#34; target=&#34;_blank&#34;&gt;George Cushen&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Released under the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/blob/master/LICENSE.md&#34; target=&#34;_blank&#34;&gt;MIT&lt;/a&gt; license.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>A Person Re-Identification System For Mobile Devices</title>
       <link>/publication/person-re-id/</link>
       <pubDate>Tue, 01 Sep 2015 00:00:00 -0500</pubDate>
       
       <guid>/publication/person-re-id/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
-      
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
-      <description>
-
-
-&lt;div id=&#34;r-markdown&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;R Markdown&lt;/h1&gt;
-&lt;p&gt;This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see &lt;a href=&#34;http://rmarkdown.rstudio.com&#34; class=&#34;uri&#34;&gt;http://rmarkdown.rstudio.com&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can embed an R code chunk like this:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-y_i = y^i
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;And make another change.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(cars)
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-fit &amp;lt;- lm(dist ~ speed, data = cars)
-fit
-## 
-## Call:
-## lm(formula = dist ~ speed, data = cars)
-## 
-## Coefficients:
-## (Intercept)        speed  
-##     -17.579        3.932&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;including-plots&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Including Plots&lt;/h1&gt;
-&lt;p&gt;You can also embed plots. See Figure &lt;a href=&#34;#fig:pie&#34;&gt;1&lt;/a&gt; for example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;par(mar = c(0, 1, 0, 1))
-pie(
-  c(280, 60, 20),
-  c(&amp;#39;Sky&amp;#39;, &amp;#39;Sunny side of pyramid&amp;#39;, &amp;#39;Shady side of pyramid&amp;#39;),
-  col = c(&amp;#39;#0292D8&amp;#39;, &amp;#39;#F7EA39&amp;#39;, &amp;#39;#C4B632&amp;#39;),
-  init.angle = -50, border = NA
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:pie&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png&#34; alt=&#34;A fancy pie chart.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: A fancy pie chart.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 </description>
     </item>
     

@@ -7,6 +7,7 @@ image:
   preview_only: false
 tags:
   - julia
+  - datasci
 options:
   fig_ext: ".svg"
 ---
