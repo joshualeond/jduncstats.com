@@ -59,12 +59,12 @@ m4.3 &lt;- rethinking::map(
 <pre class="r"><code>post &lt;- extract.samples(m4.3)
 head(post)</code></pre>
 <pre><code>##          a         b    sigma
-## 1 109.5334 0.9847427 5.363808
-## 2 113.8250 0.9084143 5.073332
-## 3 113.6425 0.9046196 4.906409
-## 4 113.5360 0.9093099 4.959741
-## 5 112.3385 0.9381905 4.983009
-## 6 118.3293 0.8067628 4.862465</code></pre>
+## 1 112.0734 0.9424389 5.235063
+## 2 112.0144 0.9380622 5.386037
+## 3 112.2121 0.9355411 5.176812
+## 4 113.2801 0.9155520 5.131002
+## 5 112.9359 0.9258103 4.965042
+## 6 114.4667 0.8890500 5.054368</code></pre>
 <pre class="r"><code>sim.height &lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -75,8 +75,8 @@ head(post)</code></pre>
 
 (sim.PI &lt;- apply(sim.height, 2, PI, prob = 0.89))</code></pre>
 <pre><code>##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.3151 145.5653 164.2520 135.1919 155.1972
-## 94% 164.3939 161.5401 180.6822 151.4706 171.5836</code></pre>
+## 5%  148.1218 145.3271 164.2434 135.3212 155.2902
+## 94% 164.5610 161.6145 180.6696 151.4692 171.4851</code></pre>
 <p>And the convenient way:</p>
 <pre class="r"><code>sim.height &lt;- sim(m4.3, data = list(weight = kung$weight))</code></pre>
 <pre><code>## [ 100 / 1000 ]
@@ -90,9 +90,9 @@ head(post)</code></pre>
 [ 900 / 1000 ]
 [ 1000 / 1000 ]</code></pre>
 <pre class="r"><code>(sim.PI &lt;- apply(sim.height, 2, PI, prob = 0.89))</code></pre>
-<pre><code>##         [,1]     [,2]    [,3]     [,4]     [,5]
-## 5%  148.1699 144.9660 164.416 135.2258 155.3972
-## 94% 164.3760 162.0217 181.244 151.5659 171.5512</code></pre>
+<pre><code>##         [,1]     [,2]     [,3]     [,4]     [,5]
+## 5%  148.5534 144.9224 163.5080 134.9054 155.4800
+## 94% 164.3544 161.6533 180.2119 151.1621 171.0385</code></pre>
 <p>We have relatively the same results here which is expected. Let’s get the mean values as well:</p>
 <pre class="r"><code>sim.mean &lt;- apply(sim.height, 2, mean)</code></pre>
 <p>Now let’s put all of this in the dataframe:</p>
@@ -127,9 +127,9 @@ kung$hi_89 &lt;- sim.PI[2,]
 <pre class="r"><code>post_early &lt;- extract.samples(fit)
 precis(post_early)</code></pre>
 <pre><code>##        Mean StdDev |0.89 0.89|
-## a     58.26   1.40 56.03 60.52
-## b      2.72   0.07  2.61  2.82
-## sigma  8.44   0.43  7.75  9.14</code></pre>
+## a     58.26   1.40 56.11 60.58
+## b      2.72   0.07  2.61  2.83
+## sigma  8.44   0.43  7.72  9.08</code></pre>
 <p>So we see for every <code>1</code> unit increase in weight a child should be <code>2.72</code> cm taller. Or as the question has asked <code>10</code> unit increase is a <code>27.2</code> cm increase in height. For every <code>22</code> lb increase there is a corresponding ~<code>1</code> foot increase in height.</p>
 </div>
 <div id="b" class="section level3">
@@ -215,7 +215,7 @@ where <span class="math inline">\(h_i\)</span> is the height of individual <span
 <pre class="r"><code>precis(fit_all)</code></pre>
 <pre><code>##         Mean StdDev   5.5%  94.5%
 ## a     -23.78   1.34 -25.92 -21.65
-## b      47.08   0.38  46.46  47.69
+## b      47.07   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38</code></pre>
 <pre class="r"><code>plot(precis(fit_all))</code></pre>
 <p><img src="/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg" width="672" /></p>

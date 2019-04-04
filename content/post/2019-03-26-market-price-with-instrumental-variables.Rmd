@@ -2,7 +2,7 @@
 title: Market Demand with Instrumental Variables
 author: J. Duncan
 date: '2019-03-26'
-draft: true
+draft: false
 slug: market-demand-with-instrumental-variables
 categories: []
 tags:
@@ -23,26 +23,26 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 ## Overview
 
-I was listening to the [DataFramed](https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science) podcast where Skipper Seabold was interviewed and spoke about "The Credibility Crisis in Data Science". He listed a set of techniques that he felt should be more common in the data science community. One of the techniques he mentioned was *Instrumental Variables*. He gave an example of a study on the **Fulton Fish Market** in New York City:
+I was listening to the [DataFramed](https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science) podcast where Skipper Seabold was interviewed and spoke about "The Credibility Crisis in Data Science". He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:
+
+* Instrumental Variables
+* Matching
+* Difference-in-Differences
+
+I'll be exploring *Instrumental Variables* using an example of a [study](https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207) on the **Fulton Fish Market** in NYC:
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/>
 
 The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it's not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.
 
-The original study can be found on the American Economic Association [website](https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207). Here is the abstract from the paper:
-
-> This feature explores the operation of individual markets. Patterns of behavior
-in markets for specific goods and services offer lessons about the determinants and
-effects of supply and demand, market structure, strategic behavior, and government regulation.
-
-This post will be for reproducing a portion of this analysis using the [brms](https://github.com/paul-buerkner/brms) package in R.
+In this blog post I'll be reproducing a portion of this analysis using R, packages of the [tidyverse](https://www.tidyverse.org/), and the [brms](https://github.com/paul-buerkner/brms) package in R.
 
 ## Data
 
-I discovered the data for this study at the following website:
+I discovered data related to this study at the following website:
 http://people.brandeis.edu/~kgraddy/data.html
 
-Bringing this data into R is extremely easy. The data is what was used to perform the original estimation so it is already prepared for us. All we need to do is read it into our R environment:
+Bringing this data into R is very easy. This data appears to be the cleand and transformed data used within the paper. Let's read it into our R environment and take a look:
 
 ```{r}
 library(tidyverse)
@@ -51,7 +51,7 @@ fulton <- read_tsv("http://people.brandeis.edu/~kgraddy/datasets/fish.out")
 fulton
 ```
 
-Here is a description of the variables we will be using for this analysis:
+Here is a description of the variables we will be using for this work:
 
 Variable | Units | Description
 ------ | ----- | -----
@@ -62,7 +62,7 @@ Variable | Units | Description
  rainy | dummy var | Rain on shore
  stormy | dummy var | Wind and waves off shore (a 3-day moving average)
  
-The paper informs the reader that transactions recorded are really around a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure `2` from the paper:
+The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure `2` from the paper.
 
 ```{r}
 # fixing the date column 
@@ -81,9 +81,11 @@ fulton %>%
       )
 ```
 
+Reproducing this figure gave me confidence that I had the correct data to reproduce the analysis.
+
 ## Demand Curve
 
-The naive way to attempt to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:
+The naive way in attempting to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:
 
 ```{r}
 ggplot(fulton, aes(x = price, y = qty)) + 
@@ -91,20 +93,24 @@ ggplot(fulton, aes(x = price, y = qty)) +
   geom_smooth(method = "lm")
 ```
 
-But would this be the demand curve? It actually wouldn't be. Going back to intro economics each one of the points in the plot is the intersection of both a supply and demand curve. Something like [this](https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/):
+But would this be the demand curve? It actually wouldn't be. According to intro economics, each one of the points in the plot is the intersection of both a supply and demand curve. Something like [this](https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/):
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png" alt="drawing" width="80%"/>
 
-## Regressions
-
 So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it's in the title of this post. We'll be using **Instrumental Variables** (or IV). 
 
-The paper includes a table of coefficients like so:
+## Regressions
+
+The paper includes a table of estimated coefficients like so:
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png" alt="drawing" width="80%"/>
 
-### OLS Reproduced
-First let's perform the linear regression without IV. We can use the `brm` function as a drop in replacement of `lm` to get distributions of our parameter estimates. Here the `brms` package is performing a bayesian estimation using MCMC. I'm keeping the default "uninformative" priors set by the package.
+I'll be reproducing this table but with bayesian estimation methods.
+
+### OLS (Ordinary Least Squares) Reproduced
+First, let's perform the linear regression without IV. We can use the `brm` function as a drop in replacement of `lm` to get distributions of our parameter estimates. Here the `brms` package is performing a bayesian estimation using MCMC. I'm keeping the default "uninformative" priors set by the package.
+
+Starting with column `1` of table `2` we estimate the coefficients with only `qty` and `price`:
 
 ```{r}
 library(brms)
@@ -118,7 +124,27 @@ fit1 %>%
   posterior_samples() %>% 
   ggplot(aes(x = b_price)) +
     geom_density_line()
+```
 
+The `brms` package provides an abstraction layer to the `Stan` probabilistic programming language. So if you're curious what these "uninformative" priors that I breezed over actually are, take a look at the generated code with the `stancode` function. Here is an excerpt of the stan code generated for the model above:
+
+```{stan, output.var="ex1", eval = FALSE}
+model {
+  vector[N] mu = temp_Intercept + Xc * b;
+  // priors including all constants
+  target += student_t_lpdf(temp_Intercept | 3, 9, 10);
+  target += student_t_lpdf(sigma | 3, 0, 10)
+    - 1 * student_t_lccdf(0 | 3, 0, 10);
+  // likelihood including all constants
+  if (!prior_only) {
+    target += normal_lpdf(Y | mu, sigma);
+  }
+}
+```
+
+Moving to column `2` of table `2` we estimate the model including the dummy `day` variables, `cold`, and `rainy` variables:
+
+```{r}
 # column 2 in table 2
 fit1_full <- brm(
   qty ~ price + day1 + day2 + day3 + day4 + cold + rainy,
@@ -138,7 +164,13 @@ We can see that the estimated coefficient for price in this context is the same 
 
 ### IV Reproduced
 
-Now let's move on to using IV. This is possible with the `brms` package and multivariate models. We'll piece it together with two separate formulas defined in the `bf` function calls below.
+Before performing the estimation I wanted to add a quote from the paper. I thought Kathryn Graddy explained the IV estimation well:
+
+> That is, first a regression is run with log price as the dependent variable and the storminess of the weather as the explanatory variable. This regression seeks to measure the variation in price that is attributable to stormy weather. The coefficients from this regression are then used to predict log price on each day, and these predicted values for price are inserted back into the regression.
+
+Now let's move on to using IV. This is possible with the `brms` package and its ability to specify multivariate models. We'll piece it together with two separate formulas defined in the `bf` function calls below.
+
+The first estimation will be for column `3` of table `2`:
 
 ```{r}
 # measure variation in price attributable to stormy weather
@@ -155,7 +187,7 @@ fit2 %>%
     geom_density_line()
 ```
 
-And lastly we'll estimate the IV with the remaining variables:
+And lastly we'll estimate the IV with the remaining variables (column `4`):
 
 ```{r}
 # add additional demand specific variables
@@ -171,7 +203,9 @@ fit2_full %>%
     geom_density_ridges()
 ```
 
-Now we can plot the demand curve with isolated demand effects:
+### Visualizing the Demand Curve
+
+Now we can plot the demand curve with isolated demand effects. I'll use the first IV estimation with only `qty`, `price`, and `stormy` variables:
 
 ```{r}
 fulton %>% 
@@ -187,7 +221,7 @@ fulton %>%
   scale_fill_brewer()
 ```
 
-The prediction is downward trending as the original curve except with a steeper slope (`-0.54` vs `-1.08`).
+The prediction is downward trending as the original curve except with a steeper slope (`` `r round(fixef(fit1)["price","Estimate"], 2)` `` vs `` `r round(fixef(fit2)["qty_price", "Estimate"], 2)` ``).
 
 ## Elasticities
 
@@ -224,7 +258,7 @@ Elastic  | \| *E* \| > 1 | % change in *Q* > % change in *P*
 Unitary Elastic | \| *E* \|  = 1 | % change in *Q* = %change in *P* 
 Inelastic | \| *E* \|  < 1| % change in *Q* < % change in *P* 
 
-Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is `-0.54` [-0.9, -0.19]. With the IV estimation our elasticity is `-1.08` [-2.18, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic. 
+Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is `` `r round(fixef(fit1)["price","Estimate"], 2)` `` [`r round(fixef(fit1)["price","Q2.5"], 2)`, `r round(fixef(fit1)["price","Q97.5"], 2)`]. With the IV estimation our elasticity is `` `r round(fixef(fit2)["qty_price", "Estimate"], 2)` `` [`r round(fixef(fit2)["qty_price", "Q2.5"], 2)`, `r round(fixef(fit2)["qty_price", "Q97.5"], 2)`]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic. 
 
 Some interesting interpretations of this unit elasticity from the paper include:
 
@@ -235,5 +269,13 @@ fish dealers. A price-setting firm will raise price to the point where the perce
 
 > Third, unit elasticities could also result from budget constraints on the part of some buyers.
 
+## Wrapping Up
+
+This was definitely a fun topic to begin exploring. I plan on taking a look at *difference-in-differences* in the near future as well.
+
 ## References
 
+* [DataFramed: The Credibility Crisis in Data Science](https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science)
+* [Graddy, Kathryn. 2006. "Markets: The Fulton Fish Market." Journal of Economic Perspectives, 20 (2): 207-220.](https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207)
+* [Create supply and demand economics curves with ggplot2](https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/)
+* [Log-level and Log-log transformations in Linear Regression Models](http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf)

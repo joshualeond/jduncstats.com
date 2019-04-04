@@ -17,7 +17,8 @@
       <pubDate>Tue, 26 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/market-demand-with-instrumental-variables/</guid>
-      <description>Overview I was listening to the DataFramed podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. One of the techniques he mentioned was Instrumental Variables. He gave an example of a study on the Fulton Fish Market in New York City:
+      <description>Overview I was listening to the DataFramed podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:
+ Instrumental Variables Matching Difference-in-Differences  I’ll be exploring Instrumental Variables using an example of a study on the Fulton Fish Market in NYC:
 The general idea of the study is to estimate the demand curve for fish at the market.</description>
     </item>
     

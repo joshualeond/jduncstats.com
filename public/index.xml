@@ -64,22 +64,22 @@
 
 &lt;div id=&#34;overview&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Overview&lt;/h2&gt;
-&lt;p&gt;I was listening to the &lt;a href=&#34;https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science&#34;&gt;DataFramed&lt;/a&gt; podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. One of the techniques he mentioned was &lt;em&gt;Instrumental Variables&lt;/em&gt;. He gave an example of a study on the &lt;strong&gt;Fulton Fish Market&lt;/strong&gt; in New York City:&lt;/p&gt;
+&lt;p&gt;I was listening to the &lt;a href=&#34;https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science&#34;&gt;DataFramed&lt;/a&gt; podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Instrumental Variables&lt;/li&gt;
+&lt;li&gt;Matching&lt;/li&gt;
+&lt;li&gt;Difference-in-Differences&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I’ll be exploring &lt;em&gt;Instrumental Variables&lt;/em&gt; using an example of a &lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;study&lt;/a&gt; on the &lt;strong&gt;Fulton Fish Market&lt;/strong&gt; in NYC:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
 &lt;p&gt;The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it’s not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.&lt;/p&gt;
-&lt;p&gt;The original study can be found on the American Economic Association &lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;website&lt;/a&gt;. Here is the abstract from the paper:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;This feature explores the operation of individual markets. Patterns of behavior
-in markets for specific goods and services offer lessons about the determinants and
-effects of supply and demand, market structure, strategic behavior, and government regulation.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This post will be for reproducing a portion of this analysis using the &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; package in R.&lt;/p&gt;
+&lt;p&gt;In this blog post I’ll be reproducing a portion of this analysis using R, packages of the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;, and the &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; package in R.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;data&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Data&lt;/h2&gt;
-&lt;p&gt;I discovered the data for this study at the following website:
+&lt;p&gt;I discovered data related to this study at the following website:
 &lt;a href=&#34;http://people.brandeis.edu/~kgraddy/data.html&#34; class=&#34;uri&#34;&gt;http://people.brandeis.edu/~kgraddy/data.html&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Bringing this data into R is extremely easy. The data is what was used to perform the original estimation so it is already prepared for us. All we need to do is read it into our R environment:&lt;/p&gt;
+&lt;p&gt;Bringing this data into R is very easy. This data appears to be the cleand and transformed data used within the paper. Let’s read it into our R environment and take a look:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
 
 fulton &amp;lt;- read_tsv(&amp;quot;http://people.brandeis.edu/~kgraddy/datasets/fish.out&amp;quot;)
@@ -99,7 +99,7 @@ fulton&lt;/code&gt;&lt;/pre&gt;
 ## 10     0     0     0     0 911213      0     0 -0.342   9.21     0     0
 ## # … with 101 more rows, and 5 more variables: windspd &amp;lt;dbl&amp;gt;,
 ## #   windspd2 &amp;lt;dbl&amp;gt;, pricelevel &amp;lt;dbl&amp;gt;, totr &amp;lt;dbl&amp;gt;, tots &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Here is a description of the variables we will be using for this analysis:&lt;/p&gt;
+&lt;p&gt;Here is a description of the variables we will be using for this work:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
@@ -141,7 +141,7 @@ fulton&lt;/code&gt;&lt;/pre&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;The paper informs the reader that transactions recorded are really around a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure &lt;code&gt;2&lt;/code&gt; from the paper:&lt;/p&gt;
+&lt;p&gt;The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure &lt;code&gt;2&lt;/code&gt; from the paper.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fixing the date column 
 fulton %&amp;gt;% 
   mutate(
@@ -157,25 +157,28 @@ fulton %&amp;gt;%
       y = &amp;quot;Quantity (pounds)&amp;quot;
       )&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-2-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Reproducing this figure gave me confidence that I had the correct data to reproduce the analysis.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;demand-curve&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Demand Curve&lt;/h2&gt;
-&lt;p&gt;The naive way to attempt to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:&lt;/p&gt;
+&lt;p&gt;The naive way in attempting to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(fulton, aes(x = price, y = qty)) + 
   geom_point() + 
   geom_smooth(method = &amp;quot;lm&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-3-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;But would this be the demand curve? It actually wouldn’t be. Going back to intro economics each one of the points in the plot is the intersection of both a supply and demand curve. Something like &lt;a href=&#34;https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/&#34;&gt;this&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;But would this be the demand curve? It actually wouldn’t be. According to intro economics, each one of the points in the plot is the intersection of both a supply and demand curve. Something like &lt;a href=&#34;https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/&#34;&gt;this&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post. We’ll be using &lt;strong&gt;Instrumental Variables&lt;/strong&gt; (or IV).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;regressions&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Regressions&lt;/h2&gt;
-&lt;p&gt;So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post. We’ll be using &lt;strong&gt;Instrumental Variables&lt;/strong&gt; (or IV).&lt;/p&gt;
-&lt;p&gt;The paper includes a table of coefficients like so:&lt;/p&gt;
+&lt;p&gt;The paper includes a table of estimated coefficients like so:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
-&lt;div id=&#34;ols-reproduced&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;OLS Reproduced&lt;/h3&gt;
-&lt;p&gt;First let’s perform the linear regression without IV. We can use the &lt;code&gt;brm&lt;/code&gt; function as a drop in replacement of &lt;code&gt;lm&lt;/code&gt; to get distributions of our parameter estimates. Here the &lt;code&gt;brms&lt;/code&gt; package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.&lt;/p&gt;
+&lt;p&gt;I’ll be reproducing this table but with bayesian estimation methods.&lt;/p&gt;
+&lt;div id=&#34;ols-ordinary-least-squares-reproduced&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;OLS (Ordinary Least Squares) Reproduced&lt;/h3&gt;
+&lt;p&gt;First, let’s perform the linear regression without IV. We can use the &lt;code&gt;brm&lt;/code&gt; function as a drop in replacement of &lt;code&gt;lm&lt;/code&gt; to get distributions of our parameter estimates. Here the &lt;code&gt;brms&lt;/code&gt; package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.&lt;/p&gt;
+&lt;p&gt;Starting with column &lt;code&gt;1&lt;/code&gt; of table &lt;code&gt;2&lt;/code&gt; we estimate the coefficients with only &lt;code&gt;qty&lt;/code&gt; and &lt;code&gt;price&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(brms)
 library(tidybayes)
 library(ggridges)
@@ -188,6 +191,19 @@ fit1 %&amp;gt;%
   ggplot(aes(x = b_price)) +
     geom_density_line()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;brms&lt;/code&gt; package provides an abstraction layer to the &lt;code&gt;Stan&lt;/code&gt; probabilistic programming language. So if you’re curious what these “uninformative” priors that I breezed over actually are, take a look at the generated code with the &lt;code&gt;stancode&lt;/code&gt; function. Here is an excerpt of the stan code generated for the model above:&lt;/p&gt;
+&lt;pre class=&#34;stan&#34;&gt;&lt;code&gt;model {
+  vector[N] mu = temp_Intercept + Xc * b;
+  // priors including all constants
+  target += student_t_lpdf(temp_Intercept | 3, 9, 10);
+  target += student_t_lpdf(sigma | 3, 0, 10)
+    - 1 * student_t_lccdf(0 | 3, 0, 10);
+  // likelihood including all constants
+  if (!prior_only) {
+    target += normal_lpdf(Y | mu, sigma);
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Moving to column &lt;code&gt;2&lt;/code&gt; of table &lt;code&gt;2&lt;/code&gt; we estimate the model including the dummy &lt;code&gt;day&lt;/code&gt; variables, &lt;code&gt;cold&lt;/code&gt;, and &lt;code&gt;rainy&lt;/code&gt; variables:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# column 2 in table 2
 fit1_full &amp;lt;- brm(
   qty ~ price + day1 + day2 + day3 + day4 + cold + rainy,
@@ -201,12 +217,17 @@ fit1_full %&amp;gt;%
   gather(b_price:b_rainy, key = &amp;quot;coef&amp;quot;, value = &amp;quot;est&amp;quot;) %&amp;gt;% 
   ggplot(aes(x = est, y = coef)) +
     geom_density_ridges()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-2.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-6-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;We can see that the estimated coefficient for price in this context is the same for both the simple linear regression and the regression accounting for weekday and onshore weather.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;iv-reproduced&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;IV Reproduced&lt;/h3&gt;
-&lt;p&gt;Now let’s move on to using IV. This is possible with the &lt;code&gt;brms&lt;/code&gt; package and multivariate models. We’ll piece it together with two separate formulas defined in the &lt;code&gt;bf&lt;/code&gt; function calls below.&lt;/p&gt;
+&lt;p&gt;Before performing the estimation I wanted to add a quote from the paper. I thought Kathryn Graddy explained the IV estimation well:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;That is, first a regression is run with log price as the dependent variable and the storminess of the weather as the explanatory variable. This regression seeks to measure the variation in price that is attributable to stormy weather. The coefficients from this regression are then used to predict log price on each day, and these predicted values for price are inserted back into the regression.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Now let’s move on to using IV. This is possible with the &lt;code&gt;brms&lt;/code&gt; package and its ability to specify multivariate models. We’ll piece it together with two separate formulas defined in the &lt;code&gt;bf&lt;/code&gt; function calls below.&lt;/p&gt;
+&lt;p&gt;The first estimation will be for column &lt;code&gt;3&lt;/code&gt; of table &lt;code&gt;2&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# measure variation in price attributable to stormy weather
 fit2a &amp;lt;- bf(price ~ stormy)
 # estimate demand
@@ -219,8 +240,8 @@ fit2 %&amp;gt;%
   posterior_samples() %&amp;gt;% 
   ggplot(aes(x = b_qty_price)) +
     geom_density_line()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-5-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;And lastly we’ll estimate the IV with the remaining variables:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And lastly we’ll estimate the IV with the remaining variables (column &lt;code&gt;4&lt;/code&gt;):&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# add additional demand specific variables
 fit2b_full &amp;lt;- bf(qty ~ price + day1 + day2 + day3 + day4 + cold + rainy)
 
@@ -232,8 +253,11 @@ fit2_full %&amp;gt;%
   gather(b_qty_price:b_qty_rainy, key = &amp;quot;coef&amp;quot;, value = &amp;quot;est&amp;quot;) %&amp;gt;% 
   ggplot(aes(x = est, y = coef)) +
     geom_density_ridges()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-6-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Now we can plot the demand curve with isolated demand effects:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-8-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualizing-the-demand-curve&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Visualizing the Demand Curve&lt;/h3&gt;
+&lt;p&gt;Now we can plot the demand curve with isolated demand effects. I’ll use the first IV estimation with only &lt;code&gt;qty&lt;/code&gt;, &lt;code&gt;price&lt;/code&gt;, and &lt;code&gt;stormy&lt;/code&gt; variables:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fulton %&amp;gt;% 
   add_predicted_draws(fit2) %&amp;gt;% 
   filter(.category == &amp;quot;qty&amp;quot;) %&amp;gt;% 
@@ -245,8 +269,8 @@ fit2_full %&amp;gt;%
     ) +
   geom_point(data = fulton, size = 2) +
   scale_fill_brewer()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;The prediction is downward trending as the original curve except with a steeper slope (&lt;code&gt;-0.54&lt;/code&gt; vs &lt;code&gt;-1.08&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-9-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The prediction is downward trending as the original curve except with a steeper slope (&lt;code&gt;-0.54&lt;/code&gt; vs &lt;code&gt;-1.06&lt;/code&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;elasticities&#34; class=&#34;section level2&#34;&gt;
@@ -296,7 +320,7 @@ So here &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; is an e
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.9, -0.19]. With the IV estimation our elasticity is &lt;code&gt;-1.08&lt;/code&gt; [-2.18, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.&lt;/p&gt;
+&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.88, -0.18]. With the IV estimation our elasticity is &lt;code&gt;-1.06&lt;/code&gt; [-2.2, -0.08]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.&lt;/p&gt;
 &lt;p&gt;Some interesting interpretations of this unit elasticity from the paper include:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;First, it is consistent with pricing power on the part of the
@@ -309,8 +333,18 @@ fish dealers. A price-setting firm will raise price to the point where the perce
 &lt;p&gt;Third, unit elasticities could also result from budget constraints on the part of some buyers.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/div&gt;
+&lt;div id=&#34;wrapping-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wrapping Up&lt;/h2&gt;
+&lt;p&gt;This was definitely a fun topic to begin exploring. I plan on taking a look at &lt;em&gt;difference-in-differences&lt;/em&gt; in the near future as well.&lt;/p&gt;
+&lt;/div&gt;
 &lt;div id=&#34;references&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science&#34;&gt;DataFramed: The Credibility Crisis in Data Science&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;Graddy, Kathryn. 2006. “Markets: The Fulton Fish Market.” Journal of Economic Perspectives, 20 (2): 207-220.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/&#34;&gt;Create supply and demand economics curves with ggplot2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf&#34;&gt;Log-level and Log-log transformations in Linear Regression Models&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -561,12 +595,12 @@ m4.3 &amp;lt;- rethinking::map(
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
 head(post)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 109.5334 0.9847427 5.363808
-## 2 113.8250 0.9084143 5.073332
-## 3 113.6425 0.9046196 4.906409
-## 4 113.5360 0.9093099 4.959741
-## 5 112.3385 0.9381905 4.983009
-## 6 118.3293 0.8067628 4.862465&lt;/code&gt;&lt;/pre&gt;
+## 1 112.0734 0.9424389 5.235063
+## 2 112.0144 0.9380622 5.386037
+## 3 112.2121 0.9355411 5.176812
+## 4 113.2801 0.9155520 5.131002
+## 5 112.9359 0.9258103 4.965042
+## 6 114.4667 0.8890500 5.054368&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
   rnorm(
     n = nrow(post),
@@ -577,8 +611,8 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 
 (sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.3151 145.5653 164.2520 135.1919 155.1972
-## 94% 164.3939 161.5401 180.6822 151.4706 171.5836&lt;/code&gt;&lt;/pre&gt;
+## 5%  148.1218 145.3271 164.2434 135.3212 155.2902
+## 94% 164.5610 161.6145 180.6696 151.4692 171.4851&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And the convenient way:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
@@ -592,9 +626,9 @@ head(post)&lt;/code&gt;&lt;/pre&gt;
 [ 900 / 1000 ]
 [ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]    [,3]     [,4]     [,5]
-## 5%  148.1699 144.9660 164.416 135.2258 155.3972
-## 94% 164.3760 162.0217 181.244 151.5659 171.5512&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
+## 5%  148.5534 144.9224 163.5080 134.9054 155.4800
+## 94% 164.3544 161.6533 180.2119 151.1621 171.0385&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
@@ -629,9 +663,9 @@ kung$hi_89 &amp;lt;- sim.PI[2,]
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
 precis(post_early)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.26   1.40 56.03 60.52
-## b      2.72   0.07  2.61  2.82
-## sigma  8.44   0.43  7.75  9.14&lt;/code&gt;&lt;/pre&gt;
+## a     58.26   1.40 56.11 60.58
+## b      2.72   0.07  2.61  2.83
+## sigma  8.44   0.43  7.72  9.08&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
@@ -717,7 +751,7 @@ where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;precis(fit_all)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         Mean StdDev   5.5%  94.5%
 ## a     -23.78   1.34 -25.92 -21.65
-## b      47.08   0.38  46.46  47.69
+## b      47.07   0.38  46.46  47.69
 ## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
