@@ -72,14 +72,14 @@
 &lt;/ul&gt;
 &lt;p&gt;I’ll be exploring &lt;em&gt;Instrumental Variables&lt;/em&gt; using an example of a &lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;study&lt;/a&gt; on the &lt;strong&gt;Fulton Fish Market&lt;/strong&gt; in NYC:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
-&lt;p&gt;The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it’s not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.&lt;/p&gt;
+&lt;p&gt;The general idea of the study is to estimate the demand curve for fish at the market. It is unfortunately not as simple as regressing price on demand. There are supply effects that need to be accounted for to isolate the demand effects.&lt;/p&gt;
 &lt;p&gt;In this blog post I’ll be reproducing a portion of this analysis using R, packages of the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;, and the &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; package in R.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;data&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Data&lt;/h2&gt;
 &lt;p&gt;I discovered data related to this study at the following website:
 &lt;a href=&#34;http://people.brandeis.edu/~kgraddy/data.html&#34; class=&#34;uri&#34;&gt;http://people.brandeis.edu/~kgraddy/data.html&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Bringing this data into R is very easy. This data appears to be the cleand and transformed data used within the paper. Let’s read it into our R environment and take a look:&lt;/p&gt;
+&lt;p&gt;Bringing this data into R is very simple. The linked dataset appears to be the cleaned and transformed data used within the paper. Let’s read it into our R environment and take a look:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
 
 fulton &amp;lt;- read_tsv(&amp;quot;http://people.brandeis.edu/~kgraddy/datasets/fish.out&amp;quot;)
@@ -141,7 +141,7 @@ fulton&lt;/code&gt;&lt;/pre&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure &lt;code&gt;2&lt;/code&gt; from the paper.&lt;/p&gt;
+&lt;p&gt;The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of Whiting being sold by reproducing Figure &lt;code&gt;2&lt;/code&gt; from the paper.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fixing the date column 
 fulton %&amp;gt;% 
   mutate(
@@ -161,7 +161,7 @@ fulton %&amp;gt;%
 &lt;/div&gt;
 &lt;div id=&#34;demand-curve&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Demand Curve&lt;/h2&gt;
-&lt;p&gt;The naive way in attempting to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:&lt;/p&gt;
+&lt;p&gt;The naive way in attempting to find the relationship between price and demand (the demand curve) would be to regress quantity on price:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(fulton, aes(x = price, y = qty)) + 
   geom_point() + 
   geom_smooth(method = &amp;quot;lm&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
@@ -174,10 +174,10 @@ fulton %&amp;gt;%
 &lt;h2&gt;Regressions&lt;/h2&gt;
 &lt;p&gt;The paper includes a table of estimated coefficients like so:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
-&lt;p&gt;I’ll be reproducing this table but with bayesian estimation methods.&lt;/p&gt;
+&lt;p&gt;I’ll be reproducing this table but with Bayesian estimation methods.&lt;/p&gt;
 &lt;div id=&#34;ols-ordinary-least-squares-reproduced&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;OLS (Ordinary Least Squares) Reproduced&lt;/h3&gt;
-&lt;p&gt;First, let’s perform the linear regression without IV. We can use the &lt;code&gt;brm&lt;/code&gt; function as a drop in replacement of &lt;code&gt;lm&lt;/code&gt; to get distributions of our parameter estimates. Here the &lt;code&gt;brms&lt;/code&gt; package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.&lt;/p&gt;
+&lt;p&gt;First, let’s perform the linear regression without IV. We can use the &lt;code&gt;brm&lt;/code&gt; function as a drop in replacement of &lt;code&gt;lm&lt;/code&gt; to get distributions of our parameter estimates. Here the &lt;code&gt;brms&lt;/code&gt; package is performing a Bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.&lt;/p&gt;
 &lt;p&gt;Starting with column &lt;code&gt;1&lt;/code&gt; of table &lt;code&gt;2&lt;/code&gt; we estimate the coefficients with only &lt;code&gt;qty&lt;/code&gt; and &lt;code&gt;price&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(brms)
 library(tidybayes)
@@ -270,7 +270,7 @@ fit2_full %&amp;gt;%
   geom_point(data = fulton, size = 2) +
   scale_fill_brewer()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-9-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;The prediction is downward trending as the original curve except with a steeper slope (&lt;code&gt;-0.54&lt;/code&gt; vs &lt;code&gt;-1.06&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;The prediction is downward trending as the original curve except with a steeper slope (&lt;code&gt;-0.54&lt;/code&gt; vs &lt;code&gt;-1.09&lt;/code&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;elasticities&#34; class=&#34;section level2&#34;&gt;
@@ -320,7 +320,7 @@ So here &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; is an e
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.88, -0.18]. With the IV estimation our elasticity is &lt;code&gt;-1.06&lt;/code&gt; [-2.2, -0.08]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.&lt;/p&gt;
+&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.89, -0.18]. With the IV estimation our elasticity is &lt;code&gt;-1.09&lt;/code&gt; [-2.17, -0.17]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.&lt;/p&gt;
 &lt;p&gt;Some interesting interpretations of this unit elasticity from the paper include:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;First, it is consistent with pricing power on the part of the

@@ -33,7 +33,7 @@ I'll be exploring *Instrumental Variables* using an example of a [study](https:/
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/>
 
-The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it's not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.
+The general idea of the study is to estimate the demand curve for fish at the market. It is unfortunately not as simple as regressing price on demand. There are supply effects that need to be accounted for to isolate the demand effects.
 
 In this blog post I'll be reproducing a portion of this analysis using R, packages of the [tidyverse](https://www.tidyverse.org/), and the [brms](https://github.com/paul-buerkner/brms) package in R.
 
@@ -42,7 +42,7 @@ In this blog post I'll be reproducing a portion of this analysis using R, packag
 I discovered data related to this study at the following website:
 http://people.brandeis.edu/~kgraddy/data.html
 
-Bringing this data into R is very easy. This data appears to be the cleand and transformed data used within the paper. Let's read it into our R environment and take a look:
+Bringing this data into R is very simple. The linked dataset appears to be the cleaned and transformed data used within the paper. Let's read it into our R environment and take a look:
 
 ```{r}
 library(tidyverse)
@@ -62,7 +62,7 @@ Variable | Units | Description
  rainy | dummy var | Rain on shore
  stormy | dummy var | Wind and waves off shore (a 3-day moving average)
  
-The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure `2` from the paper.
+The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of Whiting being sold by reproducing Figure `2` from the paper.
 
 ```{r}
 # fixing the date column 
@@ -85,7 +85,7 @@ Reproducing this figure gave me confidence that I had the correct data to reprod
 
 ## Demand Curve
 
-The naive way in attempting to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:
+The naive way in attempting to find the relationship between price and demand (the demand curve) would be to regress quantity on price:
 
 ```{r}
 ggplot(fulton, aes(x = price, y = qty)) + 
@@ -105,10 +105,10 @@ The paper includes a table of estimated coefficients like so:
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png" alt="drawing" width="80%"/>
 
-I'll be reproducing this table but with bayesian estimation methods.
+I'll be reproducing this table but with Bayesian estimation methods.
 
 ### OLS (Ordinary Least Squares) Reproduced
-First, let's perform the linear regression without IV. We can use the `brm` function as a drop in replacement of `lm` to get distributions of our parameter estimates. Here the `brms` package is performing a bayesian estimation using MCMC. I'm keeping the default "uninformative" priors set by the package.
+First, let's perform the linear regression without IV. We can use the `brm` function as a drop in replacement of `lm` to get distributions of our parameter estimates. Here the `brms` package is performing a Bayesian estimation using MCMC. I'm keeping the default "uninformative" priors set by the package.
 
 Starting with column `1` of table `2` we estimate the coefficients with only `qty` and `price`:
 

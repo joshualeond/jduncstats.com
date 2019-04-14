@@ -29,14 +29,14 @@ output:
 </ul>
 <p>I’ll be exploring <em>Instrumental Variables</em> using an example of a <a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">study</a> on the <strong>Fulton Fish Market</strong> in NYC:</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/></p>
-<p>The general idea of the study is to estimate the demand curve for fish at the market. The problem is that it’s not as simple as regressing price on demand. There are the supply effects that need to be accounted for to isolate the demand effects.</p>
+<p>The general idea of the study is to estimate the demand curve for fish at the market. It is unfortunately not as simple as regressing price on demand. There are supply effects that need to be accounted for to isolate the demand effects.</p>
 <p>In this blog post I’ll be reproducing a portion of this analysis using R, packages of the <a href="https://www.tidyverse.org/">tidyverse</a>, and the <a href="https://github.com/paul-buerkner/brms">brms</a> package in R.</p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
 <p>I discovered data related to this study at the following website:
 <a href="http://people.brandeis.edu/~kgraddy/data.html" class="uri">http://people.brandeis.edu/~kgraddy/data.html</a></p>
-<p>Bringing this data into R is very easy. This data appears to be the cleand and transformed data used within the paper. Let’s read it into our R environment and take a look:</p>
+<p>Bringing this data into R is very simple. The linked dataset appears to be the cleaned and transformed data used within the paper. Let’s read it into our R environment and take a look:</p>
 <pre class="r"><code>library(tidyverse)
 
 fulton &lt;- read_tsv(&quot;http://people.brandeis.edu/~kgraddy/datasets/fish.out&quot;)
@@ -98,7 +98,7 @@ fulton</code></pre>
 </tr>
 </tbody>
 </table>
-<p>The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of fish being sold by reproducing Figure <code>2</code> from the paper.</p>
+<p>The paper informs the reader that transactions recorded are of a particular fish species called Whiting. We can get a feel for the total amount of Whiting being sold by reproducing Figure <code>2</code> from the paper.</p>
 <pre class="r"><code># fixing the date column 
 fulton %&gt;% 
   mutate(
@@ -118,7 +118,7 @@ fulton %&gt;%
 </div>
 <div id="demand-curve" class="section level2">
 <h2>Demand Curve</h2>
-<p>The naive way in attempting to discover the relationship between price and demand (the demand curve) would be to regress quantity on price:</p>
+<p>The naive way in attempting to find the relationship between price and demand (the demand curve) would be to regress quantity on price:</p>
 <pre class="r"><code>ggplot(fulton, aes(x = price, y = qty)) + 
   geom_point() + 
   geom_smooth(method = &quot;lm&quot;)</code></pre>
@@ -131,10 +131,10 @@ fulton %&gt;%
 <h2>Regressions</h2>
 <p>The paper includes a table of estimated coefficients like so:</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png" alt="drawing" width="80%"/></p>
-<p>I’ll be reproducing this table but with bayesian estimation methods.</p>
+<p>I’ll be reproducing this table but with Bayesian estimation methods.</p>
 <div id="ols-ordinary-least-squares-reproduced" class="section level3">
 <h3>OLS (Ordinary Least Squares) Reproduced</h3>
-<p>First, let’s perform the linear regression without IV. We can use the <code>brm</code> function as a drop in replacement of <code>lm</code> to get distributions of our parameter estimates. Here the <code>brms</code> package is performing a bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.</p>
+<p>First, let’s perform the linear regression without IV. We can use the <code>brm</code> function as a drop in replacement of <code>lm</code> to get distributions of our parameter estimates. Here the <code>brms</code> package is performing a Bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.</p>
 <p>Starting with column <code>1</code> of table <code>2</code> we estimate the coefficients with only <code>qty</code> and <code>price</code>:</p>
 <pre class="r"><code>library(brms)
 library(tidybayes)
@@ -227,7 +227,7 @@ fit2_full %&gt;%
   geom_point(data = fulton, size = 2) +
   scale_fill_brewer()</code></pre>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-9-1.svg" width="672" /></p>
-<p>The prediction is downward trending as the original curve except with a steeper slope (<code>-0.54</code> vs <code>-1.06</code>).</p>
+<p>The prediction is downward trending as the original curve except with a steeper slope (<code>-0.54</code> vs <code>-1.09</code>).</p>
 </div>
 </div>
 <div id="elasticities" class="section level2">
@@ -277,7 +277,7 @@ So here <span class="math inline">\(\beta_1\)</span> is an elasticity. For a uni
 </tr>
 </tbody>
 </table>
-<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.88, -0.18]. With the IV estimation our elasticity is <code>-1.06</code> [-2.2, -0.08]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.</p>
+<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.89, -0.18]. With the IV estimation our elasticity is <code>-1.09</code> [-2.17, -0.17]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.</p>
 <p>Some interesting interpretations of this unit elasticity from the paper include:</p>
 <blockquote>
 <p>First, it is consistent with pricing power on the part of the
