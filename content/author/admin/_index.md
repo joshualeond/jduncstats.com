@@ -31,10 +31,13 @@ social:
 - icon: github
   icon_pack: fab
   link: https://github.com/joshualeond
+- icon: linkedin
+  icon_pack: fab
+  link: https://www.linkedin.com/in/joshua-duncan-580913121/
 superuser: true
 user_groups:
 - Researchers
 - Visitors
 ---
 
-Hey, I'm Josh Duncan, a former controls engineer that found a passion in data science and statistics. Statistical modeling and uncertainty fascinate me. I'm currently on a Bayesian modeling journey so you'll likely see posts on learning bayes.
+Hey, I'm Josh Duncan, a former controls engineer that found a passion in data science and statistics. This blog is a platform for extending my data science education. I'm currently on a Bayesian modeling journey so you'll likely see posts on learning bayes.

@@ -25,7 +25,7 @@ weight = 1
   icon = "lightbulb"
   icon_pack = "far"
   name = "Data Science"
-  description = "I became hooked on the field of data science in `2015`. At the moment I'd say I'm more of a data science generalist but am especially intrigued by probabilistic modeling and probabilistic programming languages (à la [Stan](https://mc-stan.org/)). I'm skeptical of the promise of deep learning but am excited to see innovations like *transfer learning*, *deep probabilistic modeling*, [*neural ODEs*](https://arxiv.org/abs/1806.07366), and [*differentiable programming*](https://fluxml.ai/2019/03/05/dp-vs-rl.html)."
+  description = "The field of data science really captured my attention back in `2015`. At the moment I'd say I'm more of a data science generalist but am especially intrigued by probabilistic modeling and probabilistic programming languages (à la [Stan](https://mc-stan.org/), [Turing](http://turing.ml/), etc.). I'm a bit skeptical of the promise of deep learning but am excited to see innovations like *transfer learning*, *deep probabilistic modeling*, [*neural ODEs*](https://arxiv.org/abs/1806.07366), and [*differentiable programming*](https://fluxml.ai/2019/03/05/dp-vs-rl.html)."
 
 [[feature]]
   icon = "laptop-code"
