@@ -29,7 +29,7 @@ output:
 <p>From what I gather, these modeling techniques are popular for discovering causal relationships in observational studies. When an RCT (randomized control trial) is unreasonable then these techniques give us an alternative approach.</p>
 <p>I’ll be exploring one of these methods called <em>Instrumental Variables</em> (or IV). An example use case from Skipper’s talk was a <a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">study</a> on the <strong>Fulton Fish Market</strong> in NYC.</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/></p>
-<p>The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing quantity on price. The price is not only influenced by demand but also by the supply effects at the market. We’ll be using IV to account for supply effects and isolate the demand effects.</p>
+<p>The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing quantity on price. The relationship between price and the quantity of fish sold is not exclusive to demand but includes supply effects at the market. We’ll be using IV to account for supply effects to isolate the demand effects.</p>
 <p>In this blog post I’ll be reproducing a portion of this analysis using R, packages of the <a href="https://www.tidyverse.org/">tidyverse</a>, and the <a href="https://github.com/paul-buerkner/brms">brms</a> package in R.</p>
 </div>
 <div id="data" class="section level2">
@@ -305,7 +305,7 @@ So here <span class="math inline">\(\beta_1\)</span> is an elasticity. For a <sp
 </tr>
 </tbody>
 </table>
-<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.88, -0.17]. With the IV estimation our elasticity is <code>-1.09</code> [-2.17, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unit elastic.</p>
+<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.9, -0.18]. With the IV estimation our elasticity is <code>-1.09</code> [-2.17, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unit elastic.</p>
 <p>Some interesting interpretations of this unit elasticity from the paper include:</p>
 <blockquote>
 <p>First, it is consistent with pricing power on the part of the
