@@ -28,9 +28,8 @@
   
     
   
-  <meta name="description" content="Overview I was listening to the DataFramed podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:
- Instrumental Variables Matching Difference-in-Differences  I’ll be exploring Instrumental Variables using an example of a study on the Fulton Fish Market in NYC:
-The general idea of the study is to estimate the demand curve for fish at the market.">
+  <meta name="description" content="Overview Skipper Seabold of PyData fame recently gave a talk titled “What’s the Science in Data Science?”. His talk presents several methods that are commonly used in econometrics that the field of data science could benefit from if more widely adopted. Some of the mentioned methods were:
+ Instrumental Variables Matching Difference-in-Differences  From what I gather, these modeling techniques are popular for discovering causal relationships in observational studies. When an RCT (randomized control trial) is unreasonable then these give us an alternative approach.">
 
   
   <link rel="alternate" hreflang="en-us" href="/post/market-demand-with-instrumental-variables/">
@@ -133,9 +132,8 @@ The general idea of the study is to estimate the demand curve for fish at the ma
   <meta property="og:site_name" content="Josh Duncan">
   <meta property="og:url" content="/post/market-demand-with-instrumental-variables/">
   <meta property="og:title" content="Market Demand with Instrumental Variables | Josh Duncan">
-  <meta property="og:description" content="Overview I was listening to the DataFramed podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:
- Instrumental Variables Matching Difference-in-Differences  I’ll be exploring Instrumental Variables using an example of a study on the Fulton Fish Market in NYC:
-The general idea of the study is to estimate the demand curve for fish at the market."><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:description" content="Overview Skipper Seabold of PyData fame recently gave a talk titled “What’s the Science in Data Science?”. His talk presents several methods that are commonly used in econometrics that the field of data science could benefit from if more widely adopted. Some of the mentioned methods were:
+ Instrumental Variables Matching Difference-in-Differences  From what I gather, these modeling techniques are popular for discovering causal relationships in observational studies. When an RCT (randomized control trial) is unreasonable then these give us an alternative approach."><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2019-03-26T00:00:00&#43;00:00">
@@ -356,7 +354,7 @@ The general idea of the study is to estimate the demand curve for fish at the ma
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    9 min read
+    10 min read
   </span>
   
 
@@ -440,15 +438,16 @@ The general idea of the study is to estimate the demand curve for fish at the ma
 
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>I was listening to the <a href="https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science">DataFramed</a> podcast where Skipper Seabold was interviewed and spoke about “The Credibility Crisis in Data Science”. He listed a set of techniques that he felt should be more common in the data science community. Some topics he mentioned:</p>
+<p>Skipper Seabold of PyData fame recently gave a <a href="https://youtu.be/kTo16ieMCi8">talk</a> titled “What’s the Science in Data Science?”. His talk presents several methods that are commonly used in econometrics that the field of data science could benefit from if more widely adopted. Some of the mentioned methods were:</p>
 <ul>
 <li>Instrumental Variables</li>
 <li>Matching</li>
 <li>Difference-in-Differences</li>
 </ul>
-<p>I’ll be exploring <em>Instrumental Variables</em> using an example of a <a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">study</a> on the <strong>Fulton Fish Market</strong> in NYC:</p>
+<p>From what I gather, these modeling techniques are popular for discovering causal relationships in observational studies. When an RCT (randomized control trial) is unreasonable then these give us an alternative approach.</p>
+<p>I’ll be exploring one of these methods called <em>Instrumental Variables</em> (or IV). An example use case from Skippers talk was a <a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">study</a> on the <strong>Fulton Fish Market</strong> in NYC.</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/></p>
-<p>The general idea of the study is to estimate the demand curve for fish at the market. It is unfortunately not as simple as regressing price on demand. There are supply effects that need to be accounted for to isolate the demand effects.</p>
+<p>The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing price on quantity. The price is not only influenced by demand but also by the supply effects at the market. We’ll be using IV to account for supply effects and isolate the demand effects.</p>
 <p>In this blog post I’ll be reproducing a portion of this analysis using R, packages of the <a href="https://www.tidyverse.org/">tidyverse</a>, and the <a href="https://github.com/paul-buerkner/brms">brms</a> package in R.</p>
 </div>
 <div id="data" class="section level2">
@@ -475,7 +474,7 @@ fulton</code></pre>
 ## 10     0     0     0     0 911213      0     0 -0.342   9.21     0     0
 ## # … with 101 more rows, and 5 more variables: windspd &lt;dbl&gt;,
 ## #   windspd2 &lt;dbl&gt;, pricelevel &lt;dbl&gt;, totr &lt;dbl&gt;, tots &lt;dbl&gt;</code></pre>
-<p>Here is a description of the variables we will be using for this work:</p>
+<p>Here is a quick description of the variables we will be using for this work:</p>
 <table>
 <thead>
 <tr class="header">
@@ -542,18 +541,18 @@ fulton %&gt;%
   geom_point() + 
   geom_smooth(method = &quot;lm&quot;)</code></pre>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-3-1.svg" width="672" /></p>
-<p>But would this be the demand curve? It actually wouldn’t be. According to intro economics, each one of the points in the plot is the intersection of both a supply and demand curve. Something like <a href="https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/">this</a>:</p>
+<p>But would this be the demand curve? No, it actually wouldn’t be. According to intro economics, each one of the points in the plot above is the result of the intersection of both a supply and demand curve. Something like this <a href="https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/">figure</a>:</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png" alt="drawing" width="80%"/></p>
-<p>So how does the author go about estimating the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post. We’ll be using <strong>Instrumental Variables</strong> (or IV).</p>
+<p>So how does the author go about estimating a more accurate representation of the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post: <strong>Instrumental Variables</strong>.</p>
 </div>
 <div id="regressions" class="section level2">
 <h2>Regressions</h2>
-<p>The paper includes a table of estimated coefficients like so:</p>
+<p>The paper includes a table of estimated coefficients shown here:</p>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/table-2.png" alt="drawing" width="80%"/></p>
-<p>I’ll be reproducing this table but with Bayesian estimation methods.</p>
+<p>I’ll be reproducing this table but with Bayesian estimation. A nice benefit of using bayesian estimation is that our estimated model includes distributions for each of our parameters.</p>
 <div id="ols-ordinary-least-squares-reproduced" class="section level3">
 <h3>OLS (Ordinary Least Squares) Reproduced</h3>
-<p>First, let’s perform the linear regression without IV. We can use the <code>brm</code> function as a drop in replacement of <code>lm</code> to get distributions of our parameter estimates. Here the <code>brms</code> package is performing a Bayesian estimation using MCMC. I’m keeping the default “uninformative” priors set by the package.</p>
+<p>First, let’s perform the classic linear regression. We can use the <code>brm</code> function in the <code>brms</code> package as a drop in replacement for R’s linear model function <code>lm</code>. However, the estimation process of <code>lm</code> and <code>brm</code> are quite different. The <code>lm</code> function is using OLS and the <code>brms</code> package is performing Bayesian estimation using a <a href="https://arxiv.org/abs/1701.02434">form</a> of Markov Chain Monte Carlo (MCMC).</p>
 <p>Starting with column <code>1</code> of table <code>2</code> we estimate the coefficients with only <code>qty</code> and <code>price</code>:</p>
 <pre class="r"><code>library(brms)
 library(tidybayes)
@@ -567,7 +566,7 @@ fit1 %&gt;%
   ggplot(aes(x = b_price)) +
     geom_density_line()</code></pre>
 <p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-4-1.svg" width="672" /></p>
-<p>The <code>brms</code> package provides an abstraction layer to the <code>Stan</code> probabilistic programming language. So if you’re curious what these “uninformative” priors that I breezed over actually are, take a look at the generated code with the <code>stancode</code> function. Here is an excerpt of the stan code generated for the model above:</p>
+<p>The <code>brms</code> package provides an abstraction layer to the <code>Stan</code> probabilistic programming language. So if you’re curious what the “uninformative” priors that I breezed over actually are, take a look at the generated code with the <code>stancode</code> function. Here is an excerpt of the stan code generated for the model above:</p>
 <pre class="stan"><code>model {
   vector[N] mu = temp_Intercept + Xc * b;
   // priors including all constants
@@ -602,7 +601,21 @@ fit1_full %&gt;%
 <blockquote>
 <p>That is, first a regression is run with log price as the dependent variable and the storminess of the weather as the explanatory variable. This regression seeks to measure the variation in price that is attributable to stormy weather. The coefficients from this regression are then used to predict log price on each day, and these predicted values for price are inserted back into the regression.</p>
 </blockquote>
-<p>Now let’s move on to using IV. This is possible with the <code>brms</code> package and its ability to specify multivariate models. We’ll piece it together with two separate formulas defined in the <code>bf</code> function calls below.</p>
+<p>So Kathryn mentions two steps here:</p>
+<ol style="list-style-type: decimal">
+<li>A regression with log price and storminess</li>
+<li>Using coefficients from step <code>1</code>, predict log price and place the predicted values back into the second regression.</li>
+</ol>
+<p>A simple diagram of this two step process is generated below:</p>
+<pre class="r"><code>library(ggdag)
+
+dagify(
+  qty ~ price, 
+  price ~ stormy
+  ) %&gt;% 
+  ggdag(seed = 12)</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg" width="672" /></p>
+<p>Now let’s perform the estimation. This is possible with the <code>brms</code> package and its ability to specify multivariate response models. We’ll piece it together with two separate formulas defined in the <code>bf</code> function calls below.</p>
 <p>The first estimation will be for column <code>3</code> of table <code>2</code>:</p>
 <pre class="r"><code># measure variation in price attributable to stormy weather
 fit2a &lt;- bf(price ~ stormy)
@@ -616,8 +629,15 @@ fit2 %&gt;%
   posterior_samples() %&gt;% 
   ggplot(aes(x = b_qty_price)) +
     geom_density_line()</code></pre>
-<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-7-1.svg" width="672" /></p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-8-1.svg" width="672" /></p>
 <p>And lastly we’ll estimate the IV with the remaining variables (column <code>4</code>):</p>
+<pre class="r"><code># visual representation of the estimation
+dagify(
+  qty ~ price + day1 + day2 + day3 + day4 + cold + rainy, 
+  price ~ stormy
+  ) %&gt;% 
+  ggdag(seed = 9)</code></pre>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-9-1.svg" width="672" /></p>
 <pre class="r"><code># add additional demand specific variables
 fit2b_full &lt;- bf(qty ~ price + day1 + day2 + day3 + day4 + cold + rainy)
 
@@ -629,7 +649,8 @@ fit2_full %&gt;%
   gather(b_qty_price:b_qty_rainy, key = &quot;coef&quot;, value = &quot;est&quot;) %&gt;% 
   ggplot(aes(x = est, y = coef)) +
     geom_density_ridges()</code></pre>
-<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-8-1.svg" width="672" /></p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-10-1.svg" width="672" /></p>
+<p>One thing that I think is particulary interesting about the distributions above is the uncertainty of the price coefficient. We can clearly see that the parameters distribution with IV is much wider than our classic linear regression. Here we are seeing the uncertainty of our first model (<code>price ~ storminess</code>) propagating to our second model.</p>
 </div>
 <div id="visualizing-the-demand-curve" class="section level3">
 <h3>Visualizing the Demand Curve</h3>
@@ -645,7 +666,7 @@ fit2_full %&gt;%
     ) +
   geom_point(data = fulton, size = 2) +
   scale_fill_brewer()</code></pre>
-<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-9-1.svg" width="672" /></p>
+<p><img src="/post/2019-03-26-market-price-with-instrumental-variables_files/figure-html/unnamed-chunk-11-1.svg" width="672" /></p>
 <p>The prediction is downward trending as the original curve except with a steeper slope (<code>-0.54</code> vs <code>-1.09</code>).</p>
 </div>
 </div>
@@ -696,7 +717,7 @@ So here <span class="math inline">\(\beta_1\)</span> is an elasticity. For a uni
 </tr>
 </tbody>
 </table>
-<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.89, -0.18]. With the IV estimation our elasticity is <code>-1.09</code> [-2.17, -0.17]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unitary elastic.</p>
+<p>Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is <code>-0.54</code> [-0.89, -0.17]. With the IV estimation our elasticity is <code>-1.09</code> [-2.17, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unit elastic.</p>
 <p>Some interesting interpretations of this unit elasticity from the paper include:</p>
 <blockquote>
 <p>First, it is consistent with pricing power on the part of the
@@ -711,14 +732,15 @@ fish dealers. A price-setting firm will raise price to the point where the perce
 </div>
 <div id="wrapping-up" class="section level2">
 <h2>Wrapping Up</h2>
-<p>This was definitely a fun topic to begin exploring. I plan on taking a look at <em>difference-in-differences</em> in the near future as well.</p>
+<p>This was definitely a fun topic to start exploring. I plan on taking a look at <em>difference-in-differences</em> in the near future as well.</p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
 <ul>
-<li><a href="https://www.datacamp.com/community/podcast/credibility-crisis-in-data-science">DataFramed: The Credibility Crisis in Data Science</a></li>
+<li><a href="https://youtu.be/kTo16ieMCi8">What’s the Science in Data Science?</a></li>
 <li><a href="https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207">Graddy, Kathryn. 2006. “Markets: The Fulton Fish Market.” Journal of Economic Perspectives, 20 (2): 207-220.</a></li>
 <li><a href="https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/">Create supply and demand economics curves with ggplot2</a></li>
+<li><a href="https://arxiv.org/abs/1701.02434">Michael Betancourt: “A Conceptual Introduction to Hamiltonian Monte Carlo”, 2017</a></li>
 <li><a href="http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf">Log-level and Log-log transformations in Linear Regression Models</a></li>
 </ul>
 </div>
