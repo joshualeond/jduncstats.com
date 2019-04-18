@@ -34,7 +34,7 @@ I'll be exploring one of these methods called *Instrumental Variables* (or IV). 
 
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg" alt="drawing" width="50%"/>
 
-The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing price on quantity. The price is not only influenced by demand but also by the supply effects at the market. We'll be using IV to account for supply effects and isolate the demand effects.
+The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing quantity on price. The price is not only influenced by demand but also by the supply effects at the market. We'll be using IV to account for supply effects and isolate the demand effects.
 
 In this blog post I'll be reproducing a portion of this analysis using R, packages of the [tidyverse](https://www.tidyverse.org/), and the [brms](https://github.com/paul-buerkner/brms) package in R.
 
@@ -99,6 +99,10 @@ But would this be the demand curve? No, it actually wouldn't be. According to in
 <img src="/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png" alt="drawing" width="80%"/>
 
 So how does the author go about estimating a more accurate representation of the demand curve? How do you isolate the demand effects from the supply? Well, it's in the title of this post: **Instrumental Variables**. 
+
+Skipper's presentation explained IV as:
+
+> We can replace *X* with **"instruments"** that are **correlated with X** but **not caused by Y** or that **affect Y** but *only* **through X**.
 
 ## Regressions
 

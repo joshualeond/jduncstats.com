@@ -73,7 +73,7 @@
 &lt;p&gt;From what I gather, these modeling techniques are popular for discovering causal relationships in observational studies. When an RCT (randomized control trial) is unreasonable then these techniques give us an alternative approach.&lt;/p&gt;
 &lt;p&gt;I’ll be exploring one of these methods called &lt;em&gt;Instrumental Variables&lt;/em&gt; (or IV). An example use case from Skipper’s talk was a &lt;a href=&#34;https://www.aeaweb.org/articles?id=10.1257/jep.20.2.207&#34;&gt;study&lt;/a&gt; on the &lt;strong&gt;Fulton Fish Market&lt;/strong&gt; in NYC.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/fulton.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
-&lt;p&gt;The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing price on quantity. The price is not only influenced by demand but also by the supply effects at the market. We’ll be using IV to account for supply effects and isolate the demand effects.&lt;/p&gt;
+&lt;p&gt;The referenced study estimates the demand curve for fish at the market. Finding the demand curve is unfortunately not as simple as regressing quantity on price. The price is not only influenced by demand but also by the supply effects at the market. We’ll be using IV to account for supply effects and isolate the demand effects.&lt;/p&gt;
 &lt;p&gt;In this blog post I’ll be reproducing a portion of this analysis using R, packages of the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;, and the &lt;a href=&#34;https://github.com/paul-buerkner/brms&#34;&gt;brms&lt;/a&gt; package in R.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;data&#34; class=&#34;section level2&#34;&gt;
@@ -170,6 +170,10 @@ fulton %&amp;gt;%
 &lt;p&gt;But would this be the demand curve? No, it actually wouldn’t be. According to intro economics, each one of the points in the plot above is the result of the intersection of both a supply and demand curve. Something like this &lt;a href=&#34;https://www.andrewheiss.com/blog/2017/09/15/create-supply-and-demand-economics-curves-with-ggplot2/&#34;&gt;figure&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/post/2019-03-26-market-price-with-instrumental-variables_files/supply-demand-intersection-simple-1.png&#34; alt=&#34;drawing&#34; width=&#34;80%&#34;/&gt;&lt;/p&gt;
 &lt;p&gt;So how does the author go about estimating a more accurate representation of the demand curve? How do you isolate the demand effects from the supply? Well, it’s in the title of this post: &lt;strong&gt;Instrumental Variables&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Skipper’s presentation explained IV as:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We can replace &lt;em&gt;X&lt;/em&gt; with &lt;strong&gt;“instruments”&lt;/strong&gt; that are &lt;strong&gt;correlated with X&lt;/strong&gt; but &lt;strong&gt;not caused by Y&lt;/strong&gt; or that &lt;strong&gt;affect Y&lt;/strong&gt; but &lt;em&gt;only&lt;/em&gt; &lt;strong&gt;through X&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;/div&gt;
 &lt;div id=&#34;regressions&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Regressions&lt;/h2&gt;
@@ -345,7 +349,7 @@ So here &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; is an e
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.88, -0.19]. With the IV estimation our elasticity is &lt;code&gt;-1.09&lt;/code&gt; [-2.17, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unit elastic.&lt;/p&gt;
+&lt;p&gt;Given the descriptions of elasticity above. We would have two different interpretations of how demand responds to price with the non-IV and the IV estimation. With the non-IV estimation our elasticity coefficient is &lt;code&gt;-0.54&lt;/code&gt; [-0.88, -0.17]. With the IV estimation our elasticity is &lt;code&gt;-1.09&lt;/code&gt; [-2.17, -0.15]. So we would mistakenly interpret the demand elasticity as being inelastic when it actually appears to be unit elastic.&lt;/p&gt;
 &lt;p&gt;Some interesting interpretations of this unit elasticity from the paper include:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;First, it is consistent with pricing power on the part of the
