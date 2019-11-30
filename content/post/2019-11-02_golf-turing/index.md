@@ -765,7 +765,7 @@ We can see that this adjusted first principles based model is fitting the data m
 
 ## Conclusion
 
-If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It's really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of it's promise to solve the [two-language problem](https://www.youtube.com/watch?v=B9moDuSYzGo).
+If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It's really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of its promise to solve the [two-language problem](https://www.youtube.com/watch?v=B9moDuSYzGo).
 
 ## References
 

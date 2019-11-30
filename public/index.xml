@@ -801,7 +801,7 @@ plot!(geom_lines2, color = 2)
 
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
-&lt;p&gt;If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It&amp;rsquo;s really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of it&amp;rsquo;s promise to solve the &lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;two-language problem&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It&amp;rsquo;s really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of its promise to solve the &lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;two-language problem&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
 
