@@ -54,6 +54,734 @@
     </item>
     
     <item>
+      <title>Model building of golf putting with Turing.jl</title>
+      <link>/post/2019-11-02_golf-turing/</link>
+      <pubDate>Sat, 02 Nov 2019 00:00:00 -0500</pubDate>
+      
+      <guid>/post/2019-11-02_golf-turing/</guid>
+      <description>
+
+&lt;h2 id=&#34;first-thing-disclaimer&#34;&gt;First Thing (Disclaimer)&lt;/h2&gt;
+
+&lt;p&gt;This blog post is based on a blog post written by the popular bayesian statistician Andrew Gelman.&lt;/p&gt;
+
+&lt;p&gt;Dr. Gelman&amp;rsquo;s post was written in the &lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34;&gt;Stan&lt;/a&gt; probabilistic programming language (or PPL). Since this post there have been a couple other blog posts translating the code to other PPL&amp;rsquo;s. They are excellent and I definitely recommend checking them out. Here&amp;rsquo;s the list of links and my opinion on some of the benefits of reading each:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Dr. Gelman&amp;rsquo;s using Stan with R: See &lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. Read Dr. Gelman&amp;rsquo;s post first as he lays out the problem being modeled here really well. Explaining the geometry at play and how to adjust the models to incorporate the physics of the problem. It&amp;rsquo;s a great article showing the power of using a probabilistic programming language to build models.&lt;/li&gt;
+&lt;li&gt;Colin Carroll&amp;rsquo;s using the Python PPL PyMC3: You can check out his work &lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. I really enjoyed Colin&amp;rsquo;s post because of his prior predictive checks, data visualizations, and showing the value of these models moving past predictions.&lt;/li&gt;
+&lt;li&gt;Adam Haber&amp;rsquo;s post using Python and Tensorflow Probability: See &lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. His post goes in great detail about more of the sampling and lower level details of Tensorflow and MCMC.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;My post is nothing really novel, simply a port to the Julia PPL, &lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34;&gt;Turing.jl&lt;/a&gt;. This post shows how to specify and estimate these same models within Julia.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started-and-plotting&#34;&gt;Getting started and plotting&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s Load the data and calculate the probabilities and error. We&amp;rsquo;ll use the following formula to calculate the error bars for the putting success rate:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;$$
+\sqrt{\hat{p}_j(1-\hat{p}_j)/n_j}
+$$&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Turing, CSV
+# Hide sampling progress.
+Turing.turnprogress(false);
+
+data = CSV.read(&amp;quot;golf_data.csv&amp;quot;)
+x, n, y = (data[:,1], data[:,2], data[:,3])
+
+pj = y ./ n
+error = @. sqrt((pj * (1 - pj) / n));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Plotting&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Plots
+
+# plot out the error
+scatter(
+  x, pj,
+  yerror= error,
+  legend = false,
+  ylim = (0, 1),
+  ylab = &amp;quot;Probability of Success&amp;quot;,
+  xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;logistic-regression&#34;&gt;Logistic Regression&lt;/h2&gt;
+
+&lt;p&gt;Building our first model, a GLM (Generalized Linear Model). We will attempt to model the probability of success in golf putting incorporating the distance as an independent (or predictor) variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;$$
+y_j\sim\mbox{binomial}(n_j, \mbox{logit}^{-1}(a + bx_j)),
+\mbox{ for } j=1,\dots, J.
+$$&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using StatsFuns: logistic
+
+@model golf_logistic(x,y,n,J) = begin
+  # parameters
+  a ~ Normal(0, 1)
+  b ~ Normal(0, 1)
+
+  # model
+  for i in 1:J
+    p = logistic(a + b * x[i])
+    y[i] ~ Binomial(n[i], p)
+  end
+end
+
+chn = psample(golf_logistic(x, y, n, length(x)), NUTS(), 4000, 2);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I&amp;rsquo;d like to add here that I&amp;rsquo;m using the &lt;code&gt;psample&lt;/code&gt; method in &lt;code&gt;Turing.jl&lt;/code&gt; to sample this model. If you have read through the documentation for &lt;code&gt;Turing.jl&lt;/code&gt; you&amp;rsquo;ll have seen the &lt;code&gt;sample&lt;/code&gt; method used more often. The only difference here is that the &lt;code&gt;psample&lt;/code&gt; method performs parallel sampling and thus gives us more than one chain. That last argument in the function call is the number of chains I&amp;rsquo;d like to run. You can read more about it in the &lt;a href=&#34;https://turing.ml/dev/docs/using-turing/guide#sampling-multiple-chains&#34; target=&#34;_blank&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now we&amp;rsquo;ve sampled the joint probability distribution. Let&amp;rsquo;s take a look at the results. I&amp;rsquo;ll create a function to show the table of results as html using the &lt;code&gt;PrettyTables.jl&lt;/code&gt; package. Looking at the summary statistics for the posterior distribution:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using PrettyTables
+
+function prettystats(chains)
+  chains |&amp;gt;
+    x -&amp;gt; summarystats(x, digits = 2) |&amp;gt;
+    x -&amp;gt; x.df |&amp;gt;
+    x -&amp;gt; pretty_table(x, backend = :html)
+end
+
+prettystats(chn)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;html&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;style&gt;
+table, td, th {
+    border-collapse: collapse;
+    font-family: sans-serif;
+}&lt;/p&gt;
+
+&lt;p&gt;td, th {
+    border-bottom: 0;
+    padding: 4px
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(odd) {
+    background: #eee;
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(even) {
+    background: #fff;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.header {
+    background: navy !important;
+    color: white;
+    font-weight: bold;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.subheader {
+    background: lightgray !important;
+    color: black;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.headerLastRow {
+    border-bottom: 2px solid black;
+}&lt;/p&gt;
+
+&lt;p&gt;th.rowNumber, td.rowNumber {
+    text-align: right;
+}&lt;/p&gt;
+
+&lt;p&gt;&lt;/style&gt;
+&lt;body&gt;
+&lt;table&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;tr class = header&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;naive_se&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mcse&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;ess&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr class = &#34;subheader headerLastRow&#34;&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;a&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;2.23&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.06&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;899.26&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;b&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;-0.26&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1173.64&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;Visualizing the predictions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;a_post = median(chn[:a].value)
+b_post = median(chn[:b].value)
+
+# iterator for distance from hole calcs
+xrng = 1:1:21
+post_lines = [logistic(a_post + b_post * x) for x = xrng]
+
+# 50 draws from the posterior
+using StatsBase
+a_samp = StatsBase.sample(chn[:a].value, 50)
+b_samp = StatsBase.sample(chn[:b].value, 50)
+
+post_samp = [logistic(a_samp[i] + b_samp[i] * x) for x = xrng, i = 1:50]
+
+plot!(post_samp, alpha = 0.5, color = :gray) # add uncertainty samples
+plot!(post_lines, color = :black) # add median
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;first-principles&#34;&gt;First Principles&lt;/h2&gt;
+
+&lt;p&gt;The next step is building a more bespoke model that incorporates the physics of this problem. Dr. Gelman describes this step as follows:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;We assume that the golfer is attempting to hit the ball completely straight but that many small factors interfere with this goal, so that the actual angle follows a normal distribution centered at 0 with some standard deviation σ.&lt;/p&gt;
+
+&lt;p&gt;The probability the ball goes in the hole is then the probability that the angle is less than the threshold; that is &lt;code&gt;$$
+\mbox{Pr}\left(|\mbox{angle}| &amp;lt; \sin^{-1}((R-r)/x)\right) = 2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma}\right) - 1
+$$&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;where Φ is the cumulative normal distribution function.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Again, for more background I would suggest reading the original post. So now we&amp;rsquo;ll define the function &lt;code&gt;Phi&lt;/code&gt;. It&amp;rsquo;s the cumulative distribution function of the standard normal distribution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Phi(x) = cdf.(Normal(0, 1), x);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s create and sample this model incorporating the angle.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle(x, y, n, J, r, R) = begin
+  # transformed data
+  threshold_angle = asin.((R - r) ./ x)
+
+  # parameters
+  sigma ~ Truncated(Normal(0, 1), 0, Inf)
+
+  # model
+  p = 2 * Phi(threshold_angle / sigma) .- 1
+  for i in 1:J
+    y[i] ~ Binomial(n[i], p[i])
+  end
+end
+
+# radius of ball and hole respectively
+r = (1.68 / 2) / 12
+R = (4.25 / 2) / 12
+
+chn2 = psample(golf_angle(x, y, n, length(x), r, R), NUTS(), 4000, 2)
+chn2 = hcat(chn2, Chains(chn2[:sigma].value * 180 / π, [&amp;quot;sigma_degrees&amp;quot;]))
+
+prettystats(chn2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;html&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;style&gt;
+table, td, th {
+    border-collapse: collapse;
+    font-family: sans-serif;
+}&lt;/p&gt;
+
+&lt;p&gt;td, th {
+    border-bottom: 0;
+    padding: 4px
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(odd) {
+    background: #eee;
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(even) {
+    background: #fff;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.header {
+    background: navy !important;
+    color: white;
+    font-weight: bold;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.subheader {
+    background: lightgray !important;
+    color: black;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.headerLastRow {
+    border-bottom: 2px solid black;
+}&lt;/p&gt;
+
+&lt;p&gt;th.rowNumber, td.rowNumber {
+    text-align: right;
+}&lt;/p&gt;
+
+&lt;p&gt;&lt;/style&gt;
+&lt;body&gt;
+&lt;table&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;tr class = header&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;naive_se&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mcse&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;ess&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr class = &#34;subheader headerLastRow&#34;&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.03&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4414.07&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_degrees&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.53&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.02&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4414.07&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we can calculate predictions and see how this model compares to the logistic model. Let&amp;rsquo;s wrap the angle calculation into a function as we&amp;rsquo;ll use it frequently throughout the post.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prob_angle(threshold, sigma) = 2 * Phi(threshold / sigma) .- 1;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Calculate and visualize predictions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# calculate predictions
+post_sigma = median(chn2[:sigma].value)
+threshold_angle = [asin((R - r) / x) for x = xrng]
+geom_lines = prob_angle(threshold_angle, post_sigma)
+
+scatter(
+  x, pj,
+  yerror= error,
+  label = &amp;quot;&amp;quot;,
+  ylim = (0, 1),
+  ylab = &amp;quot;Probability of Success&amp;quot;,
+  xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
+plot!(post_lines, color = :black, label = &amp;quot;Logistic regression&amp;quot;)
+plot!(geom_lines, color = 1, label = &amp;quot;Geometry-based model&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_9_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We see that the geometry based model fits the data much better than the Logistic regression.&lt;/p&gt;
+
+&lt;h2 id=&#34;new-golf-data&#34;&gt;New Golf Data&lt;/h2&gt;
+
+&lt;p&gt;Then came new data. Dr. Gelman received new data of gulf putting and compared the fit of the original geometry based model with the old and new data. Here is the comparison below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;datanew = CSV.read(&amp;quot;golf_data_new.csv&amp;quot;)
+xnew, nnew, ynew = (datanew[:,1], datanew[:,2], datanew[:,3])
+pnew = ynew ./ nnew
+xrngnew = 1:1:80
+
+# plot the old model fit with new data
+threshold_angle2 = [asin((R - r) / x) for x = xrngnew]
+geom_lines2 = prob_angle(threshold_angle2, post_sigma)
+
+scatter(
+  x, pj,
+  label = &amp;quot;Old data&amp;quot;,
+  ylab = &amp;quot;Probability of Success&amp;quot;,
+  xlab = &amp;quot;Distance from hole (ft)&amp;quot;,
+  color = 1)
+scatter!(xnew, pnew, color = 2, label = &amp;quot;New data&amp;quot;)
+plot!(geom_lines2, label = &amp;quot;&amp;quot;, color = 1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_10_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We see that the new data have many more observations with longer distance putts than in the original data. The success of these longer distance putts do not agree with the original geometry based model.&lt;/p&gt;
+
+&lt;h2 id=&#34;updated-geometry&#34;&gt;Updated Geometry&lt;/h2&gt;
+
+&lt;p&gt;So Dr. Gelman improves the model by taking distance into account.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;To get the ball in the hole, the angle isn’t the only thing you need to control; you also need to hit the ball just hard enough.&lt;/p&gt;
+
+&lt;p&gt;the probability a shot goes in becomes, &lt;code&gt;$$
+\left(2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma_{\rm angle}}\right) - 1\right)\left(\Phi\left(\frac{2}{(x+1)\,\sigma_{\rm distance}}\right) - \Phi\left(\frac{-1}{(x+1)\,\sigma_{\rm distance}}\right)\right)
+$$&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;where we have renamed the parameter σ from our earlier model to σ_angle to distinguish it from the new σ_distance parameter.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let&amp;rsquo;s add a function for the distance calculation for the improved geometry.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prob_distance(distance, tol, overshot, sigma) =
+  Phi((tol - overshot) ./ ((distance .+ overshot) * sigma)) -
+    Phi(-overshot ./ ((distance .+ overshot) * sigma));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s create the model to sample:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle_dist(x, y, n, J, r, R, overshot, distance_tolerance) = begin
+  # transformed data
+  threshold_angle = asin.((R - r) ./ x)
+
+  # parameters
+  sigma_angle ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma_distance ~ Truncated(Normal(0, 1), 0, Inf)
+
+  # model
+  p_angle = prob_angle(threshold_angle, sigma_angle)
+  p_distance = prob_distance(x, distance_tolerance, overshot, sigma_distance)
+  p = p_angle .* p_distance
+
+  for i in 1:J
+    y[i] ~ Binomial(n[i], p[i])
+  end
+end
+
+overshot = 1.
+distance_tolerance = 3.
+
+chn3 = psample(
+  golf_angle_dist(xnew, ynew, nnew, length(xnew), r, R, overshot, distance_tolerance),
+  NUTS(),
+  8000,
+  2)
+prettystats(chn3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;html&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;style&gt;
+table, td, th {
+    border-collapse: collapse;
+    font-family: sans-serif;
+}&lt;/p&gt;
+
+&lt;p&gt;td, th {
+    border-bottom: 0;
+    padding: 4px
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(odd) {
+    background: #eee;
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(even) {
+    background: #fff;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.header {
+    background: navy !important;
+    color: white;
+    font-weight: bold;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.subheader {
+    background: lightgray !important;
+    color: black;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.headerLastRow {
+    border-bottom: 2px solid black;
+}&lt;/p&gt;
+
+&lt;p&gt;th.rowNumber, td.rowNumber {
+    text-align: right;
+}&lt;/p&gt;
+
+&lt;p&gt;&lt;/style&gt;
+&lt;body&gt;
+&lt;table&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;tr class = header&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;naive_se&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mcse&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;ess&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr class = &#34;subheader headerLastRow&#34;&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_angle&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4092.49&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_distance&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.14&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4348.54&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;Dr. Gelman&amp;rsquo;s post suggests something is unstable with this model estimation. The estimated parameters match his closely however we do have drastically different values for the &lt;code&gt;$\hat R$&lt;/code&gt; diagnostics. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s make some predictions and visualize the results:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# calculate predictions
+post_siga = median(chn3[:sigma_angle].value)
+post_sigd = median(chn3[:sigma_distance].value)
+
+p_angle = prob_angle(threshold_angle2, post_siga)
+p_distance = prob_distance(xrngnew, distance_tolerance, overshot, post_sigd)
+
+geom2_lines = p_angle .* p_distance
+
+# plot
+scatter(
+  xnew, pnew,
+  legend = false,
+  color = 2,
+  ylab = &amp;quot;Probability of Success&amp;quot;,
+  xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
+plot!(geom2_lines, color = 2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_13_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now this model fits the new data better than the original geometry based model but you can see an issue near the middle of the range of the x-axis (distance). Gelman&amp;rsquo;s comments and proposed fix:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;There are problems with the fit in the middle of the range of x. We suspect this is a problem with the binomial error model, as it tries harder to fit points where the counts are higher. Look at how closely the fitted curve hugs the data at the very lowest values of x.&lt;/p&gt;
+
+&lt;p&gt;To fix this problem we took the data model, &lt;code&gt;$ y_j \sim \mbox{binomial}(n_j, p_j) $&lt;/code&gt;, and added an independent error term to each observation.&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;we first approximate the binomial data distribution by a normal and then add independent variance; thus: &lt;code&gt;$$ y_j/n_j \sim \mbox{normal}\left(p_j, \sqrt{p_j(1-p_j)/n_j + \sigma_y^2}\right) $$&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;a-dispersed-model&#34;&gt;A Dispersed Model&lt;/h2&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s implement the changes referenced above within Turing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle_dist_resid(x, y, n, J, r, R, overshot, distance_tolerance, raw) = begin
+  # transformed data
+  threshold_angle = asin.((R - r) ./ x)
+
+  # parameters
+  sigma_angle ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma_distance ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma_y ~ Truncated(Normal(0, 1), 0, Inf)
+
+  # model
+  p_angle = prob_angle(threshold_angle, sigma_angle)
+  p_distance = prob_distance(x, distance_tolerance, overshot, sigma_distance)
+  p = p_angle .* p_distance
+
+  for i in 1:J
+    raw[i] ~ Normal(p[i], sqrt(p[i] * (1-p[i]) / n[i] + sigma_y^2))
+  end
+end
+
+chn4 = psample(
+  golf_angle_dist_resid(xnew, ynew, nnew, length(xnew), r, R, overshot, distance_tolerance, ynew ./ nnew),
+  NUTS(),
+  4000,
+  2)
+
+# adding the conversion to degrees
+chns = hcat(chn4, Chains(chn4[:sigma_angle].value * 180 / π, [&amp;quot;sigma_degrees&amp;quot;]))
+prettystats(chns)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;html&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;style&gt;
+table, td, th {
+    border-collapse: collapse;
+    font-family: sans-serif;
+}&lt;/p&gt;
+
+&lt;p&gt;td, th {
+    border-bottom: 0;
+    padding: 4px
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(odd) {
+    background: #eee;
+}&lt;/p&gt;
+
+&lt;p&gt;tr:nth-child(even) {
+    background: #fff;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.header {
+    background: navy !important;
+    color: white;
+    font-weight: bold;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.subheader {
+    background: lightgray !important;
+    color: black;
+}&lt;/p&gt;
+
+&lt;p&gt;tr.headerLastRow {
+    border-bottom: 2px solid black;
+}&lt;/p&gt;
+
+&lt;p&gt;th.rowNumber, td.rowNumber {
+    text-align: right;
+}&lt;/p&gt;
+
+&lt;p&gt;&lt;/style&gt;
+&lt;body&gt;
+&lt;table&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;tr class = header&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;naive_se&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;mcse&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;ess&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr class = &#34;subheader headerLastRow&#34;&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_angle&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.02&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4098.68&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_degrees&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.02&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4098.68&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_distance&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.08&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;3803.99&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_y&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;785.16&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;Calculate predictions and visualize:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;post_siga = median(chn4[:sigma_angle].value)
+post_sigd = median(chn4[:sigma_distance].value)
+
+p_angle2 = prob_angle(threshold_angle2, post_siga)
+p_distance2 = prob_distance(xrngnew, distance_tolerance, overshot, post_sigd)
+
+geom_lines2 = p_angle2 .* p_distance2
+
+# plot
+scatter(
+  xnew, pnew,
+  legend = false,
+  color = 2,
+  ylab = &amp;quot;Probability of Success&amp;quot;,
+  xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
+plot!(geom_lines2, color = 2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_15_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We can see that this adjusted first principles based model is fitting the data much better now. To add to that, it also sampled faster and more consistently during my testing.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It&amp;rsquo;s really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and it&amp;rsquo;s promise to solve the &lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;two-language problem&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34;&gt;Stan: a state-of-the-art platform for statistical modeling and high-performance statistical computation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34;&gt;Model building and expansion for golf putting - Gelman&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34;&gt;Model building and expansion for golf putting - Carroll&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34;&gt;Bayesian golf puttings, NUTS, and optimizing your sampling function with TensorFlow Probability&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34;&gt;Turing.jl: A library for robust, efficient, general-purpose probabilistic programming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;ODSC East 2016 | Stefan Karpinski - &amp;ldquo;Solving the Two Language Problem&amp;rdquo;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Market Demand with Instrumental Variables</title>
       <link>/post/2019-03-26_market-dem-with-iv/</link>
       <pubDate>Tue, 26 Mar 2019 00:00:00 +0000</pubDate>
@@ -566,270 +1294,6 @@ end
 &lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next?&lt;/h2&gt;
 
 &lt;p&gt;A short post on cumulative distribution functions (cdf) using Julia will likely follow this one. Janert introduces both kdes and cdfs in his chapter &lt;strong&gt;A Single Variable: Shape and Distribution&lt;/strong&gt; and they complement each other really well. Thanks for reading!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Homework 2, Chapter 4</title>
-      <link>/post/hw2-ch-4/</link>
-      <pubDate>Sun, 10 Mar 2019 21:13:14 -0500</pubDate>
-      
-      <guid>/post/hw2-ch-4/</guid>
-      <description>
-
-
-&lt;div id=&#34;hard-problems&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Hard Problems&lt;/h2&gt;
-&lt;div id=&#34;h1.&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;4H1.&lt;/h3&gt;
-&lt;p&gt;The weights listed below were recorded in the !Kung census, but heights were not recorded for these individuals. Provide predicted heights and 89% intervals (either HPDI or PI) for each of these individuals. That is, fill in the table below, using model-based predictions.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
-library(knitr)
-library(kableExtra)
-
-kung &amp;lt;- tibble::tribble(
-  ~individual, ~weight,
-            1,   46.95,
-            2,   43.72,
-            3,   64.78,
-            4,   32.59,
-            5,   54.63
-  )
-
-# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;%
-#   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Well it looks like first we need to estimate this model. In the book on page &lt;code&gt;96&lt;/code&gt; we see the MAP estimation of this model on the filtered dataset. I’m going to fit this one for predictions.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rethinking)
-data(&amp;quot;Howell1&amp;quot;)
-
-d &amp;lt;- Howell1
-d2 &amp;lt;- d[d$age &amp;gt;= 18, ]
-
-# fit model
-m4.3 &amp;lt;- rethinking::map(
-  alist(
-    height ~ dnorm(mu, sigma), # likelihood
-    mu &amp;lt;- a + b * weight, # linear model
-    a ~ dnorm(156, 100), # prior
-    b ~ dnorm(0, 10), # prior
-    sigma ~ dunif(0, 50) # prior
-  ),
-  data = d2
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now the model is fit and we can estimate the predictions in two ways:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Collect posterior samples of the parameters of the estimated model and for each weight in the above dataframe sample from a Normal distribution with our posterior samples as parameters&lt;/li&gt;
-&lt;li&gt;Use the convenience function in the &lt;code&gt;rethinking&lt;/code&gt; package called &lt;code&gt;sim()&lt;/code&gt; to do the above giving it only the new weights&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post &amp;lt;- extract.samples(m4.3)
-head(post)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##          a         b    sigma
-## 1 112.0734 0.9424389 5.235063
-## 2 112.0144 0.9380622 5.386037
-## 3 112.2121 0.9355411 5.176812
-## 4 113.2801 0.9155520 5.131002
-## 5 112.9359 0.9258103 4.965042
-## 6 114.4667 0.8890500 5.054368&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sapply(kung$weight, function(weight)
-  rnorm(
-    n = nrow(post),
-    mean = post$a + post$b * weight,
-    sd = post$sigma
-    )
-  )
-
-(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.1218 145.3271 164.2434 135.3212 155.2902
-## 94% 164.5610 161.6145 180.6696 151.4692 171.4851&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And the convenient way:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.height &amp;lt;- sim(m4.3, data = list(weight = kung$weight))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
-[ 200 / 1000 ]
-[ 300 / 1000 ]
-[ 400 / 1000 ]
-[ 500 / 1000 ]
-[ 600 / 1000 ]
-[ 700 / 1000 ]
-[ 800 / 1000 ]
-[ 900 / 1000 ]
-[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(sim.PI &amp;lt;- apply(sim.height, 2, PI, prob = 0.89))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##         [,1]     [,2]     [,3]     [,4]     [,5]
-## 5%  148.5534 144.9224 163.5080 134.9054 155.4800
-## 94% 164.3544 161.6533 180.2119 151.1621 171.0385&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We have relatively the same results here which is expected. Let’s get the mean values as well:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim.mean &amp;lt;- apply(sim.height, 2, mean)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now let’s put all of this in the dataframe:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;kung$exp_height &amp;lt;- sim.mean
-kung$lo_89 &amp;lt;- sim.PI[1,]
-kung$hi_89 &amp;lt;- sim.PI[2,]
-
-# kable(kung, digits = 3, row.names = FALSE, align = &amp;quot;c&amp;quot;, caption = NULL) %&amp;gt;%
-#   kable_styling(bootstrap_options = &amp;quot;striped&amp;quot;, full_width = FALSE)&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;h2.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;4H2.&lt;/h2&gt;
-&lt;p&gt;Select out all the rows in the &lt;code&gt;Howell1&lt;/code&gt; data with ages below 18 years of age. If you do it right you should end up with a new data frame with 192 rows in it.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;d3 &amp;lt;- d[d$age &amp;lt; 18,]&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;a&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;(a)&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Fit a linear regression to these data, using &lt;code&gt;map&lt;/code&gt;. Present and interpret the estimates. For every 10 units of increase in weight, how much taller does the model predict a child gets?&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fit &amp;lt;- rethinking::map(
-  alist(
-    height ~ dnorm(mu, sigma), # likelihood
-    mu &amp;lt;- a + b * weight, # linear model
-    a ~ dnorm(156, 100), # prior
-    b ~ dnorm(0, 10), # prior
-    sigma ~ dunif(0, 50) # prior
-  ),
-  data = d3
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let’s look at the results of this model:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;post_early &amp;lt;- extract.samples(fit)
-precis(post_early)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##        Mean StdDev |0.89 0.89|
-## a     58.26   1.40 56.11 60.58
-## b      2.72   0.07  2.61  2.83
-## sigma  8.44   0.43  7.72  9.08&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;So we see for every &lt;code&gt;1&lt;/code&gt; unit increase in weight a child should be &lt;code&gt;2.72&lt;/code&gt; cm taller. Or as the question has asked &lt;code&gt;10&lt;/code&gt; unit increase is a &lt;code&gt;27.2&lt;/code&gt; cm increase in height. For every &lt;code&gt;22&lt;/code&gt; lb increase there is a corresponding ~&lt;code&gt;1&lt;/code&gt; foot increase in height.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;(b)&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Plot the raw data, with height on the vertical axis and weight on the horizontal axis. Superimpose the MAP regression line and 89% HPDI for the mean. Also superimpose the 89% HPDI for predicted heights.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(height ~ weight, d3, col = col.alpha(rangi2, 0.5))
-
-# get index for calculations
-weight.seq &amp;lt;- seq(0, 50, by = 1)
-
-# extract samples of parameters and calculate expected mu
-mu &amp;lt;- link(fit, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
-[ 200 / 1000 ]
-[ 300 / 1000 ]
-[ 400 / 1000 ]
-[ 500 / 1000 ]
-[ 600 / 1000 ]
-[ 700 / 1000 ]
-[ 800 / 1000 ]
-[ 900 / 1000 ]
-[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mu.mean &amp;lt;- apply(mu, 2, mean)
-lines(weight.seq, mu.mean)
-mu.HPDI &amp;lt;- apply(mu, 2, HPDI)
-shade(mu.HPDI, weight.seq)
-
-# simulate posterior observations of the model fit
-sim.height &amp;lt;- sim(fit, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
-[ 200 / 1000 ]
-[ 300 / 1000 ]
-[ 400 / 1000 ]
-[ 500 / 1000 ]
-[ 600 / 1000 ]
-[ 700 / 1000 ]
-[ 800 / 1000 ]
-[ 900 / 1000 ]
-[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;height.HPDI &amp;lt;- apply(sim.height, 2, HPDI)
-shade(height.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-10-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;c&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;(c)&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;What aspects of the model fit concern you? Describe the kinds of assumptions you would change, if any, to improve the model. You don’t have to write any new code. Just explain what the model appears to be doing a bad job of, and what you hypothesize would be a better model.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Well the model appears to be doing good job with the data at hand. The prior’s were set for persons age &amp;gt; 18 so these should be adjusted. Something of conrern is that you see a non-linear structure in this data. So the two tails of the data are not covered well by the model. This non-linearity could be accounted for with a polynomial regression or with splines.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;h3.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;4H3.&lt;/h2&gt;
-&lt;p&gt;Suppose a colleague of yours, who works on allometry, glances at the practice problems just above. Your colleague exclaims, “That’s silly. Everyone knows that it’s only the &lt;strong&gt;logarithm&lt;/strong&gt; of body weight that scales with height!” Let’s take your colleague’s advice and see what happens.&lt;/p&gt;
-&lt;div id=&#34;a-1&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;(a)&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Model the relationship between height(cm) and the natural logarithm of weight (log-kg). Use the entire &lt;code&gt;Howell1&lt;/code&gt; data frame, all 544 rows, adults and non-adults. Fit this model, using quadratic approximation:&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\begin{aligned}
-h_i \sim \text{Normal}(\mu_i, \sigma) \\
-\mu_i = \alpha + \beta \text{log}(w_i) \\
-\alpha \sim \text{Normal}(178, 100) \\
-\beta \sim \text{Normal}(0, 100) \\
-\sigma \sim \text{Uniform}(0, 50)
-\end{aligned}
-\]&lt;/span&gt;
-where &lt;span class=&#34;math inline&#34;&gt;\(h_i\)&lt;/span&gt; is the height of individual &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(w_i\)&lt;/span&gt; is the weight (in kg) of individual &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt;. The function for computing a natural log in R is just &lt;code&gt;log&lt;/code&gt;. Can you interpret the resulting estimates?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fit_all &amp;lt;- rethinking::map(
-  alist(
-    height ~ dnorm(mu, sigma),
-    mu &amp;lt;- a + b * log(weight), # linear model
-    a ~ dnorm(178, 100),
-    b ~ dnorm(0, 100),
-    sigma ~ dunif(0, 50)
-  ),
-  data = d
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now the model is fit let’s review the coefficients.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;precis(fit_all)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##         Mean StdDev   5.5%  94.5%
-## a     -23.78   1.34 -25.92 -21.65
-## b      47.07   0.38  46.46  47.69
-## sigma   5.13   0.16   4.89   5.38&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(precis(fit_all))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-12-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;When the weight is low or equivalent to &lt;code&gt;1&lt;/code&gt; then the height would be &lt;code&gt;-23&lt;/code&gt; which is not insightful. Given that this is a log-level model we can &lt;a href=&#34;https://stats.stackexchange.com/questions/18480/interpretation-of-log-transformed-predictor&#34;&gt;interpret&lt;/a&gt; our &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; as a one percent increase in weight corresponds to a &lt;span class=&#34;math inline&#34;&gt;\(\beta/100 = 47.08/100\)&lt;/span&gt; unit increase in height.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;b-1&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;(b)&lt;/h3&gt;
-&lt;p&gt;Begin with this plot:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-13-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Then use the samples from the quadratic approximate posterior of the model in (a) to superimpose on the plot: (1) the predicted mean height as a function of weight, (2) the 97% HPDI for the mean, and (3) the 97% HPDI for predicted heights.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;weight.seq &amp;lt;- seq(2, 65, by = 1)
-all_samp &amp;lt;- link(fit_all, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
-[ 200 / 1000 ]
-[ 300 / 1000 ]
-[ 400 / 1000 ]
-[ 500 / 1000 ]
-[ 600 / 1000 ]
-[ 700 / 1000 ]
-[ 800 / 1000 ]
-[ 900 / 1000 ]
-[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_mu &amp;lt;- apply(all_samp, 2, mean)
-all_mu.HPDI &amp;lt;- apply(all_samp, 2, HPDI, prob = 0.97)
-
-all_sim &amp;lt;- sim(fit_all, data = data.frame(weight = weight.seq))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [ 100 / 1000 ]
-[ 200 / 1000 ]
-[ 300 / 1000 ]
-[ 400 / 1000 ]
-[ 500 / 1000 ]
-[ 600 / 1000 ]
-[ 700 / 1000 ]
-[ 800 / 1000 ]
-[ 900 / 1000 ]
-[ 1000 / 1000 ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_sim.HPDI &amp;lt;- apply(all_sim, 2, HPDI, prob = 0.97)
-
-plot(height ~ weight, data = d, col = col.alpha(rangi2, 0.4))
-# the predicted mean height
-lines(weight.seq, all_mu)
-# the 97% HPDI of the mean
-shade(all_mu.HPDI, weight.seq)
-# the 97% HPDI for predictions
-shade(all_sim.HPDI, weight.seq)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/post/hw2-ch-4_files/figure-html/unnamed-chunk-14-1.svg&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 </description>
     </item>
     

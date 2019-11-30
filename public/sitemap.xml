@@ -16,6 +16,14 @@
     
     <url>
     
+      <loc>/post/2019-11-02_golf-turing/</loc>
+      <lastmod>2019-11-02T00:00:00-05:00</lastmod>
+    </url>
+    
+  
+    
+    <url>
+    
       <loc>/post/2019-03-26_market-dem-with-iv/</loc>
       <lastmod>2019-03-26T00:00:00+00:00</lastmod>
     </url>
@@ -26,14 +34,6 @@
     
       <loc>/post/2019-03-16_kde-scratch/</loc>
       <lastmod>2019-03-16T00:00:00-05:00</lastmod>
-    </url>
-    
-  
-    
-    <url>
-    
-      <loc>/post/hw2-ch-4/</loc>
-      <lastmod>2019-03-10T21:13:14-05:00</lastmod>
     </url>
     
   
@@ -165,7 +165,7 @@
     <url>
     
       <loc>/post/</loc>
-      <lastmod>2019-03-26T00:00:00+00:00</lastmod>
+      <lastmod>2019-11-02T00:00:00-05:00</lastmod>
     </url>
     
   
@@ -220,6 +220,15 @@
     
     <url>
     
+      <loc>/tags/turing.jl/</loc>
+      <lastmod>2019-11-02T00:00:00-05:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    <url>
+    
       <loc>/authors/admin/</loc>
       <priority>0</priority>
     </url>
@@ -229,7 +238,7 @@
     <url>
     
       <loc>/tags/bayes/</loc>
-      <lastmod>2019-03-26T00:00:00+00:00</lastmod>
+      <lastmod>2019-11-02T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -256,7 +265,7 @@
     <url>
     
       <loc>/tags/julia/</loc>
-      <lastmod>2019-03-16T00:00:00-05:00</lastmod>
+      <lastmod>2019-11-02T00:00:00-05:00</lastmod>
       <priority>0</priority>
     </url>
     
