@@ -18,21 +18,17 @@ options:
 
 This blog post is based on a blog post written by the popular bayesian statistician Andrew Gelman.
 
-Dr. Gelman's post was written in the [Stan](https://mc-stan.org/) probabilistic programming language (or PPL). Since this post there have been a couple other blog posts translating the code to other PPL's. They are excellent and I definitely recommend checking them out. Here's the list of links and my opinion on some of the benefits of reading each:
+Dr. Gelman's post was written in the [Stan](https://mc-stan.org/) probabilistic programming language (or PPL). Since this post, there have been a couple other blog posts translating the code to other PPLs. They are excellent and I definitely recommend checking them out. Here's the list of links and my opinion on some of the benefits of reading each:
 
 * Dr. Gelman's using Stan with R: See [here](https://mc-stan.org/users/documentation/case-studies/golf.html). Read Dr. Gelman's post first as he lays out the problem being modeled here really well. Explaining the geometry at play and how to adjust the models to incorporate the physics of the problem. It's a great article showing the power of using a probabilistic programming language to build models.
 * Colin Carroll's using the Python PPL PyMC3: You can check out his work [here](https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb). I really enjoyed Colin's post because of his prior predictive checks, data visualizations, and showing the value of these models moving past predictions.
-* Adam Haber's post using Python and Tensorflow Probability: See [here](https://adamhaber.github.io/post/nuts/). His post goes in great detail about more of the sampling and lower level details of Tensorflow and MCMC.
+* Adam Haber's post using Python and Tensorflow Probability: See [here](https://adamhaber.github.io/post/nuts/). His post goes into great detail about more of the sampling and lower level details of Tensorflow Probability and MCMC.
 
-My post is nothing really novel, simply a port to the Julia PPL, [Turing.jl](https://turing.ml/dev/). This post shows how to specify and estimate these same models within Julia.
+My post is nothing really novel, simply a port to the Julia PPL, [Turing.jl](https://turing.ml/dev/). This post shows how to specify and estimate these same models within the Julia programming language.
 
 ## Getting started and plotting
 
-Let's Load the data and calculate the probabilities and error. We'll use the following formula to calculate the error bars for the putting success rate:
-
-`$$
-\sqrt{\hat{p}_j(1-\hat{p}_j)/n_j}
-$$`
+Let's Load the data and take a look:
 
 ````julia
 using Turing, CSV
@@ -41,16 +37,28 @@ Turing.turnprogress(false);
 
 data = CSV.read("golf_data.csv")
 x, n, y = (data[:,1], data[:,2], data[:,3])
+````
 
+We have three variables in this dataset:
+
+Variable | Units | Description
+------ | ----- | -----
+x  | feet | The distance of the attempted putt
+n | count | The total attempts (or trials) of putts at a chosen distance
+y | count | The total successful putts from the total attempts
+
+What we are attempting to build is a model to predict the probability of success given the distance from the hole. We need to transform this data a bit to explore the dataset visually. Let's calculate the probabilities and the error involved. We'll use the following formula to calculate the error bars for the putting success rate:
+
+`$$
+\sqrt{\hat{p}_j(1-\hat{p}_j)/n_j}
+$$`
+
+````julia
 pj = y ./ n
 error = @. sqrt((pj * (1 - pj) / n));
 ````
 
-
-
-
-
-Plotting
+Now let's visualize the dataset:
 
 ````julia
 using Plots
@@ -99,7 +107,7 @@ chn = psample(golf_logistic(x, y, n, length(x)), NUTS(), 4000, 2);
 ````
 
 
-I'd like to add here that I'm using the `psample` method in `Turing.jl` to sample this model. If you have read through the documentation for `Turing.jl` you'll have seen the `sample` method used more often. The only difference here is that the `psample` method performs parallel sampling and thus gives us more than one chain. That last argument in the function call is the number of chains I'd like to run. You can read more about it in the [documentation](https://turing.ml/dev/docs/using-turing/guide#sampling-multiple-chains).
+I'd like to add here that I'm using the `psample` method in `Turing.jl` to sample this model. If you have read through the documentation for `Turing.jl` you'll have seen the `sample` method used more often. The only difference here is that the `psample` method performs parallel sampling (using the [new](https://julialang.org/blog/2019/07/multithreading) multi-threaded functionality available in Julia version `1.3`) and thus gives us more than one chain. That last argument in the function call is the number of chains I'd like to use. You can read more about it in the [documentation](https://turing.ml/dev/docs/using-turing/guide#sampling-multiple-chains).
 
 Now we've sampled the joint probability distribution. Let's take a look at the results. I'll create a function to show the table of results as html using the `PrettyTables.jl` package. Looking at the summary statistics for the posterior distribution:
 
@@ -391,7 +399,7 @@ We see that the geometry based model fits the data much better than the Logistic
 
 ## New Golf Data
 
-Then came new data. Dr. Gelman received new data of gulf putting and compared the fit of the original geometry based model with the old and new data. Here is the comparison below:
+Then came new data. Dr. Gelman received new data of golf putting and compared the fit of the original geometry based model with the old and new data. Here is the comparison below:
 
 ````julia
 datanew = CSV.read("golf_data_new.csv")
@@ -416,7 +424,7 @@ plot!(geom_lines2, label = "", color = 1)
 
 ![](/post/2019-11-02_golf-turing_files/golf-turing-rev1_10_1.svg)
 
-We see that the new data have many more observations with longer distance putts than in the original data. The success of these longer distance putts do not agree with the original geometry based model.
+We see that the new data have many more observations with longer distance putts than in the original data. The probability of success for these longer distance putts do not agree with the original geometry based model.
 
 ## Updated Geometry
 
@@ -424,7 +432,7 @@ So Dr. Gelman improves the model by taking distance into account.
 
 > To get the ball in the hole, the angle isn’t the only thing you need to control; you also need to hit the ball just hard enough.
 
-> the probability a shot goes in becomes, `$$
+> ...the probability a shot goes in becomes, `$$
 \left(2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma_{\rm angle}}\right) - 1\right)\left(\Phi\left(\frac{2}{(x+1)\,\sigma_{\rm distance}}\right) - \Phi\left(\frac{-1}{(x+1)\,\sigma_{\rm distance}}\right)\right)
 $$`
 
@@ -583,7 +591,7 @@ plot!(geom2_lines, color = 2)
 
 ![](/post/2019-11-02_golf-turing_files/golf-turing-rev1_13_1.svg)
 
-Now this model fits the new data better than the original geometry based model but you can see an issue near the middle of the range of the x-axis (distance). Gelman's comments and proposed fix:
+Now this model fits the new data better than the original geometry based model but you can see an issue near the middle of the range of the x-axis (distance). Some of Gelman's select comments and proposed fix:
 
 > There are problems with the fit in the middle of the range of x. We suspect this is a problem with the binomial error model, as it tries harder to fit points where the counts are higher. Look at how closely the fitted curve hugs the data at the very lowest values of x.
 
@@ -753,11 +761,11 @@ plot!(geom_lines2, color = 2)
 
 ![](/post/2019-11-02_golf-turing_files/golf-turing-rev1_15_1.svg)
 
-We can see that this adjusted first principles based model is fitting the data much better now. To add to that, it also sampled faster and more consistently during my testing.
+We can see that this adjusted first principles based model is fitting the data much better now! To add to that, it also sampled faster and more consistently during my testing. This case study really shows off the power of a bayesian approach. The modeler has the ability to expand a model using domain knowledge and craft a model that makes sense and aligns with the data generating process.
 
 ## Conclusion
 
-If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It's really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and it's promise to solve the [two-language problem](https://www.youtube.com/watch?v=B9moDuSYzGo).
+If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It's really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of it's promise to solve the [two-language problem](https://www.youtube.com/watch?v=B9moDuSYzGo).
 
 ## References
 
@@ -766,4 +774,5 @@ If you made it this far, thanks for checking out this post! I personally appreci
 * [Model building and expansion for golf putting - Carroll](https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb)
 * [Bayesian golf puttings, NUTS, and optimizing your sampling function with TensorFlow Probability](https://adamhaber.github.io/post/nuts/)
 * [Turing.jl: A library for robust, efficient, general-purpose probabilistic programming](https://turing.ml/dev/)
+* [Announcing composable multi-threaded parallelism in Julia](https://julialang.org/blog/2019/07/multithreading)
 * [ODSC East 2016 | Stefan Karpinski - "Solving the Two Language Problem"](https://www.youtube.com/watch?v=B9moDuSYzGo)
