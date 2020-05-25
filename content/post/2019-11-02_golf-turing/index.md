@@ -687,7 +687,7 @@ th.rowNumber, td.rowNumber {
 
 
 
-Dr. Gelman's post suggests something is unstable with this model estimation. The estimated parameters match his closely however we do have drastically different values for the `$\hat R$` diagnostics. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.
+Dr. Gelman's post suggests something is unstable with this model estimation. The estimated parameters match his closely. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.
 
 Now let's make some predictions and visualize the results:
 

@@ -567,7 +567,7 @@ text-align: right;
 &lt;/table&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-&lt;p&gt;Dr. Gelman&amp;rsquo;s post suggests something is unstable with this model estimation. The estimated parameters match his closely however we do have drastically different values for the &lt;code&gt;$\hat R$&lt;/code&gt; diagnostics. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.&lt;/p&gt;
+&lt;p&gt;Dr. Gelman&amp;rsquo;s post suggests something is unstable with this model estimation. The estimated parameters match his closely. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.&lt;/p&gt;
 &lt;p&gt;Now let&amp;rsquo;s make some predictions and visualize the results:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# calculate predictions
 post_siga = median(chn3[:sigma_angle].value)
