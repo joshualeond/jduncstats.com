@@ -1,54 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Josh Duncan on Josh Duncan</title>
+    <title>Josh Duncan</title>
     <link>/</link>
-    <description>Recent content in Josh Duncan on Josh Duncan</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 20 Sep 2017 00:00:00 -0500</lastBuildDate>
-    <atom:link href="/" rel="self" type="application/rss+xml" />
-    
-    <item>
-      <title>Interests</title>
-      <link>/bio/skills/</link>
-      <pubDate>Wed, 20 Sep 2017 00:00:00 -0500</pubDate>
-      
-      <guid>/bio/skills/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Work Experience</title>
-      <link>/bio/experience/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/bio/experience/</guid>
-      <description></description>
-    </item>
+      <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <description>Josh Duncan</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sat, 01 Jun 2030 13:00:00 -0500</lastBuildDate>
+    <image>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <title>Josh Duncan</title>
+      <link>/</link>
+    </image>
     
     <item>
       <title>Example Talk</title>
       <link>/talk/example/</link>
       <pubDate>Sat, 01 Jun 2030 13:00:00 -0500</pubDate>
-      
       <guid>/talk/example/</guid>
       <description>&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    &lt;p&gt;Click on the &lt;strong&gt;Slides&lt;/strong&gt; button above to view the built-in slides feature.&lt;/p&gt;
-
+    Click on the &lt;strong&gt;Slides&lt;/strong&gt; button above to view the built-in slides feature.
   &lt;/div&gt;
 &lt;/div&gt;
-
-
 &lt;p&gt;Slides can be added in a few ways:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Create&lt;/strong&gt; slides using Academic&amp;rsquo;s &lt;em&gt;Slides&lt;/em&gt; feature and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Upload&lt;/strong&gt; an existing slide deck to &lt;code&gt;static/&lt;/code&gt; and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Embed&lt;/strong&gt; your slides (e.g. Google Slides) or presentation video on this page using &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Embed&lt;/strong&gt; your slides (e.g. Google Slides) or presentation video on this page using 
+&lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;shortcodes&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;Further talk details can easily be added to this page using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
@@ -56,39 +36,37 @@
     <item>
       <title>Model building of golf putting with Turing.jl</title>
       <link>/post/2019-11-02_golf-turing/</link>
-      <pubDate>Sat, 02 Nov 2019 00:00:00 -0500</pubDate>
-      
+      <pubDate>Mon, 25 May 2020 00:00:00 -0500</pubDate>
       <guid>/post/2019-11-02_golf-turing/</guid>
-      <description>
-
+      <description>&lt;h2 id=&#34;updates-may-2020&#34;&gt;Updates (May 2020):&lt;/h2&gt;
+&lt;p&gt;I originally wrote this &lt;code&gt;Turing.jl&lt;/code&gt; version of the golf putting model in late &lt;code&gt;2019&lt;/code&gt;. Since then there have been many updates to the &lt;code&gt;Turing.jl&lt;/code&gt; Julia package. I&amp;rsquo;ve updated this blog post to be aligned with the latest release (&lt;code&gt;v0.13.0&lt;/code&gt;) and have also included something new given that the latest release includes a feature for sampling from the prior distribution.&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;first-thing-disclaimer&#34;&gt;First Thing (Disclaimer)&lt;/h2&gt;
-
 &lt;p&gt;This blog post is based on a blog post written by the popular bayesian statistician Andrew Gelman.&lt;/p&gt;
-
-&lt;p&gt;Dr. Gelman&amp;rsquo;s post was written in the &lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34;&gt;Stan&lt;/a&gt; probabilistic programming language (or PPL). Since this post, there have been a couple other blog posts translating the code to other PPLs. They are excellent and I definitely recommend checking them out. Here&amp;rsquo;s the list of links and my opinion on some of the benefits of reading each:&lt;/p&gt;
-
+&lt;p&gt;Dr. Gelman&amp;rsquo;s post was written in the 
+&lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Stan&lt;/a&gt; probabilistic programming language (or PPL). Since this post, there have been a couple other blog posts translating the code to other PPLs. They are excellent and I definitely recommend checking them out. Here&amp;rsquo;s the list of links and my opinion on some of the benefits of reading each:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Dr. Gelman&amp;rsquo;s using Stan with R: See &lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. Read Dr. Gelman&amp;rsquo;s post first as he lays out the problem being modeled here really well. Explaining the geometry at play and how to adjust the models to incorporate the physics of the problem. It&amp;rsquo;s a great article showing the power of using a probabilistic programming language to build models.&lt;/li&gt;
-&lt;li&gt;Colin Carroll&amp;rsquo;s using the Python PPL PyMC3: You can check out his work &lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. I really enjoyed Colin&amp;rsquo;s post because of his prior predictive checks, data visualizations, and showing the value of these models moving past predictions.&lt;/li&gt;
-&lt;li&gt;Adam Haber&amp;rsquo;s post using Python and Tensorflow Probability: See &lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. His post goes into great detail about more of the sampling and lower level details of Tensorflow Probability and MCMC.&lt;/li&gt;
+&lt;li&gt;Dr. Gelman&amp;rsquo;s using Stan with R: See 
+&lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;. Read Dr. Gelman&amp;rsquo;s post first as he lays out the problem being modeled here really well. Explaining the geometry at play and how to adjust the models to incorporate the physics of the problem. It&amp;rsquo;s a great article showing the power of using a probabilistic programming language to build models.&lt;/li&gt;
+&lt;li&gt;Colin Carroll&amp;rsquo;s using the Python PPL PyMC3: You can check out his work 
+&lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;. I really enjoyed Colin&amp;rsquo;s post because of his prior and posterior predictive checks, data visualizations, and showing the value of these models moving past predictions.&lt;/li&gt;
+&lt;li&gt;Adam Haber&amp;rsquo;s post using Python and Tensorflow Probability: See 
+&lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;. His post goes into great detail about more of the sampling and lower level details of Tensorflow Probability and MCMC.&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;My post is nothing really novel, simply a port to the Julia PPL, &lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34;&gt;Turing.jl&lt;/a&gt;. This post shows how to specify and estimate these same models within the Julia programming language.&lt;/p&gt;
-
+&lt;p&gt;My post is nothing really novel, simply a port to the Julia PPL, 
+&lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Turing.jl&lt;/a&gt;. This post shows how to specify and estimate these same models within the Julia programming language.&lt;/p&gt;
 &lt;h2 id=&#34;getting-started-and-plotting&#34;&gt;Getting started and plotting&lt;/h2&gt;
-
 &lt;p&gt;Let&amp;rsquo;s Load the data and take a look:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Turing, CSV
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Turing, HTTP, CSV
 # Hide sampling progress.
 Turing.turnprogress(false);
 
-data = CSV.read(&amp;quot;golf_data.csv&amp;quot;)
+resp = HTTP.get(&amp;quot;https://raw.githubusercontent.com/stan-dev/example-models/master/knitr/golf/golf_data.txt&amp;quot;);
+data = CSV.read(IOBuffer(resp.body), normalizenames = true, header = 3)
+
 x, n, y = (data[:,1], data[:,2], data[:,3])
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;We have three variables in this dataset:&lt;/p&gt;
-
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -97,20 +75,17 @@ x, n, y = (data[:,1], data[:,2], data[:,3])
 &lt;th&gt;Description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
-
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;x&lt;/td&gt;
 &lt;td&gt;feet&lt;/td&gt;
 &lt;td&gt;The distance of the attempted putt&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;n&lt;/td&gt;
 &lt;td&gt;count&lt;/td&gt;
 &lt;td&gt;The total attempts (or trials) of putts at a chosen distance&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;y&lt;/td&gt;
 &lt;td&gt;count&lt;/td&gt;
@@ -118,19 +93,14 @@ x, n, y = (data[:,1], data[:,2], data[:,3])
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
 &lt;p&gt;What we are attempting to build is a model to predict the probability of success given the distance from the hole. We need to transform this data a bit to explore the dataset visually. Let&amp;rsquo;s calculate the probabilities and the error involved. We&amp;rsquo;ll use the following formula to calculate the error bars for the putting success rate:&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;$$
+&lt;p&gt;$$
 \sqrt{\hat{p}_j(1-\hat{p}_j)/n_j}
-$$&lt;/code&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;pj = y ./ n
 error = @. sqrt((pj * (1 - pj) / n));
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Now let&amp;rsquo;s visualize the dataset:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Plots
 
 # plot out the error
@@ -142,18 +112,13 @@ scatter(
   ylab = &amp;quot;Probability of Success&amp;quot;,
   xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_3_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;logistic-regression&#34;&gt;Logistic Regression&lt;/h2&gt;
-
 &lt;p&gt;Building our first model, a GLM (Generalized Linear Model). We will attempt to model the probability of success in golf putting incorporating the distance as an independent (or predictor) variable.&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;$$
+&lt;p&gt;$$
 y_j\sim\mbox{binomial}(n_j, \mbox{logit}^{-1}(a + bx_j)),
 \mbox{ for } j=1,\dots, J.
-$$&lt;/code&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using StatsFuns: logistic
 
 @model golf_logistic(x,y,n,J) = begin
@@ -168,70 +133,60 @@ $$&lt;/code&gt;&lt;/p&gt;
   end
 end
 
-chn = psample(golf_logistic(x, y, n, length(x)), NUTS(), 4000, 2);
+chn = sample(golf_logistic(x, y, n, length(x)), NUTS(), MCMCThreads(), 4000, 4);
 &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;sample&lt;/code&gt; method now allows for parallel sampling with either one thread per chain (&lt;code&gt;MCMCThreads&lt;/code&gt;) or one process per chain (&lt;code&gt;MCMCDistributed&lt;/code&gt;). Here I&amp;rsquo;m using multithreading and am specifying &lt;code&gt;4&lt;/code&gt; chains should be used.&lt;/p&gt;
+&lt;p&gt;Now that we&amp;rsquo;ve sampled the joint probability distribution. Let&amp;rsquo;s take a look at the results. I&amp;rsquo;ll create a function to show the table of results as html using the &lt;code&gt;PrettyTables.jl&lt;/code&gt; package. Looking at the summary statistics for the posterior distribution:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using PrettyTables, DataFrames
 
-&lt;p&gt;I&amp;rsquo;d like to add here that I&amp;rsquo;m using the &lt;code&gt;psample&lt;/code&gt; method in &lt;code&gt;Turing.jl&lt;/code&gt; to sample this model. If you have read through the documentation for &lt;code&gt;Turing.jl&lt;/code&gt; you&amp;rsquo;ll have seen the &lt;code&gt;sample&lt;/code&gt; method used more often. The only difference here is that the &lt;code&gt;psample&lt;/code&gt; method performs parallel sampling (using the &lt;a href=&#34;https://julialang.org/blog/2019/07/multithreading&#34; target=&#34;_blank&#34;&gt;new&lt;/a&gt; multi-threaded functionality available in Julia version &lt;code&gt;1.3&lt;/code&gt;) and thus gives us more than one chain. That last argument in the function call is the number of chains I&amp;rsquo;d like to use. You can read more about it in the &lt;a href=&#34;https://turing.ml/dev/docs/using-turing/guide#sampling-multiple-chains&#34; target=&#34;_blank&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now we&amp;rsquo;ve sampled the joint probability distribution. Let&amp;rsquo;s take a look at the results. I&amp;rsquo;ll create a function to show the table of results as html using the &lt;code&gt;PrettyTables.jl&lt;/code&gt; package. Looking at the summary statistics for the posterior distribution:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using PrettyTables
+formatters = (v,i,j) -&amp;gt; (j &amp;gt; 1) ? round(v, digits=3) : v
 
 function prettystats(chains)
   chains |&amp;gt;
-    x -&amp;gt; summarystats(x, digits = 2) |&amp;gt;
-    x -&amp;gt; x.df |&amp;gt;
-    x -&amp;gt; pretty_table(x, backend = :html)
+    x -&amp;gt; summarystats(x) |&amp;gt;
+    x -&amp;gt; DataFrame(x) |&amp;gt;
+    x -&amp;gt; pretty_table(x, backend = :html, formatters = formatters)
 end
 
 prettystats(chn)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;html&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
 &lt;meta charset=&#34;UTF-8&#34;&gt;
 &lt;style&gt;
 table, td, th {
     border-collapse: collapse;
     font-family: sans-serif;
-}&lt;/p&gt;
-
+}
 &lt;p&gt;td, th {
-    border-bottom: 0;
-    padding: 4px
+border-bottom: 0;
+padding: 4px
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(odd) {
-    background: #eee;
+background: #eee;
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(even) {
-    background: #fff;
+background: #fff;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.header {
-    background: navy !important;
-    color: white;
-    font-weight: bold;
+background: navy !important;
+color: white;
+font-weight: bold;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.subheader {
-    background: lightgray !important;
-    color: black;
+background: lightgray !important;
+color: black;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.headerLastRow {
-    border-bottom: 2px solid black;
+border-bottom: 2px solid black;
 }&lt;/p&gt;
-
 &lt;p&gt;th.rowNumber, td.rowNumber {
-    text-align: right;
+text-align: right;
 }&lt;/p&gt;
-
-&lt;p&gt;&lt;/style&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
 &lt;body&gt;
-&lt;table&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;tr class = header&gt;
+&lt;table&gt;
+&lt;tr class = header&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
@@ -241,36 +196,36 @@ table, td, th {
 &lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr class = &#34;subheader headerLastRow&#34;&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;String&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;a&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;2.23&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.06&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;899.26&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;2.225&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.057&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.001&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.001&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;2997.531&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.002&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;b&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;-0.26&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;-0.255&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.007&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1173.64&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;3137.058&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.002&lt;/td&gt;
 &lt;/tr&gt;
-&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
-
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 &lt;p&gt;Visualizing the predictions:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;a_post = median(chn[:a].value)
 b_post = median(chn[:b].value)
 
@@ -288,36 +243,30 @@ post_samp = [logistic(a_samp[i] + b_samp[i] * x) for x = xrng, i = 1:50]
 plot!(post_samp, alpha = 0.5, color = :gray) # add uncertainty samples
 plot!(post_lines, color = :black) # add median
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_6_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;first-principles&#34;&gt;First Principles&lt;/h2&gt;
-
 &lt;p&gt;The next step is building a more bespoke model that incorporates the physics of this problem. Dr. Gelman describes this step as follows:&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;We assume that the golfer is attempting to hit the ball completely straight but that many small factors interfere with this goal, so that the actual angle follows a normal distribution centered at 0 with some standard deviation σ.&lt;/p&gt;
-
-&lt;p&gt;The probability the ball goes in the hole is then the probability that the angle is less than the threshold; that is &lt;code&gt;$$
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The probability the ball goes in the hole is then the probability that the angle is less than the threshold; that is $$
 \mbox{Pr}\left(|\mbox{angle}| &amp;lt; \sin^{-1}((R-r)/x)\right) = 2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma}\right) - 1
-$$&lt;/code&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
 &lt;p&gt;where Φ is the cumulative normal distribution function.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;Again, for more background I would suggest reading the original post. So now we&amp;rsquo;ll define the function &lt;code&gt;Phi&lt;/code&gt;. It&amp;rsquo;s the cumulative distribution function of the standard normal distribution.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;Phi(x) = cdf.(Normal(0, 1), x);
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Now let&amp;rsquo;s create and sample this model incorporating the angle.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle(x, y, n, J, r, R) = begin
   # transformed data
   threshold_angle = asin.((R - r) ./ x)
 
   # parameters
-  sigma ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma ~ truncated(Normal(0, 1), 0, Inf)
 
   # model
   p = 2 * Phi(threshold_angle / sigma) .- 1
@@ -329,58 +278,80 @@ end
 # radius of ball and hole respectively
 r = (1.68 / 2) / 12
 R = (4.25 / 2) / 12
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Taking a note from 
+&lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Colin&amp;rsquo;s&lt;/a&gt; book, we can perform prior predictive checks for the geometry-based model. In Turing we&amp;rsquo;ll simply replace the sampler argument on the &lt;code&gt;sample&lt;/code&gt; method with &lt;code&gt;Prior()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prior = sample(golf_angle(x, y, n, length(x), r, R), Prior(), 4000)
 
-chn2 = psample(golf_angle(x, y, n, length(x), r, R), NUTS(), 4000, 2)
+angle_prior = StatsBase.sample(prior[:sigma].value, 500)
+angle_of_shot = rand.(Normal.(0, angle_prior), 1)  # radians
+angle_of_shot = getindex.(angle_of_shot) # extract array
+
+distance = 20 # feet
+
+end_positions = [
+    distance * cos.(angle_of_shot),
+    distance * sin.(angle_of_shot)
+]
+
+# visualize
+ plot(
+   [[0, i] for i in end_positions[1]],
+   [[0, i] for i in end_positions[2]],
+   labels = false,
+   legend = :topleft,
+   color = :black,
+   alpha = 0.3,
+   title = &amp;quot;Prior distribution of putts from 20ft away&amp;quot;
+   )
+scatter!(end_positions[1], end_positions[2], color = :black, labels = false)
+scatter!((0,0), color = :green, label = &amp;quot;start&amp;quot;, markersize = 6)
+scatter!((20, 0), color = :red, label = &amp;quot;goal&amp;quot;, markersize = 6)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_9_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Now for the estimation of the parameters:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;chn2 = sample(golf_angle(x, y, n, length(x), r, R), NUTS(), MCMCThreads(), 4000, 4)
 chn2 = hcat(chn2, Chains(chn2[:sigma].value * 180 / π, [&amp;quot;sigma_degrees&amp;quot;]))
 
 prettystats(chn2)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;html&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
 &lt;meta charset=&#34;UTF-8&#34;&gt;
 &lt;style&gt;
 table, td, th {
     border-collapse: collapse;
     font-family: sans-serif;
-}&lt;/p&gt;
-
+}
 &lt;p&gt;td, th {
-    border-bottom: 0;
-    padding: 4px
+border-bottom: 0;
+padding: 4px
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(odd) {
-    background: #eee;
+background: #eee;
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(even) {
-    background: #fff;
+background: #fff;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.header {
-    background: navy !important;
-    color: white;
-    font-weight: bold;
+background: navy !important;
+color: white;
+font-weight: bold;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.subheader {
-    background: lightgray !important;
-    color: black;
+background: lightgray !important;
+color: black;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.headerLastRow {
-    border-bottom: 2px solid black;
+border-bottom: 2px solid black;
 }&lt;/p&gt;
-
 &lt;p&gt;th.rowNumber, td.rowNumber {
-    text-align: right;
+text-align: right;
 }&lt;/p&gt;
-
-&lt;p&gt;&lt;/style&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
 &lt;body&gt;
-&lt;table&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;tr class = header&gt;
+&lt;table&gt;
+&lt;tr class = header&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
@@ -390,41 +361,39 @@ table, td, th {
 &lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr class = &#34;subheader headerLastRow&#34;&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;String&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.03&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.027&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4414.07&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;5818.38&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma_degrees&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.53&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.02&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.527&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.023&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4414.07&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;5818.38&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
 &lt;/tr&gt;
-&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
-
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 &lt;p&gt;Now we can calculate predictions and see how this model compares to the logistic model. Let&amp;rsquo;s wrap the angle calculation into a function as we&amp;rsquo;ll use it frequently throughout the post.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prob_angle(threshold, sigma) = 2 * Phi(threshold / sigma) .- 1;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prob_angle(threshold, sigma) = 2 * Phi(threshold / sigma) .- 1
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Calculate and visualize predictions.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# calculate predictions
 post_sigma = median(chn2[:sigma].value)
 threshold_angle = [asin((R - r) / x) for x = xrng]
@@ -440,16 +409,42 @@ scatter(
 plot!(post_lines, color = :black, label = &amp;quot;Logistic regression&amp;quot;)
 plot!(geom_lines, color = 1, label = &amp;quot;Geometry-based model&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_9_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_12_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We see that the geometry based model fits the data much better than the Logistic regression.&lt;/p&gt;
+&lt;p&gt;Now let&amp;rsquo;s perform a posterior predictive check:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;angle_post = StatsBase.sample(chn2[:sigma].value, 500)
+angle_of_shot = rand.(Normal.(0, angle_post), 1)  # radians
+angle_of_shot = getindex.(angle_of_shot) # extract array
 
+distance = 20 # feet
+
+end_positions = [
+    distance * cos.(angle_of_shot),
+    distance * sin.(angle_of_shot)
+]
+
+# visualize
+plot(
+  [[0, i] for i in end_positions[1]],
+  [[0, i] for i in end_positions[2]],
+  xlim = (-21, 21),
+  ylim = (-21, 21),
+  labels = false,
+  legend = :topleft,
+  color = :black,
+  alpha = 0.1,
+  title = &amp;quot;Posterior distribution of putts from 20ft away&amp;quot;
+  )
+scatter!(end_positions[1], end_positions[2], color = :black, labels = false)
+scatter!((0,0), color = :green, label = &amp;quot;start&amp;quot;, markersize = 6)
+scatter!((20, 0), color = :red, label = &amp;quot;goal&amp;quot;, markersize = 6)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_13_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;new-golf-data&#34;&gt;New Golf Data&lt;/h2&gt;
-
 &lt;p&gt;Then came new data. Dr. Gelman received new data of golf putting and compared the fit of the original geometry based model with the old and new data. Here is the comparison below:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;respnew = HTTP.get(&amp;quot;https://raw.githubusercontent.com/stan-dev/example-models/master/knitr/golf/golf_data_new.txt&amp;quot;);
+datanew = CSV.read(IOBuffer(respnew.body), normalizenames = true, header = 3)
 
-&lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;datanew = CSV.read(&amp;quot;golf_data_new.csv&amp;quot;)
 xnew, nnew, ynew = (datanew[:,1], datanew[:,2], datanew[:,3])
 pnew = ynew ./ nnew
 xrngnew = 1:1:80
@@ -467,41 +462,34 @@ scatter(
 scatter!(xnew, pnew, color = 2, label = &amp;quot;New data&amp;quot;)
 plot!(geom_lines2, label = &amp;quot;&amp;quot;, color = 1)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_10_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_14_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We see that the new data have many more observations with longer distance putts than in the original data. The probability of success for these longer distance putts do not agree with the original geometry based model.&lt;/p&gt;
-
 &lt;h2 id=&#34;updated-geometry&#34;&gt;Updated Geometry&lt;/h2&gt;
-
 &lt;p&gt;So Dr. Gelman improves the model by taking distance into account.&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;To get the ball in the hole, the angle isn’t the only thing you need to control; you also need to hit the ball just hard enough.&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;the probability a shot goes in becomes, &lt;code&gt;$$
-\left(2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma_{\rm angle}}\right) - 1\right)\left(\Phi\left(\frac{2}{(x+1)\,\sigma_{\rm distance}}\right) - \Phi\left(\frac{-1}{(x+1)\,\sigma_{\rm distance}}\right)\right)
-$$&lt;/code&gt;&lt;/p&gt;
-
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;the probability a shot goes in becomes, $$
+\left(2\Phi\left(\frac{\sin^{-1}((R-r)/x)}{\sigma_{\rm angle}}\right) - 1\right)\left(\Phi\left(\frac{2}{(x+1),\sigma_{\rm distance}}\right) - \Phi\left(\frac{-1}{(x+1),\sigma_{\rm distance}}\right)\right)
+$$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
 &lt;p&gt;where we have renamed the parameter σ from our earlier model to σ_angle to distinguish it from the new σ_distance parameter.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;Let&amp;rsquo;s add a function for the distance calculation for the improved geometry.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;prob_distance(distance, tol, overshot, sigma) =
   Phi((tol - overshot) ./ ((distance .+ overshot) * sigma)) -
     Phi(-overshot ./ ((distance .+ overshot) * sigma));
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Now let&amp;rsquo;s create the model to sample:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle_dist(x, y, n, J, r, R, overshot, distance_tolerance) = begin
   # transformed data
   threshold_angle = asin.((R - r) ./ x)
 
   # parameters
-  sigma_angle ~ Truncated(Normal(0, 1), 0, Inf)
-  sigma_distance ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma_angle ~ truncated(Normal(0, 1), 0, Inf)
+  sigma_distance ~ truncated(Normal(0, 1), 0, Inf)
 
   # model
   p_angle = prob_angle(threshold_angle, sigma_angle)
@@ -516,59 +504,52 @@ end
 overshot = 1.
 distance_tolerance = 3.
 
-chn3 = psample(
+chn3 = sample(
   golf_angle_dist(xnew, ynew, nnew, length(xnew), r, R, overshot, distance_tolerance),
   NUTS(),
-  8000,
-  2)
+  MCMCThreads(),
+  6000,
+  4)
+
 prettystats(chn3)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;html&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
 &lt;meta charset=&#34;UTF-8&#34;&gt;
 &lt;style&gt;
 table, td, th {
     border-collapse: collapse;
     font-family: sans-serif;
-}&lt;/p&gt;
-
+}
 &lt;p&gt;td, th {
-    border-bottom: 0;
-    padding: 4px
+border-bottom: 0;
+padding: 4px
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(odd) {
-    background: #eee;
+background: #eee;
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(even) {
-    background: #fff;
+background: #fff;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.header {
-    background: navy !important;
-    color: white;
-    font-weight: bold;
+background: navy !important;
+color: white;
+font-weight: bold;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.subheader {
-    background: lightgray !important;
-    color: black;
+background: lightgray !important;
+color: black;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.headerLastRow {
-    border-bottom: 2px solid black;
+border-bottom: 2px solid black;
 }&lt;/p&gt;
-
 &lt;p&gt;th.rowNumber, td.rowNumber {
-    text-align: right;
+text-align: right;
 }&lt;/p&gt;
-
-&lt;p&gt;&lt;/style&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
 &lt;body&gt;
-&lt;table&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;tr class = header&gt;
+&lt;table&gt;
+&lt;tr class = header&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
@@ -578,38 +559,37 @@ table, td, th {
 &lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr class = &#34;subheader headerLastRow&#34;&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;String&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma_angle&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.014&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.002&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4092.49&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;80.321&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.317&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma_distance&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.14&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.135&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4348.54&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.001&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;80.321&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.36&lt;/td&gt;
 &lt;/tr&gt;
-&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
-
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 &lt;p&gt;Dr. Gelman&amp;rsquo;s post suggests something is unstable with this model estimation. The estimated parameters match his closely however we do have drastically different values for the &lt;code&gt;$\hat R$&lt;/code&gt; diagnostics. I did notice that sampling this model did not always give me same results though. I ended up increasing the length of the chains to try to get around the inconsistent parameter estimation I was experiencing.&lt;/p&gt;
-
 &lt;p&gt;Now let&amp;rsquo;s make some predictions and visualize the results:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# calculate predictions
 post_siga = median(chn3[:sigma_angle].value)
 post_sigd = median(chn3[:sigma_distance].value)
@@ -628,31 +608,27 @@ scatter(
   xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
 plot!(geom2_lines, color = 2)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_13_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_17_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Now this model fits the new data better than the original geometry based model but you can see an issue near the middle of the range of the x-axis (distance). Some of Gelman&amp;rsquo;s select comments and proposed fix:&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;There are problems with the fit in the middle of the range of x. We suspect this is a problem with the binomial error model, as it tries harder to fit points where the counts are higher. Look at how closely the fitted curve hugs the data at the very lowest values of x.&lt;/p&gt;
-
-&lt;p&gt;To fix this problem we took the data model, &lt;code&gt;$ y_j \sim \mbox{binomial}(n_j, p_j) $&lt;/code&gt;, and added an independent error term to each observation.&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;we first approximate the binomial data distribution by a normal and then add independent variance; thus: &lt;code&gt;$$ y_j/n_j \sim \mbox{normal}\left(p_j, \sqrt{p_j(1-p_j)/n_j + \sigma_y^2}\right) $$&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
+&lt;blockquote&gt;
+&lt;p&gt;To fix this problem we took the data model, $ y_j \sim \mbox{binomial}(n_j, p_j) $, and added an independent error term to each observation.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;we first approximate the binomial data distribution by a normal and then add independent variance; thus: $$ y_j/n_j \sim \mbox{normal}\left(p_j, \sqrt{p_j(1-p_j)/n_j + \sigma_y^2}\right) $$&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&#34;a-dispersed-model&#34;&gt;A Dispersed Model&lt;/h2&gt;
-
 &lt;p&gt;Now let&amp;rsquo;s implement the changes referenced above within Turing:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;@model golf_angle_dist_resid(x, y, n, J, r, R, overshot, distance_tolerance, raw) = begin
   # transformed data
   threshold_angle = asin.((R - r) ./ x)
 
   # parameters
-  sigma_angle ~ Truncated(Normal(0, 1), 0, Inf)
-  sigma_distance ~ Truncated(Normal(0, 1), 0, Inf)
-  sigma_y ~ Truncated(Normal(0, 1), 0, Inf)
+  sigma_angle ~ truncated(Normal(0, 1), 0, Inf)
+  sigma_distance ~ truncated(Normal(0, 1), 0, Inf)
+  sigma_y ~ truncated(Normal(0, 1), 0, Inf)
 
   # model
   p_angle = prob_angle(threshold_angle, sigma_angle)
@@ -664,62 +640,54 @@ plot!(geom2_lines, color = 2)
   end
 end
 
-chn4 = psample(
+chn4 = sample(
   golf_angle_dist_resid(xnew, ynew, nnew, length(xnew), r, R, overshot, distance_tolerance, ynew ./ nnew),
   NUTS(),
+  MCMCThreads(),
   4000,
-  2)
+  4)
 
 # adding the conversion to degrees
 chns = hcat(chn4, Chains(chn4[:sigma_angle].value * 180 / π, [&amp;quot;sigma_degrees&amp;quot;]))
 prettystats(chns)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;html&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
 &lt;meta charset=&#34;UTF-8&#34;&gt;
 &lt;style&gt;
 table, td, th {
     border-collapse: collapse;
     font-family: sans-serif;
-}&lt;/p&gt;
-
+}
 &lt;p&gt;td, th {
-    border-bottom: 0;
-    padding: 4px
+border-bottom: 0;
+padding: 4px
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(odd) {
-    background: #eee;
+background: #eee;
 }&lt;/p&gt;
-
 &lt;p&gt;tr:nth-child(even) {
-    background: #fff;
+background: #fff;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.header {
-    background: navy !important;
-    color: white;
-    font-weight: bold;
+background: navy !important;
+color: white;
+font-weight: bold;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.subheader {
-    background: lightgray !important;
-    color: black;
+background: lightgray !important;
+color: black;
 }&lt;/p&gt;
-
 &lt;p&gt;tr.headerLastRow {
-    border-bottom: 2px solid black;
+border-bottom: 2px solid black;
 }&lt;/p&gt;
-
 &lt;p&gt;th.rowNumber, td.rowNumber {
-    text-align: right;
+text-align: right;
 }&lt;/p&gt;
-
-&lt;p&gt;&lt;/style&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
 &lt;body&gt;
-&lt;table&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;tr class = header&gt;
+&lt;table&gt;
+&lt;tr class = header&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;parameters&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;mean&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;std&lt;/th&gt;
@@ -729,54 +697,54 @@ table, td, th {
 &lt;th style = &#34;text-align: right; &#34;&gt;r_hat&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr class = &#34;subheader headerLastRow&#34;&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Symbol&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;String&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
-&lt;th style = &#34;text-align: right; &#34;&gt;Any&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
+&lt;th style = &#34;text-align: right; &#34;&gt;Float64&lt;/th&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma_angle&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.02&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.018&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4098.68&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;5026.215&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.001&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_distance&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.08&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.001&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;4901.694&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;sigma_y&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.003&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.001&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;6563.99&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;sigma_degrees&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;1.02&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.01&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;0.006&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
 &lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;4098.68&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;5026.215&lt;/td&gt;
+&lt;td style = &#34;text-align: right; &#34;&gt;1.001&lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;sigma_distance&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.08&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;3803.99&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;sigma_y&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;0.0&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;785.16&lt;/td&gt;
-&lt;td style = &#34;text-align: right; &#34;&gt;1.0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&lt;/p&gt;
-
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 &lt;p&gt;Calculate predictions and visualize:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;post_siga = median(chn4[:sigma_angle].value)
 post_sigd = median(chn4[:sigma_distance].value)
 
@@ -794,25 +762,27 @@ scatter(
   xlab = &amp;quot;Distance from hole (ft)&amp;quot;)
 plot!(geom_lines2, color = 2)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-11-02_golf-turing_files/golf-turing-rev1_15_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2020-05-25_golf-turing_files/golf-turing-rev2_19_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We can see that this adjusted first principles based model is fitting the data much better now! To add to that, it also sampled faster and more consistently during my testing. This case study really shows off the power of a bayesian approach. The modeler has the ability to expand a model using domain knowledge and craft a model that makes sense and aligns with the data generating process.&lt;/p&gt;
-
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It&amp;rsquo;s really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of its promise to solve the &lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;two-language problem&lt;/a&gt;.&lt;/p&gt;
-
+&lt;p&gt;If you made it this far, thanks for checking out this post! I personally appreciate all of the great scientists, applied statisticians, etc. that have created and shared the other posts I referenced as well as the team developing the Turing PPL within Julia. It&amp;rsquo;s really exciting to see a PPL written entirely in one language. In my opinion, it shows the strengths of the Julia language and is an example of its promise to solve the 
+&lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;two-language problem&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34;&gt;Stan: a state-of-the-art platform for statistical modeling and high-performance statistical computation&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34;&gt;Model building and expansion for golf putting - Gelman&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34;&gt;Model building and expansion for golf putting - Carroll&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34;&gt;Bayesian golf puttings, NUTS, and optimizing your sampling function with TensorFlow Probability&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34;&gt;Turing.jl: A library for robust, efficient, general-purpose probabilistic programming&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://julialang.org/blog/2019/07/multithreading&#34; target=&#34;_blank&#34;&gt;Announcing composable multi-threaded parallelism in Julia&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34;&gt;ODSC East 2016 | Stefan Karpinski - &amp;ldquo;Solving the Two Language Problem&amp;rdquo;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://mc-stan.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Stan: a state-of-the-art platform for statistical modeling and high-performance statistical computation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://mc-stan.org/users/documentation/case-studies/golf.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Model building and expansion for golf putting - Gelman&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://nbviewer.jupyter.org/github/pymc-devs/pymc3/blob/master/docs/source/notebooks/putting_workflow.ipynb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Model building and expansion for golf putting - Carroll&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://adamhaber.github.io/post/nuts/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Bayesian golf puttings, NUTS, and optimizing your sampling function with TensorFlow Probability&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://turing.ml/dev/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Turing.jl: A library for robust, efficient, general-purpose probabilistic programming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://julialang.org/blog/2019/07/multithreading&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Announcing composable multi-threaded parallelism in Julia&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=B9moDuSYzGo&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ODSC East 2016 | Stefan Karpinski - &amp;ldquo;Solving the Two Language Problem&amp;rdquo;&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
@@ -821,7 +791,6 @@ plot!(geom_lines2, color = 2)
       <title>Market Demand with Instrumental Variables</title>
       <link>/post/2019-03-26_market-dem-with-iv/</link>
       <pubDate>Tue, 26 Mar 2019 00:00:00 +0000</pubDate>
-      
       <guid>/post/2019-03-26_market-dem-with-iv/</guid>
       <description>
 
@@ -1146,22 +1115,15 @@ fish dealers. A price-setting firm will raise price to the point where the perce
       <title>Kernel Density Estimation from Scratch</title>
       <link>/post/2019-03-16_kde-scratch/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 -0500</pubDate>
-      
       <guid>/post/2019-03-16_kde-scratch/</guid>
-      <description>
-
-&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
-
-&lt;p&gt;Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s &lt;a href=&#34;https://www.countbayesie.com/&#34; target=&#34;_blank&#34;&gt;probability blog&lt;/a&gt; I&amp;rsquo;ve been reading a great book on data analysis by Philipp K. Janert:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/janert.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;&lt;/p&gt;
-
+      <description>&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;Why am I writing about KDE&amp;rsquo;s? At the recommendation of Will Kurt&amp;rsquo;s 
+&lt;a href=&#34;https://www.countbayesie.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;probability blog&lt;/a&gt; I&amp;rsquo;ve been reading a great book on data analysis by Philipp K. Janert:&lt;/p&gt;
+&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/janert.jpg&#34; alt=&#34;drawing&#34; width=&#34;50%&#34;/&gt;
 &lt;p&gt;This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage. In fact, there are many metrics that we commonly use to understand a variable that have an implicit assumption that your data are &lt;code&gt;unimodal&lt;/code&gt; (having a single peak). If your data doesn&amp;rsquo;t have this structure then you may be mislead by measures of central tendency (mean/median/mode), outliers, or other statistical methods (linear regression, t-tests, etc.).&lt;/p&gt;
-
 &lt;p&gt;This post&amp;rsquo;s structure follows closely with how I commonly learn topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what&amp;rsquo;s going on underneath.&lt;/p&gt;
-
-&lt;p&gt;I use a small example I discovered on the &lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_density_estimation&#34; target=&#34;_blank&#34;&gt;Wikipedia page&lt;/a&gt; for KDEs. It uses a handful of data points for a single variable:&lt;/p&gt;
-
+&lt;p&gt;I use a small example I discovered on the 
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Kernel_density_estimation&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikipedia page&lt;/a&gt; for KDEs. It uses a handful of data points for a single variable:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1169,42 +1131,34 @@ fish dealers. A price-setting firm will raise price to the point where the perce
 &lt;th&gt;Value&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
-
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;1&lt;/td&gt;
 &lt;td&gt;-2.1&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;2&lt;/td&gt;
 &lt;td&gt;-1.3&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;3&lt;/td&gt;
 &lt;td&gt;-0.4&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;4&lt;/td&gt;
 &lt;td&gt;1.9&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;5&lt;/td&gt;
 &lt;td&gt;5.1&lt;/td&gt;
 &lt;/tr&gt;
-
 &lt;tr&gt;
 &lt;td&gt;6&lt;/td&gt;
 &lt;td&gt;6.2&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
 &lt;p&gt;Let&amp;rsquo;s start with a basic &lt;code&gt;dot&lt;/code&gt; plot of these points. I&amp;rsquo;ll be using the &lt;code&gt;Julia Programming Language&lt;/code&gt; for these examples.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using StatsPlots
 
 # initialize an array of the samples
@@ -1212,54 +1166,40 @@ x = [-2.1; -1.3; -0.4; 1.9; 5.1; 6.2];
 # plot it out
 scatter(x, zeros(length(x)), legend = false)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;kde-with-kerneldensity-jl&#34;&gt;KDE with KernelDensity.jl&lt;/h2&gt;
-
-&lt;p&gt;Now applying the quick and easy solution: a &lt;a href=&#34;https://github.com/JuliaStats/KernelDensity.jl&#34; target=&#34;_blank&#34;&gt;package&lt;/a&gt;. This package has a function named &lt;code&gt;kde&lt;/code&gt; that takes a one dimensional array (or vector), a bandwidth argument, and a chosen kernel (we&amp;rsquo;ll use the default). So let&amp;rsquo;s see it:&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_1_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;kde-with-kerneldensityjl&#34;&gt;KDE with KernelDensity.jl&lt;/h2&gt;
+&lt;p&gt;Now applying the quick and easy solution: a 
+&lt;a href=&#34;https://github.com/JuliaStats/KernelDensity.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;package&lt;/a&gt;. This package has a function named &lt;code&gt;kde&lt;/code&gt; that takes a one dimensional array (or vector), a bandwidth argument, and a chosen kernel (we&amp;rsquo;ll use the default). So let&amp;rsquo;s see it:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;import KernelDensity
 
 KernelDensity.kde(x, bandwidth = sqrt(2.25)) |&amp;gt;
   x -&amp;gt; plot!(x, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_2_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;There we go, we&amp;rsquo;ve applied KDE to these data points and we can now see the &lt;code&gt;bimodal&lt;/code&gt; nature of this data. If all we wanted to do was visualize the distribution then we&amp;rsquo;re done. I&amp;rsquo;d like to dig a bit deeper though.&lt;/p&gt;
-
-&lt;h2 id=&#34;kde-with-distributions-jl&#34;&gt;KDE with Distributions.jl&lt;/h2&gt;
-
+&lt;h2 id=&#34;kde-with-distributionsjl&#34;&gt;KDE with Distributions.jl&lt;/h2&gt;
 &lt;p&gt;What is the &lt;code&gt;kernel&lt;/code&gt; part of this about? What was the default kernel we used in the previous section? The &lt;code&gt;kde&lt;/code&gt; function from the package used a default kernel associated with the Normal distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;$$
+&lt;p&gt;$$
 D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
-$$&lt;/code&gt;&lt;/p&gt;
-
+$$&lt;/p&gt;
 &lt;p&gt;Breaking down this formula a bit: The kernel is the function shown above as &lt;code&gt;$K$&lt;/code&gt; and Janert describes it like so:&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;To form a KDE, we place a &lt;em&gt;kernel&lt;/em&gt; —that is, a smooth, strongly peaked function—at the
 position of each data point. We then add up the contributions from all kernels to obtain a
 smooth curve, which we can evaluate at any point along the &lt;em&gt;x&lt;/em&gt; axis&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;p&gt;We are effectively calculating weighted distances from our data points to points along the &lt;em&gt;x&lt;/em&gt; axis. There is a great interactive introduction to kernel density estimation &lt;a href=&#34;https://mathisonian.github.io/kde/&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. I highly recommend it because you can play with bandwidth, select different kernel methods, and check out the resulting effects.&lt;/p&gt;
-
+&lt;p&gt;We are effectively calculating weighted distances from our data points to points along the &lt;em&gt;x&lt;/em&gt; axis. There is a great interactive introduction to kernel density estimation 
+&lt;a href=&#34;https://mathisonian.github.io/kde/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;. I highly recommend it because you can play with bandwidth, select different kernel methods, and check out the resulting effects.&lt;/p&gt;
 &lt;p&gt;As I mentioned before, the default &lt;code&gt;kernel&lt;/code&gt; for this package is the Normal (or Gaussian) probability density function (pdf):&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;$$
+&lt;p&gt;$$
 K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
-$$&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Since we are calculating pdfs I&amp;rsquo;ll use the &lt;a href=&#34;https://github.com/JuliaStats/Distributions.jl&#34; target=&#34;_blank&#34;&gt;Distributions.jl&lt;/a&gt; package to create each distribution, calculate the densities, and sum the results.&lt;/p&gt;
-
+$$&lt;/p&gt;
+&lt;p&gt;Since we are calculating pdfs I&amp;rsquo;ll use the 
+&lt;a href=&#34;https://github.com/JuliaStats/Distributions.jl&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Distributions.jl&lt;/a&gt; package to create each distribution, calculate the densities, and sum the results.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;using Distributions
 
 dists = Normal.(x, sqrt(2.25))
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;pre&gt;&lt;code&gt;6-element Array{Distributions.Normal{Float64},1}:
  Distributions.Normal{Float64}(μ=-2.1, σ=1.5)
  Distributions.Normal{Float64}(μ=-1.3, σ=1.5)
@@ -1268,16 +1208,12 @@ dists = Normal.(x, sqrt(2.25))
  Distributions.Normal{Float64}(μ=5.1, σ=1.5)
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See &lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of &lt;code&gt;2.25&lt;/code&gt; (aka our chosen bandwidth). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
-
+&lt;p&gt;Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the &lt;code&gt;.&lt;/code&gt; (or &amp;ldquo;dot&amp;rdquo;) operator. See 
+&lt;a href=&#34;https://julialang.org/blog/2018/05/extensible-broadcast-fusion&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this&lt;/a&gt; blog post if you want to learn more about it. Above we applied the &lt;code&gt;Normal&lt;/code&gt; method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of &lt;code&gt;2.25&lt;/code&gt; (aka our chosen bandwidth). Let&amp;rsquo;s plot each of these distributions:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;plot(dists, legend = false)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_4_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Summing up their probability densities across all of &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# create an iterator
 x_d = range(-7, 11, length = 100)
 # find the kde with a gaussian kernel
@@ -1285,15 +1221,10 @@ dens = sum(pdf.(eachdist, x_d) for eachdist in dists)
 
 plot!(x_d, dens)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_5_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the gaussian kernel. Let&amp;rsquo;s extrapolate a bit so we could use different kernels.&lt;/p&gt;
-
 &lt;h2 id=&#34;kernel-density-from-scratch&#34;&gt;Kernel Density from Scratch&lt;/h2&gt;
-
 &lt;p&gt;To apply a new kernel method we can just write the KDE code from scratch. Below I&amp;rsquo;ve defined the KDE function as &lt;code&gt;D&lt;/code&gt; and the kernel argument as &lt;code&gt;K&lt;/code&gt; to mimic the math above.&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;# define some kernels:
 # gaussian kernel
 kgauss(x) = 1/sqrt(2π) * exp(-1/2 * x^2)
@@ -1312,11 +1243,8 @@ dens = [D(xstep, sqrt(2.25), x, K) for xstep in x_d, K in (kgauss, kbox, ktri)]
 # visualize the kernels
 plot(x_d, dens, label = [&amp;quot;Gaussian&amp;quot;, &amp;quot;Box&amp;quot;, &amp;quot;Triangular&amp;quot;])
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;/post/2019-03-16-kde-scratch_files/2019-03-16_kde-scratch_6_1.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;In my example above I used some shorthand Julia syntax. The &lt;code&gt;?:&lt;/code&gt; syntax is called a ternary operator and makes a conditional &lt;code&gt;if-else&lt;/code&gt; statement more compact. I also used Julia&amp;rsquo;s &lt;code&gt;Assignment&lt;/code&gt; form for my function definitions above because it looks a lot more like the math involved. You could have easily defined each of these functions to look more like so:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-julia&#34;&gt;function foo(x)
   if ...
     ...
@@ -1326,29 +1254,28 @@ plot(x_d, dens, label = [&amp;quot;Gaussian&amp;quot;, &amp;quot;Box&amp;quot;, 
   return ...
 end
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next?&lt;/h2&gt;
-
+&lt;h2 id=&#34;whats-next&#34;&gt;What&amp;rsquo;s next?&lt;/h2&gt;
 &lt;p&gt;A short post on cumulative distribution functions (cdf) using Julia will likely follow this one. Janert introduces both kdes and cdfs in his chapter &lt;strong&gt;A Single Variable: Shape and Distribution&lt;/strong&gt; and they complement each other really well. Thanks for reading!&lt;/p&gt;
 </description>
+    </item>
+    
+    <item>
+      <title>About / Contact</title>
+      <link>/bio/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>/bio/</guid>
+      <description></description>
     </item>
     
     <item>
       <title>Example Page</title>
       <link>/tutorial/example/</link>
       <pubDate>Sun, 09 Sep 2018 00:00:00 -0500</pubDate>
-      
       <guid>/tutorial/example/</guid>
-      <description>
-
-&lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
-
+      <description>&lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
 &lt;h2 id=&#34;tip-1&#34;&gt;Tip 1&lt;/h2&gt;
-
 &lt;p&gt;&amp;hellip;&lt;/p&gt;
-
 &lt;h2 id=&#34;tip-2&#34;&gt;Tip 2&lt;/h2&gt;
-
 &lt;p&gt;&amp;hellip;&lt;/p&gt;
 </description>
     </item>
@@ -1357,7 +1284,6 @@ end
       <title>Privacy Policy</title>
       <link>/privacy/</link>
       <pubDate>Thu, 28 Jun 2018 00:00:00 -0500</pubDate>
-      
       <guid>/privacy/</guid>
       <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
 </description>
@@ -1367,7 +1293,6 @@ end
       <title>A Person Re-Identification System For Mobile Devices</title>
       <link>/publication/person-re-id/</link>
       <pubDate>Tue, 01 Sep 2015 00:00:00 -0500</pubDate>
-      
       <guid>/publication/person-re-id/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
@@ -1377,7 +1302,6 @@ end
       <title>Mobile visual clothing search</title>
       <link>/publication/clothing-search/</link>
       <pubDate>Mon, 01 Jul 2013 00:00:00 -0500</pubDate>
-      
       <guid>/publication/clothing-search/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
@@ -1387,29 +1311,20 @@ end
       <title>Slides</title>
       <link>/slides/example-slides/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>/slides/example-slides/</guid>
-      <description>
-
-&lt;h1 id=&#34;welcome-to-slides&#34;&gt;Welcome to Slides&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/&#34; target=&#34;_blank&#34;&gt;Academic&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+      <description>&lt;h1 id=&#34;welcome-to-slides&#34;&gt;Welcome to Slides&lt;/h1&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://sourcethemes.com/academic/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Academic&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;features&#34;&gt;Features&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Efficiently write slides in Markdown&lt;/li&gt;
 &lt;li&gt;3-in-1: Create, Present, and Publish your slides&lt;/li&gt;
 &lt;li&gt;Supports speaker notes&lt;/li&gt;
 &lt;li&gt;Mobile friendly slides&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;controls&#34;&gt;Controls&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
@@ -1419,80 +1334,56 @@ end
 &lt;li&gt;Speaker notes: &lt;code&gt;S&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Zoom: &lt;code&gt;Alt + Click&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/hakimel/reveal.js#pdf-export&#34; target=&#34;_blank&#34;&gt;PDF Export&lt;/a&gt;: &lt;code&gt;E&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://github.com/hakimel/reveal.js#pdf-export&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;PDF Export&lt;/a&gt;: &lt;code&gt;E&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;code-highlighting&#34;&gt;Code Highlighting&lt;/h2&gt;
-
 &lt;p&gt;Inline code: &lt;code&gt;variable&lt;/code&gt;&lt;/p&gt;
-
 &lt;p&gt;Code block:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;porridge = &amp;quot;blueberry&amp;quot;
 if porridge == &amp;quot;blueberry&amp;quot;:
     print(&amp;quot;Eating...&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;math&#34;&gt;Math&lt;/h2&gt;
-
 &lt;p&gt;In-line math: $x + y = z$&lt;/p&gt;
-
 &lt;p&gt;Block math:&lt;/p&gt;
-
 &lt;p&gt;$$
-f\left( x \right) = \;\frac{{2\left( {x + 4} \right)\left( {x - 4} \right)}}{{\left( {x + 4} \right)\left( {x + 1} \right)}}
+f\left( x \right) = ;\frac{{2\left( {x + 4} \right)\left( {x - 4} \right)}}{{\left( {x + 4} \right)\left( {x + 1} \right)}}
 $$&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;fragments&#34;&gt;Fragments&lt;/h2&gt;
-
 &lt;p&gt;Make content appear incrementally&lt;/p&gt;
-
 &lt;pre&gt;&lt;code&gt;{{% fragment %}} One {{% /fragment %}}
 {{% fragment %}} **Two** {{% /fragment %}}
 {{% fragment %}} Three {{% /fragment %}}
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Press &lt;code&gt;Space&lt;/code&gt; to play!&lt;/p&gt;
-
 &lt;p&gt;&lt;span class=&#34;fragment &#34; &gt;
-  One
+One
 &lt;/span&gt;
 &lt;span class=&#34;fragment &#34; &gt;
-  &lt;strong&gt;Two&lt;/strong&gt;
+&lt;strong&gt;Two&lt;/strong&gt;
 &lt;/span&gt;
 &lt;span class=&#34;fragment &#34; &gt;
-  Three
+Three
 &lt;/span&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;p&gt;A fragment can accept two optional parameters:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;class&lt;/code&gt;: use a custom style (requires definition in custom CSS)&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;weight&lt;/code&gt;: sets the order in which a fragment appears&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;speaker-notes&#34;&gt;Speaker Notes&lt;/h2&gt;
-
 &lt;p&gt;Add speaker notes to your presentation&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{% speaker_note %}}
 - Only the speaker can read these notes
 - Press `S` key to view
 {{% /speaker_note %}}
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Press the &lt;code&gt;S&lt;/code&gt; key to view the speaker notes!&lt;/p&gt;
-
 &lt;aside class=&#34;notes&#34;&gt;
   &lt;ul&gt;
 &lt;li&gt;Only the speaker can read these notes&lt;/li&gt;
@@ -1500,11 +1391,8 @@ $$&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;/aside&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;themes&#34;&gt;Themes&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;black: Black background, white text, blue links (default)&lt;/li&gt;
 &lt;li&gt;white: White background, black text, blue links&lt;/li&gt;
@@ -1512,18 +1400,14 @@ $$&lt;/p&gt;
 &lt;li&gt;beige: Beige background, dark text, brown links&lt;/li&gt;
 &lt;li&gt;sky: Blue background, thin dark text, blue links&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;ul&gt;
 &lt;li&gt;night: Black background, thick white text, orange links&lt;/li&gt;
 &lt;li&gt;serif: Cappuccino background, gray text, brown links&lt;/li&gt;
 &lt;li&gt;simple: White background, black text, blue links&lt;/li&gt;
 &lt;li&gt;solarized: Cream-colored background, dark green text, blue links&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 
 &lt;section data-noprocess data-shortcode-slide
   
@@ -1531,38 +1415,28 @@ $$&lt;/p&gt;
       data-background-image=&#34;/img/boards.jpg&#34;
   &gt;
 
-
 &lt;h2 id=&#34;custom-slide&#34;&gt;Custom Slide&lt;/h2&gt;
-
 &lt;p&gt;Customize the slide style and background&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{&amp;lt; slide background-image=&amp;quot;/img/boards.jpg&amp;quot; &amp;gt;}}
 {{&amp;lt; slide background-color=&amp;quot;#0000FF&amp;quot; &amp;gt;}}
 {{&amp;lt; slide class=&amp;quot;my-style&amp;quot; &amp;gt;}}
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;custom-css-example&#34;&gt;Custom CSS Example&lt;/h2&gt;
-
 &lt;p&gt;Let&amp;rsquo;s make headers navy colored.&lt;/p&gt;
-
 &lt;p&gt;Create &lt;code&gt;assets/css/reveal_custom.css&lt;/code&gt; with:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.reveal section h1,
 .reveal section h2,
 .reveal section h3 {
   color: navy;
 }
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h1 id=&#34;questions&#34;&gt;Questions?&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://discourse.gohugo.io&#34; target=&#34;_blank&#34;&gt;Ask&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://discourse.gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ask&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Documentation&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
