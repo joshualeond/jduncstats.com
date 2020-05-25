@@ -67,9 +67,9 @@ There we go, we've applied KDE to these data points and we can now see the `bimo
 
 What is the `kernel` part of this about? What was the default kernel we used in the previous section? The `kde` function from the package used a default kernel associated with the Normal distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:
 
-`$$
+$$
 D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
-$$`
+$$
 
 Breaking down this formula a bit: The kernel is the function shown above as `$K$` and Janert describes it like so:
 
@@ -81,9 +81,9 @@ We are effectively calculating weighted distances from our data points to points
 
 As I mentioned before, the default `kernel` for this package is the Normal (or Gaussian) probability density function (pdf):
 
-`$$
+$$
 K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
-$$`
+$$
 
 Since we are calculating pdfs I'll use the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package to create each distribution, calculate the densities, and sum the results.
 
