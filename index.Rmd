@@ -1,0 +1,51 @@
+---
+title: "jduncstats"
+site: distill::distill_website
+---
+
+<div class = "container">
+  <div class = "pull-left">
+```{r, echo = FALSE, eval = TRUE, out.width="80%", fig.align='center'}
+knitr::include_graphics(here::here("personal_picture.jpeg"))
+```
+
+<center>**Joshua Duncan**  
+*Sr. Business Analyst* </center>
+  </div>
+  
+  <div class = "pull-right">
+  
+Hey, I’m Josh Duncan, a former controls engineer that found a passion in data science and statistics. This blog is a platform for extending my data science education. I’m currently on a Bayesian modeling journey so you’ll likely see posts on learning bayes.
+
+  </div>
+</div>
+<br>
+<br>
+
+## Background
+<div class = "container">
+  <div class = "pull-left">
+  
+### Education
+**Graduate School, Non-Matriculated, Statistics**
+Louisiana State University, present
+
+**MS in Analytics**  
+Louisiana State University, 2017
+  
+**BS in Electrical Engineering**  
+Louisiana State University, 2014
+  </div>
+  <div class = "pull-right">
+  
+### Recent Roles  
+**Sr. Business Analyst**  
+CF Industries
+  
+**Statistical Data Analyst**  
+Rain Carbon
+
+**Analytics Engineer**  
+InCentrik
+  </div>
+</div>

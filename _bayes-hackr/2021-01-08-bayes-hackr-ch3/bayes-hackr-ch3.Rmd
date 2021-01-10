@@ -1,0 +1,208 @@
+---
+title: "Chapter 3"
+description: |
+  Reproducing Chapter 3 of Bayesian Methods for Hackers in R + Stan
+author:
+  - name: J. Duncan
+date: 01-08-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## 3.1 The Bayesian Landscape
+
+### 3.1.4 Example: Unsupervised Clustering Using a Mixture Model
+
+```{r}
+library(tidyverse)
+library(cmdstanr)
+library(posterior)
+library(bayesplot)
+library(tidybayes)
+library(rstan)
+library(patchwork)
+library(distributional)
+
+url <- "https://raw.githubusercontent.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/master/Chapter3_MCMC/data/mixture_data.csv"
+
+data <- read_csv(url, col_names = FALSE) %>% 
+  rename(x = X1)
+```
+
+Let's visualize this data to make sure all is well:
+
+```{r fig.height=4}
+theme_set(theme_tidybayes())
+
+data %>% 
+  ggplot(aes(x=x)) + 
+  stat_histinterval() +
+  labs(
+    title = "Mixture Data",
+    x = "Value",
+    y = NULL
+  ) 
+```
+
+```{r}
+data_list <- list(
+  N = 300,
+  K = 2, # number of clusters
+  y = data$x
+)
+```
+
+https://mc-stan.org/docs/2_25/stan-users-guide/summing-out-the-responsibility-parameter.html
+
+```{r}
+mod <- cmdstanr::cmdstan_model("models/ch3-mod.stan")
+mod$print()
+
+fit <- mod$sample(
+  data = data_list,
+  seed = 123,
+  chains = 2,
+  parallel_chains = 2,
+  refresh = 1000,
+  iter_warmup = 4000,
+  iter_sampling = 8000
+)
+
+fit$summary()
+
+posterior <- fit$output_files() %>% 
+  read_stan_csv()
+```
+
+```{r fig.height=7}
+p1 <- posterior %>% 
+  mcmc_trace(pars = c("mu[1]", "mu[2]")) +
+  labs(
+    title = "Traces of center for each cluster"
+  )
+
+p2 <- posterior %>% 
+  mcmc_trace(pars = c("sigma[1]", "sigma[2]")) +
+  labs(
+    title = "Traces of standard deviation of each cluster"
+  )
+
+p3 <- posterior %>% 
+  mcmc_trace(pars = c("theta[1]")) +
+  labs(
+    title = "Frequency of assignment to cluster 1"
+  )
+
+p1 / p2 / p3 
+```
+
+> Notice the following characteristics:  
+>
+> 1. The traces converges, not to a single point, but to a distribution of possible points. This is convergence in an MCMC algorithm.
+> 2. Inference using the first few thousand points is a bad idea, as they are unrelated to the final distribution we are interested in. Thus is it a good idea to discard those samples before using the samples for inference. We call this period before converge the burn-in period.
+> 3. The traces appear as a random "walk" around the space, that is, the paths exhibit correlation with previous positions. This is both good and bad. We will always have correlation between current positions and the previous positions, but too much of it means we are not exploring the space well. This will be detailed in the Diagnostics section later in this chapter.
+
+#### Cluster Investigation
+
+```{r}
+# https://mpopov.com/blog/2020/09/07/pivoting-posteriors/
+tidy_draws.CmdStanMCMC <- function(model, ...) {
+  return(as_draws_df(model$draws()))
+}
+```
+
+```{r}
+fit %>% 
+  gather_draws(mu[cluster], sigma[cluster]) %>% 
+  mutate(cluster = paste0("Cluster ", cluster)) %>% 
+  ggplot(aes(.value)) +
+  stat_histinterval() +
+  facet_wrap(vars(cluster, .variable), ncol = 2, scales = "free") +
+  labs(
+    title = "Posterior of center and standard deviation of clusters 1 & 2",
+    y = NULL,
+    x = NULL
+  )
+```
+
+> One quick and dirty way (which has nice theoretical properties we will see in Chapter 5), is to use the mean of the posterior distributions. Below we overlay the Normal density functions, using the mean of the posterior distributions as the chosen parameters, with our observed data:
+
+```{r fig.height=4}
+distdata <- fit %>% 
+  spread_draws(mu[cluster], sigma[cluster], theta[cluster]) %>% 
+  mean_hdci() %>% 
+  mutate(
+    cluster = as_factor(cluster),
+    nest(tibble(x = seq(20, 300, length.out = 500)))
+    ) %>% 
+  mutate(
+    data = pmap(
+      list(data, mu, sigma, theta),
+      function(data, mu, sigma, theta) 
+        mutate(data, dens = theta * dnorm(x, mean = mu, sd = sigma))
+      )
+  ) %>% 
+  unnest() 
+
+distdata %>% 
+  ggplot(aes(x = x)) +
+  geom_histogram(
+    data = data, 
+    aes(y = stat(density)), color = "black", fill = "white"
+    ) +
+  geom_ribbon(aes(ymin = 0, ymax = dens, fill = cluster), alpha = 0.5) +
+  labs(
+    title = "Visualizing Clusters using posterior-mean parameters",
+    y = NULL,
+    x = NULL
+  ) +
+  scale_fill_viridis_d()
+```
+
+#### Returning to Clustering: Prediction
+
+> We can try a *less precise*, but much quicker method. We will use Bayes' Theorem for this. As you'll recall, Bayes' Theorem looks like:
+
+$$
+P(A|X) = \frac{P(X|A)P(A)}{P(X)} 
+$$
+
+> For a particular sample set of parameters for our posterior distribution, ($\mu_1,\sigma_1,\mu_2,\sigma_2,\theta$), we are interested in asking, "Is the probability that $x$ is in the cluster 1 *greater* than the probability it is in cluster 0?" where the probability is dependent on the chosen parameters:
+
+$$
+\frac{P(x = ?|L_x = 1)P(L_x=1)}{P(x=?)} > \frac{P(x = ?|L_x = 2)P(L_x=2)}{P(x=?)} 
+$$
+
+> Since the denominators are equal, they can be ignored:
+
+$$
+P(x = ?|L_x = 1)P(L_x=1) > P(x = ?|L_x = 2)P(L_x=2)
+$$
+This is what you'll see in the `generated quantities` block but instead on the log space. There is likely a more *precise* way to estimate the probability of the data points belonging to each cluster. I think it would be similar to what was done in the Chapter `1` model for the change point detection. 
+
+```{r fig.height=4}
+dataorig <- data %>% 
+  mutate(i = row_number())
+
+probassign <- fit %>% 
+  gather_draws(yrep[i]) %>% 
+  mean_hdci() %>% 
+  left_join(dataorig)
+
+probassign %>% 
+  ggplot(aes(x = x, y = .value)) +
+  geom_point(aes(color = .value)) +
+  scale_color_viridis_c() +
+  labs(
+    title = "Probability of data point belonging to cluster 0",
+    y = "probability",
+    x = "value of data point"
+  ) +
+  theme(legend.position = "none")
+```
+

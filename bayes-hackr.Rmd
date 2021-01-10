@@ -1,0 +1,4 @@
+---
+title: "Bayesian Methods for Hackers with R + Tidyverse + Stan (WIP)"
+listing: bayes-hackr
+---
