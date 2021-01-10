@@ -2,7 +2,7 @@
   from = "/post/2019-11-02_golf-turing/"
   to = "/posts/2019-11-02-golf-turing/"
   status = 301
-  force = false
+  force = true
   
 [[redirects]]
   from = "/post/2019-03-26_market-dem-with-iv/"
@@ -14,4 +14,4 @@
   from = "/post/2019-03-16_kde-scratch"
   to = "/posts/2019-03-16-kde-scratch"
   status = 301
-  force = false
+  force = true
