@@ -1,0 +1,472 @@
+---
+title: "Chapter 5"
+description: |
+  Reproducing Chapter 5 of Bayesian Methods for Hackers in R + Stan
+author:
+  - name: J. Duncan
+date: 01-08-2021
+preview: halo-example.png
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## 5.2 Loss Functions
+### 5.2.2 Example: Optimizing for the Showcase on *The Price Is Right*
+
+We can start by visualizing some priors:
+
+```{r}
+library(tidyverse)
+library(tidybayes)
+library(posterior)
+library(patchwork)
+theme_set(theme_tidybayes())
+
+tribble(
+  ~var, ~mu, ~sd,
+  "historical total prices", 35000, 7500,
+  "snowblower price guess", 3000, 500,
+  "trip price guess", 12000, 3000
+  ) %>% 
+  ggplot() +
+  stat_dist_halfeye(
+    aes(dist = distributional::dist_normal(mu = mu, sigma = sd)),
+    normalize = "panels",
+    orientation = "horizontal"
+  ) +
+  facet_wrap(~var, ncol = 1) +
+  labs(
+    y = NULL,
+    x = NULL
+  )
+```
+
+There's no `data` block here. We're simply playing with priors which is kind of cool.
+
+```{r}
+mod <- cmdstanr::cmdstan_model("models/ch5-mod1.stan")
+mod$print()
+
+fit <- mod$sample(
+  seed = 123,
+  chains = 4,
+  parallel_chains = 2,
+  refresh = 1000,
+  iter_sampling = 3000
+)
+```
+
+Now to visualize the `total_price` estimate:
+
+```{r}
+# https://mpopov.com/blog/2020/09/07/pivoting-posteriors/
+tidy_draws.CmdStanMCMC <- function(model, ...) {
+  return(as_draws_df(model$draws()))
+}
+```
+
+Now visualizing the prior information versus the posterior price estimate:
+
+```{r}
+priorp <- ggplot() +
+  stat_dist_halfeye(
+    aes(dist = distributional::dist_normal(mu = 35000, sigma = 7500)),
+    .width = 0.25,
+    orientation = "horizontal"
+  ) +
+  xlim(5000, 40000) +
+  labs(
+    title = "Prior distribution of suite price",
+    y = NULL,
+    x = NULL
+  )
+
+postp <- fit %>% 
+  gather_draws(true_price) %>% 
+  ggplot() +
+  stat_histinterval(aes(x = .value), .width = 0.25) +
+  xlim(5000, 40000) +
+  labs(
+    title = "Posterior of the true price estimate",
+    y = NULL,
+    x = NULL
+  )
+
+priorp / postp
+```
+
+```{r}
+# with util function
+risks <- seq(30000, 150000, length.out = 6)
+guesses <- seq(5000, 50000, length.out = 70)
+```
+
+I prefer the above method of just writing the utility function in Stan and using it to estimate the expected loss. However, there's a limitation for the optimization process this way. It's only as granular as the inputs we send to Stan. We could increase the resolution of `guesses` here and get something more accurate or just keep as is and select the best guess in our set of `70` guesses.
+
+You can use the `optim` function to get a better choice using optimization by just using the posterior within the R environment. Something more like [this](http://www.statsathome.com/2017/10/12/bayesian-decision-theory-made-ridiculously-simple/#the-loss-function) example which uses the `posterior_predict` function from the `brms` package. This is also better for scale once we start having more dimensions.
+
+Define the loss function using the true_price posterior distribution
+
+```{r}
+showdown_loss <- function(guess, true_price, risk){
+  loss <- case_when(
+    true_price$.value < guess ~ risk,
+    abs(true_price$.value - guess) <= 250 ~ -2 * abs(true_price$.value),
+    TRUE ~ abs(true_price$.value - guess - 250)
+  )
+  return(mean(loss))
+}
+```
+
+```{r fig.height=5, fig.width=9}
+post_df <- gather_draws(fit, true_price)
+
+dat <- crossing(guesses, risks) %>% 
+  mutate(nest(post_df)) %>% 
+  mutate(
+    loss = pmap_dbl(
+      list(guesses, data, risks),
+      ~ showdown_loss(..1, ..2, ..3)
+      )
+    ) %>% 
+  select(guesses, risks, loss)
+
+p <- dat %>% 
+  ggplot(aes(x = guesses, y = loss, color = ordered(risks))) + 
+  geom_line() + 
+  xlim(5000, 30000) + 
+  scale_color_viridis_d(
+    name = "Risk parameter",
+    labels = risks
+    ) +
+  labs(
+    title = "Expected loss of different guesses",
+    subtitle = "various risk-levels of overestimating",
+    x = "price bid",
+    y = "expected loss"
+  ) 
+p
+```
+
+#### Minimizing our losses
+
+```{r fig.height=5, fig.width=9}
+oppnts <- tibble(risks) %>% 
+  mutate(nest(post_df)) %>% 
+  mutate(
+    opt = map2(data, risks, ~ optim(
+      5000,
+      fn = function(guess) showdown_loss(guess, .x, .y)
+    ))
+  ) %>% 
+  mutate(
+    opt_tidy = map(opt, broom::tidy),
+    opt_glance = map(opt, broom::glance)
+  ) %>% 
+  unnest(opt_tidy, opt_glance) %>% 
+  select(risks, starts_with("value")) %>% 
+  rename(guesses = value, loss = value1)
+
+p + geom_vline(
+  data = oppnts, 
+  aes(xintercept = guesses, color = ordered(risks)), 
+  linetype = "dashed"
+  ) + 
+  scale_color_viridis_d(
+    name = "Bayes action at risk:",
+    labels = risks
+    ) +
+  labs(
+    title = "Expected loss & Bayes actions of different guesses",
+    subtitle = "various risk-levels of overestimating",
+    x = "price bid",
+    y = "expected loss"
+  ) 
+```
+
+## 5.3 Machine Learning via Bayesian Methods
+
+### Example: Financial Prediction
+
+```{r}
+stock_loss <- function(true_return, yhat, alpha = 100.){
+  loss <- if_else(
+    true_return * yhat < 0,
+    alpha * yhat^2 - sign(true_return) * yhat + abs(true_return),
+    abs(true_return - yhat)
+    )
+  return(loss)
+}
+```
+
+```{r}
+pred <- seq(-0.04, 0.12, length.out = 75)
+
+pred_df <- tibble(pred) %>% 
+  mutate(
+    `true_0.05` = stock_loss(0.05, pred),
+    `true_-0.02` = stock_loss(-0.02, pred)
+    ) %>% 
+  pivot_longer(-pred, names_to = "loss", names_prefix = "true_")
+
+pred_df %>% 
+  ggplot(aes(x = pred, y = value, color = loss)) +
+  geom_line() +
+  xlim(-0.04, .12) +
+  ylim(0, 0.25) +
+  geom_vline(aes(xintercept = 0.0), linetype = "dashed") +
+  labs(
+    title = "Stock returns loss if true value = 0.05, -0.02",
+    y = "loss",
+    x = "prediction"
+  ) +
+  scale_color_viridis_d(name = "If true value = ") 
+```
+
+> We will perform a regression on a trading signal that we believe predicts future returns well. Our dataset is artificial, as most financial data is not even close to linear. Below, we plot the data along with the least-squares line.
+
+```{r}
+## Code to create artificial data
+set.seed(123)
+N <- 100
+X <- 0.025 * rnorm(N)
+Y <- 0.5 * X + 0.01 * rnorm(N)
+artdat <- tibble(X, Y)
+
+ls_coef_ <- cov(X, Y) / var(X)
+ls_intercept <- mean(Y) - ls_coef_ * mean(X)
+
+artdat %>% 
+  ggplot(aes(X, Y)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Empirical returns vs trading signal",
+    x = "trading signal",
+    y = "returns"
+  )
+```
+
+```{r}
+dat_list <- compose_data(artdat)
+
+trading_signals <- seq(min(X), max(X), length.out = 50)
+dat_list[["trading_signals"]] <- trading_signals
+
+mod2 <- cmdstanr::cmdstan_model("models/ch5-mod2.stan")
+mod2$print()
+
+fit2 <- mod2$sample(
+  data = dat_list,
+  seed = 123,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 1000,
+  iter_sampling = 3000
+)
+
+fit2
+```
+
+Visualizing the marginal distributions:
+
+```{r}
+tidy_post <- gather_draws(fit2, alpha, beta, std) 
+  
+tidy_post %>% 
+  ggplot(aes(x = .value)) +
+  stat_histinterval(normalize = "panels", show_interval = FALSE) + 
+  facet_wrap(~.variable, ncol = 1, scales = "free") +
+  labs(
+    title = "Marginal Distributions", 
+    y = NULL,
+    x = NULL
+  )
+```
+
+Now for incorporating the loss function into our predictions:
+
+```{r}
+trading_signals <- seq(min(X), max(X), length.out = 50)
+dat_list[["trading_signals"]] <- trading_signals
+
+mod2_1 <- cmdstanr::cmdstan_model("models/ch5-mod2-wfunc.stan")
+mod2_1$print()
+
+fit3 <- mod2_1$sample(
+  data = dat_list,
+  seed = 123,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 1000,
+  iter_sampling = 3000
+)
+
+baction <- fit3 %>% 
+  gather_draws(util[i])
+  
+tibble(trading_signals) %>% 
+  rowid_to_column(var = "i") %>% 
+  right_join(baction) %>% 
+  ggplot(aes(x = trading_signals)) +
+  stat_lineribbon(aes(y = .value), .width = c(.99, .95, .8, .5), color = "#08519C") +
+  scale_fill_brewer()
+```
+
+We're able to see the issue with predictions close to zero from the chart above. Given there are many returns that could be positive or negative in this range we see a spike in potential risk or loss. In this case our optimization should instead predict `0` to take no position. This quote from the book explains this all well:
+
+> What is interesting about the above graph is that when the signal is near 0, and many of the possible returns outcomes are possibly both positive and negative, our best (with respect to our loss) prediction is to predict close to 0, hence take on no position. Only when we are very confident do we enter into a position. I call this style of model a sparse prediction, where we feel uncomfortable with our uncertainty so choose not to act. (Compare with the least-squares prediction which will rarely, if ever, predict zero).
+
+I think the only way we can optimize continuous decisions is to keep the utility/loss function all in the R session. I want to include it in Stan because it kind of wraps it all up nicely but I'm not sure how to minimize/maximize the loss functions here. In the Stan manual it says for $k$ discrete actions:
+
+> It only remains to make the decision k with highest expected utility, which will correspond to the choice with the highest posterior mean for util[k]. This can be read off of the mean column of the Stan’s summary statistics or accessed programmatically through Stan’s interfaces.
+
+Then the following regarding continuous decisions:
+
+> In these cases, the continuous choice can be coded as data in the Stan program. Then the expected utilities may be calculated. In other words, Stan can be used as a function from a choice to expected utilities. Then an external optimizer can call that function.
+
+```{r}
+ypred <- fit2 %>% 
+  gather_draws(outcomes[i]) %>% 
+  nest()
+
+bayesact <- ypred %>% 
+  mutate(
+    opt = map(data, ~ optim(
+      0,
+      fn = function(yhat) stock_loss(.x$.value, yhat, alpha = 500) %>% mean()
+    ))
+  ) %>% 
+  select(-data) %>% 
+  mutate(
+    opt_tidy = map(opt, broom::tidy),
+    opt_glance = map(opt, broom::glance)
+  ) %>% 
+  unnest(opt_tidy, opt_glance) %>% 
+  rename(true_return = value, loss = value1) %>% 
+  select(i, true_return, loss) %>% 
+  ungroup()
+```
+
+Let's visualize the predictions now:
+
+```{r fig.height=4, fig.width=8}
+ols <- tibble(trading_signals) %>% 
+  rowid_to_column(var = "i") %>% 
+  mutate(pred = ls_coef_ * trading_signals + ls_intercept)
+
+bayesact %>% 
+  left_join(ols) %>% 
+  ggplot(aes(x = trading_signals)) +
+  geom_line(aes(y = true_return, color = "Bayes action")) +
+  geom_line(aes(y = pred, color = "Least-squares")) +
+  geom_hline(aes(yintercept = 0), linetype = "dashed") +
+  labs(
+    title = "Least-squares prediction vs. Bayes action prediction",
+    x = "trading signal",
+    y = "prediction"
+  ) +
+  scale_color_viridis_d(name = NULL)
+```
+
+
+### 5.3.2 Example: Kaggle Contest on Observing Dark Worlds
+
+```{r}
+library(ggforce)
+
+sky3 <- read_csv("data/Train_Skies/Training_Sky3.csv")
+
+size_multiplier <- 25
+
+sky3prep <- sky3 %>% 
+  mutate(
+    d = sqrt(e1^2 + e2^2),
+    a = (1.0 / (1 - d)) * size_multiplier,
+    b = (1.0 / (1 + d)) * size_multiplier,
+    theta = atan2(e2, e1) * 0.5
+  )
+
+p2 <- sky3prep %>% 
+  ggplot() +
+  geom_ellipse(
+    aes(x0 = x, y0 = y, a = a, b = b, angle = theta), 
+    alpha = 0.4,
+    fill = 'cyan4', 
+    colour = 'cyan4'
+    )
+
+p2
+```
+
+```{r}
+dat_list2 <- list(
+  n = nrow(sky3),
+  cart_pos = rbind(sky3$x, sky3$y),
+  ellip_pos = rbind(sky3$e1, sky3$e2)
+)
+```
+
+Thanks to some help from the Stan community:
+https://discourse.mc-stan.org/t/help-with-vectorizing-stan-program/19957
+
+```{r}
+mod3 <- cmdstanr::cmdstan_model("models/ch5-mod3.stan")
+mod3$print()
+
+# sample with MCMC
+fit4 <- mod3$sample(
+  data = dat_list2,
+  seed = 123,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 1000,
+  iter_warmup = 1000,
+  iter_sampling = 3000
+)
+
+fit4$summary()
+```
+
+Visualizing the halo location:
+
+```{r}
+halo_post <- fit4 %>% 
+  spread_draws(halo_position[coord]) %>% 
+  pivot_wider(names_from = coord, values_from = halo_position) %>% 
+  rename(x = `1`, y = `2`)
+
+true_loc <- read_csv("data/Training_halos.csv") %>% 
+  filter(SkyId == "Sky3") %>% 
+  rename(x = halo_x1, y = halo_y1)
+
+p2 + 
+  geom_point(data = halo_post, aes(x = x, y = y), alpha = 0.015, color = "black") +
+  geom_point(data = true_loc, aes(x = x, y = y), color = "orange")
+```
+
+A closer look at the true location parameters:
+
+```{r}
+true_loc <- read_csv("data/Training_halos.csv") %>% 
+  filter(SkyId == "Sky3") %>% 
+  rename(`1` = halo_x1, `2` = halo_y1) %>% 
+  select(`1`, `2`) %>% 
+  pivot_longer(`1`:`2`, names_to = "coord") %>% 
+  mutate(coord = as.integer(coord))
+
+fit4 %>% 
+  spread_draws(halo_position[coord]) %>% 
+  left_join(true_loc) %>% 
+  ggplot() +
+  stat_histinterval(aes(x = halo_position), show_interval = FALSE, breaks = 40) +
+  geom_vline(aes(xintercept = value), linetype = "dashed") +
+  facet_wrap(~ coord, ncol = 1, scales = "free") 
+```
+
