@@ -49,5 +49,22 @@
     "preview": "bayes-hackr/2021-01-08-bayes-hackr-ch3/bayes-hackr-ch3_files/figure-html5/unnamed-chunk-2-1.png",
     "last_modified": "2021-01-08T20:07:23-06:00",
     "input_file": {}
+  },
+  {
+    "path": "bayes-hackr/2021-01-09-bayes-hackr-ch4/",
+    "title": "Chapter 4",
+    "description": "Reproducing Chapter 4 of Bayesian Methods for Hackers in R + Stan",
+    "author": [
+      {
+        "name": "J. Duncan",
+        "url": {}
+      }
+    ],
+    "date": "2021-01-08",
+    "categories": [],
+    "contents": "\n4.3 The Disorder of Small Numbers\n4.3.3 Example: How to Sort Reddit Comments\nThe original post:\n\n\nknitr::include_graphics(\"https://i.imgur.com/OYsHKlH.jpg\")\n\n\n\n\n\n\nlibrary(tidyverse)\nlibrary(RedditExtractoR)\nlibrary(tidybayes)\n\nreddit_thread <- reddit_content(\n  \"https://www.reddit.com/r/pics/comments/1w454i/deleted_by_user/\"\n  ) %>% \n  as_tibble()\n\nvote_data <- reddit_thread %>% \n  mutate(\n    ups = round((upvote_prop * comment_score)/(2 * upvote_prop - 1)),\n    upvotes = if_else(upvote_prop != 0.5, ups, round(comment_score / 2)),\n    downvotes = upvotes - comment_score,\n    total_votes = upvotes + downvotes\n  ) %>% \n  select(comment, comment_score, upvotes, downvotes, total_votes) %>% \n  arrange(desc(comment_score)) %>% \n  filter(comment_score > 1)\n\n\n\n\n\ndat_lists <- vote_data %>% \n  group_by(comment) %>% \n  nest() %>% \n  mutate(data_list = map(data, compose_data))\n\n\n\n\n\nmod <- cmdstanr::cmdstan_model(\"models/ch4-mod.stan\")\nmod$print()\n\n\ndata {\n  int<lower=0> n;\n  int upvotes[n];\n  int total_votes[n];\n}\n\nparameters {\n  real<lower=0,upper=1> upvote_ratio;\n}\n\nmodel {\n  upvote_ratio ~ uniform(0, 1);\n  upvotes ~ binomial(total_votes, upvote_ratio);\n}\n\n\n\nfits <- dat_lists %>% \n  mutate(\n    fit = map(\n      data_list, \n      ~ mod$sample(\n        data = .x,\n        seed = 123,\n        chains = 2,\n        parallel_chains = 2,\n        refresh = 0\n        )\n      )\n    )\n\n\n\nNow for visualizing some of these:\n\n\ntop_dists <- fits %>% \n  unnest(data) %>% \n  filter(\n    str_detect(comment, \"Sly Cooper\") ||\n      str_detect(comment, \"Dammit Elsa\") ||\n      str_detect(comment, \"Duratray\") ||\n      str_detect(comment, \"Actually it does\")\n  ) %>% \n  mutate(\n    draws = map(fit, ~ posterior::as_draws_df(.x$draws())),\n    brief = str_sub(comment, start = 1, end = 76),\n    description = paste0(\"(\", upvotes, \" up:\", downvotes, \" down): \", brief)\n    ) %>% \n  select(description, draws) %>% \n  unnest()\n\n\n\nNow for the histograms:\n\n\ntheme_set(theme_tidybayes())\n\nleast_plaus <- top_dists %>% \n  group_by(description) %>% \n  median_qi(upvote_ratio, .width = 0.95) %>% \n  select(description, .lower)\n  \ntop_dists %>% \n  ggplot(aes(x = upvote_ratio)) +\n  stat_histinterval(slab_color = \"gray45\") +\n  facet_wrap(~ description, ncol = 1) +\n  geom_vline(data = least_plaus, aes(xintercept = .lower), linetype = \"dashed\") +\n  labs(\n    y = NULL,\n    x = \"Probability of Upvotes\"\n  )\n\n\n\n\nSorting all distributions by 95% least plausible values:\n\n\nall_dists <- fits %>% \n  mutate(\n    draws = map(fit, ~ posterior::as_draws_df(.x$draws())),\n    brief = str_sub(comment, start = 1, end = 50),\n    brief = str_remove_all(brief, \"\\n\") # remove new lines\n    ) %>% \n  select(brief, draws) %>% \n  unnest(draws) %>% \n  group_by(brief) %>% \n  median_qi(upvote_ratio, .width = c(0.95)) %>% \n  mutate(\n    brief = as_factor(brief),\n    brief = fct_reorder(brief, .lower)\n  ) %>% \n  top_n(40, .lower)\n\n\n\n\n\nall_dists %>% \n  ggplot(aes(x = upvote_ratio, y = brief)) +\n  geom_pointinterval(aes(xmin = .lower, xmax = .upper)) +\n  labs(\n    y = NULL,\n    x = \"Probability of Upvotes\"\n  )\n\n\n\n\n\n\n\n",
+    "preview": "https://i.imgur.com/OYsHKlH.jpg",
+    "last_modified": "2021-01-09T21:44:14-06:00",
+    "input_file": {}
   }
 ]

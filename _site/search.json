@@ -5,21 +5,21 @@
       "title": "Bayesian Methods for Hackers with R + Tidyverse + Stan (WIP)",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-01-09T20:17:21-06:00"
+      "last_modified": "2021-01-09T21:46:37-06:00"
     },
     {
       "path": "blog.html",
       "title": "Blog Posts",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-01-09T20:17:22-06:00"
+      "last_modified": "2021-01-09T21:46:39-06:00"
     },
     {
       "path": "index.html",
       "title": "jduncstats",
       "author": [],
       "contents": "\n\n\n\n\n\n\nJoshua DuncanSr. Business Analyst\n\n\n\nHey, I’m Josh Duncan, a former controls engineer that found a passion in data science and statistics. This blog is a platform for extending my data science education. I’m currently on a Bayesian modeling journey so you’ll likely see posts on learning bayes.\n\n\n\nBackground\n\n\nEducation\nGraduate School, Non-Matriculated, Statistics Louisiana State University, present\nMS in Analytics\nLouisiana State University, 2017\nBS in Electrical Engineering\nLouisiana State University, 2014\n\n\nRecent Roles\nSr. Business Analyst\nCF Industries\nStatistical Data Analyst\nRain Carbon\nAnalytics Engineer\nInCentrik\n\n\n\n\n\n",
-      "last_modified": "2021-01-09T20:17:23-06:00"
+      "last_modified": "2021-01-09T21:46:40-06:00"
     }
   ],
   "collections": ["posts/posts.json", "bayes-hackr/bayes-hackr.json"]

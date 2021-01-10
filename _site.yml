@@ -10,7 +10,7 @@ navbar:
       href: index.html
     - text: "Blog Posts"
       href: blog.html
-    - text: "Bayes Hacker"
+    - text: "Bayes Hacker (WIP)"
       href: bayes-hackr.html
     - icon: fab fa-twitter
       href: https://twitter.com/joshualeond
