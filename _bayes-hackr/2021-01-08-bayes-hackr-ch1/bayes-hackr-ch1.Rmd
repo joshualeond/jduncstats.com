@@ -51,9 +51,9 @@ data %>%
 
 ### 1.4.2 Introducing Our First Hammer: ~~PyMC~~ Stan
 
-This is where things get interesting. The original model included a discrete random variable $\tau$ that was modeled with a *Discrete Uniform* distribution. Then they sampled with the *Metropolis* algorithm so it was possible to sample from a joint distribution including this discrete random variable.
+This is where things get interesting. The original model included a discrete random variable $\tau$ that was modeled with a *Discrete Uniform* distribution. Then they sampled with the *Metropolis* algorithm so it was possible to sample from a joint distribution including this discrete parameter.
 
-A limitation (I suppose) of the main algorithm used by Stan, HMC, is that everything must be differentiable and so discrete random variables are off the table. However, with a little statistical theory you're still able to estimate this model and even this exact posterior of $\tau$ by marginalizing the parameter out of the probability function. Then recovering this parameter after the fact in the **generated quantities** block!
+A limitation (I suppose) of the main algorithm used by Stan, HMC, is that everything must be differentiable and so discrete parameters are off the table. However, with a little statistical theory you're still able to estimate this model and even the posterior of $\tau$ by marginalizing the parameter out of the probability function. Then recovering this parameter afterwards in the **generated quantities** block!
 
 See the [Stan](https://mc-stan.org/docs/2_25/stan-users-guide/change-point-section.html) manual as well as [this](https://nowave.it/pages/bayesian-changepoint-detection-with-r-and-stan.html) blog post for more info on implementing this model and the marginalization process.
 

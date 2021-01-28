@@ -20,19 +20,18 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,7 +51,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
@@ -117,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["bayes-hackr-ch1_files/anchor-4.2.2/anchor.min.js","bayes-hackr-ch1_files/bowser-1.9.3/bowser.min.js","bayes-hackr-ch1_files/distill-2.2.21/template.v2.js","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-10-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-11-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-2-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-7-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-8-1.png","bayes-hackr-ch1_files/jquery-1.11.3/jquery.min.js","bayes-hackr-ch1_files/popper-2.6.0/popper.min.js","bayes-hackr-ch1_files/tippy-6.2.7/tippy-bundle.umd.min.js","bayes-hackr-ch1_files/tippy-6.2.7/tippy-light-border.css","bayes-hackr-ch1_files/tippy-6.2.7/tippy.css","bayes-hackr-ch1_files/tippy-6.2.7/tippy.umd.min.js","bayes-hackr-ch1_files/webcomponents-2.0.0/webcomponents.js","models/ch1-mod","models/ch1-mod.stan"]}
+  {"type":"character","attributes":{},"value":["bayes-hackr-ch1_files/anchor-4.2.2/anchor.min.js","bayes-hackr-ch1_files/bowser-1.9.3/bowser.min.js","bayes-hackr-ch1_files/distill-2.2.21/template.v2.js","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-10-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-11-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-2-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-7-1.png","bayes-hackr-ch1_files/figure-html5/unnamed-chunk-8-1.png","bayes-hackr-ch1_files/header-attrs-2.6.4/header-attrs.js","bayes-hackr-ch1_files/jquery-1.11.3/jquery.min.js","bayes-hackr-ch1_files/popper-2.6.0/popper.min.js","bayes-hackr-ch1_files/tippy-6.2.7/tippy-bundle.umd.min.js","bayes-hackr-ch1_files/tippy-6.2.7/tippy-light-border.css","bayes-hackr-ch1_files/tippy-6.2.7/tippy.css","bayes-hackr-ch1_files/tippy-6.2.7/tippy.umd.min.js","bayes-hackr-ch1_files/webcomponents-2.0.0/webcomponents.js","models/ch1-mod","models/ch1-mod.stan"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2360,6 +2359,7 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.6.4/header-attrs.js"></script>
   <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
@@ -2470,8 +2470,8 @@ gtag('config', 'UA-136620931-1');
 <p><img src="bayes-hackr-ch1_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
 </div>
 <h3 id="introducing-our-first-hammer-pymc-stan">1.4.2 Introducing Our First Hammer: <del>PyMC</del> Stan</h3>
-<p>This is where things get interesting. The original model included a discrete random variable <span class="math inline">\(\tau\)</span> that was modeled with a <em>Discrete Uniform</em> distribution. Then they sampled with the <em>Metropolis</em> algorithm so it was possible to sample from a joint distribution including this discrete random variable.</p>
-<p>A limitation (I suppose) of the main algorithm used by Stan, HMC, is that everything must be differentiable and so discrete random variables are off the table. However, with a little statistical theory you’re still able to estimate this model and even this exact posterior of <span class="math inline">\(\tau\)</span> by marginalizing the parameter out of the probability function. Then recovering this parameter after the fact in the <strong>generated quantities</strong> block!</p>
+<p>This is where things get interesting. The original model included a discrete random variable <span class="math inline">\(\tau\)</span> that was modeled with a <em>Discrete Uniform</em> distribution. Then they sampled with the <em>Metropolis</em> algorithm so it was possible to sample from a joint distribution including this discrete parameter.</p>
+<p>A limitation (I suppose) of the main algorithm used by Stan, HMC, is that everything must be differentiable and so discrete parameters are off the table. However, with a little statistical theory you’re still able to estimate this model and even the posterior of <span class="math inline">\(\tau\)</span> by marginalizing the parameter out of the probability function. Then recovering this parameter afterwards in the <strong>generated quantities</strong> block!</p>
 <p>See the <a href="https://mc-stan.org/docs/2_25/stan-users-guide/change-point-section.html">Stan</a> manual as well as <a href="https://nowave.it/pages/bayesian-changepoint-detection-with-r-and-stan.html">this</a> blog post for more info on implementing this model and the marginalization process.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2579,17 +2579,17 @@ Chain 2 Iteration: 3000 / 4000 [ 75%]  (Sampling)
 Chain 4 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
 Chain 3 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
 Chain 1 Iteration: 4000 / 4000 [100%]  (Sampling) 
-Chain 1 finished in 11.7 seconds.
+Chain 1 finished in 11.5 seconds.
 Chain 2 Iteration: 4000 / 4000 [100%]  (Sampling) 
-Chain 2 finished in 13.3 seconds.
+Chain 2 finished in 12.9 seconds.
 Chain 4 Iteration: 4000 / 4000 [100%]  (Sampling) 
-Chain 4 finished in 13.5 seconds.
+Chain 4 finished in 13.1 seconds.
 Chain 3 Iteration: 4000 / 4000 [100%]  (Sampling) 
-Chain 3 finished in 14.5 seconds.
+Chain 3 finished in 13.9 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 13.2 seconds.
-Total execution time: 14.7 seconds.</code></pre>
+Mean chain execution time: 12.9 seconds.
+Total execution time: 14.4 seconds.</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fit</span><span class='op'>$</span><span class='fu'>summary</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
