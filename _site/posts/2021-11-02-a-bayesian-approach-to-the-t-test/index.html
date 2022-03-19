@@ -2475,7 +2475,7 @@ using samples</a></li>
 improvements</a>
 <ul>
 <li><a href="#summary-of-results">Summary of results</a></li>
-<li><a href="#potential-improvements">Potential Improvements</a></li>
+<li><a href="#improvements">Improvements</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2618,16 +2618,6 @@ class="math inline">\(19.5\%\)</span> which would provide little
 evidence against the hypothesis that <span class="math inline">\(\eta_B
 - \eta_A = 0\)</span>.</p>
 </blockquote>
-<h2 id="visualizing-the-t-test-results">Visualizing the <span
-class="math inline">\(t\)</span>-test results</h2>
-<p>Scaling a <span class="math inline">\(t\)</span>-distribution by the
-standard error of the difference between <span
-class="math inline">\(\bar y_B\)</span> and <span
-class="math inline">\(\bar y_A\)</span> and looking at the probability
-density that exists above our estimated mean difference of <span
-class="math inline">\(1.3\)</span> we can visualize the results of our
-test. Seeing approximately <span class="math inline">\(19.5 \%\)</span>
-of the probability mass above this difference:</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2657,26 +2647,36 @@ class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>tstat <span class="op">=</span> diff_ab <span class="op">/</span> std_err</span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># significance level</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>sig_level <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu">cdf</span>(<span class="fu">TDist</span>(nu), tstat)</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>fig2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">600</span>, <span class="fl">300</span>))</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig2[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">&quot;Scaled t-distribution&quot;</span>)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># A scaled t-distribution by the standard error of y_B - y_A</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>scaled_dist <span class="op">=</span> <span class="fu">LocationScale</span>(<span class="fl">0.0</span>, std_err, <span class="fu">TDist</span>(nu))</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>xs2 <span class="op">=</span> <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">5</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>post_range <span class="op">=</span> <span class="fu">pdf</span>.(scaled_dist, xs2)</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>post_clip <span class="op">=</span> [x <span class="op">&lt;</span> diff_ab ? <span class="fl">0</span> <span class="op">:</span> <span class="fu">pdf</span>(scaled_dist, x) for x <span class="kw">in</span> xs2] </span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs2, post_range)</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="fu">band!</span>(xs2, <span class="fl">0</span>, post_clip)</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax2, [diff_ab], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax2)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>fig2</span></code></pre></div>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>sig_level <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu">cdf</span>(<span class="fu">TDist</span>(nu), tstat)</span></code></pre></div>
+<h2 id="visualizing-the-t-test-results">Visualizing the <span
+class="math inline">\(t\)</span>-test results</h2>
+<p>Scaling a <span class="math inline">\(t\)</span>-distribution by the
+standard error of the difference between <span
+class="math inline">\(\bar y_B\)</span> and <span
+class="math inline">\(\bar y_A\)</span> and looking at the probability
+density that exists above our estimated mean difference of <span
+class="math inline">\(1.3\)</span> we can visualize the results of our
+test. Seeing approximately <span class="math inline">\(19.5 \%\)</span>
+of the probability mass above this difference:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">600</span>, <span class="fl">300</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig2[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">&quot;Scaled t-distribution&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># A scaled t-distribution by the standard error of y_B - y_A</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>scaled_dist <span class="op">=</span> <span class="fu">LocationScale</span>(<span class="fl">0.0</span>, std_err, <span class="fu">TDist</span>(nu))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>xs2 <span class="op">=</span> <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">5</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>post_range <span class="op">=</span> <span class="fu">pdf</span>.(scaled_dist, xs2)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>post_clip <span class="op">=</span> [x <span class="op">&lt;</span> diff_ab ? <span class="fl">0</span> <span class="op">:</span> <span class="fu">pdf</span>(scaled_dist, x) for x <span class="kw">in</span> xs2] </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs2, post_range)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">band!</span>(xs2, <span class="fl">0</span>, post_clip)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax2, [diff_ab], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax2)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>fig2</span></code></pre></div>
 <p><img src="figures/midterm-pres_3_1.svg" /></p>
 <h1 id="a-bayesian-approach">A Bayesian approach</h1>
 <h2 id="choosing-our-priors">Choosing our priors</h2>
@@ -2703,28 +2703,28 @@ Yield}} \times 100\%
 <p>Considering that yield here is a <em>percentage</em> I’d think a
 decent prior probability distribution for the average yield would be a
 <em>Beta</em> distribution:</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig3 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig3[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>beta_dist <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">1</span>, <span class="fl">1</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>beta_dist2 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">2</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>beta_dist3 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">5</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>xs3 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>post_range2 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist, xs3)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>post_range3 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist2, xs3)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>post_range4 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist3, xs3)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range2, label <span class="op">=</span> <span class="st">&quot;Beta(1, 1)&quot;</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range3, label <span class="op">=</span> <span class="st">&quot;Beta(2, 2)&quot;</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range4, label <span class="op">=</span> <span class="st">&quot;Beta(2, 5)&quot;</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax3)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>fig3</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig3 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig3[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>beta_dist <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">1</span>, <span class="fl">1</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>beta_dist2 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">2</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>beta_dist3 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">5</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>xs3 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>post_range2 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist, xs3)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>post_range3 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist2, xs3)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>post_range4 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist3, xs3)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range2, label <span class="op">=</span> <span class="st">&quot;Beta(1, 1)&quot;</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range3, label <span class="op">=</span> <span class="st">&quot;Beta(2, 2)&quot;</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range4, label <span class="op">=</span> <span class="st">&quot;Beta(2, 5)&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax3)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>fig3</span></code></pre></div>
 <p><img src="figures/midterm-pres_4_1.svg" /></p>
 <p>Since percent yield could reasonably be anywhere between <span
 class="math inline">\(0\)</span> and <span
@@ -2737,28 +2737,28 @@ methods: we will have two means but one shared variance. The variance
 must be positive and since our means are scaled between <span
 class="math inline">\([0,1]\)</span> then the standard deviation should
 be close to this range.</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig4 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax4 <span class="op">=</span> <span class="fu">Axis</span>(fig4[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>exp_dist <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.50</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>exp_dist2 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.25</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>exp_dist3 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.10</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>xs4 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span>.</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>prior_range <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist, xs4)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>prior_range2 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist2, xs4)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>prior_range3 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist3, xs4)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range, label <span class="op">=</span> <span class="st">&quot;Exponential(0.50)&quot;</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range2, label <span class="op">=</span> <span class="st">&quot;Exponential(0.25)&quot;</span>)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range3, label <span class="op">=</span> <span class="st">&quot;Exponential(0.10)&quot;</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax4)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>fig4</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fig4 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ax4 <span class="op">=</span> <span class="fu">Axis</span>(fig4[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>exp_dist <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.50</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>exp_dist2 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.25</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>exp_dist3 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.10</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>xs4 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span>.</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>prior_range <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist, xs4)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>prior_range2 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist2, xs4)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>prior_range3 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist3, xs4)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range, label <span class="op">=</span> <span class="st">&quot;Exponential(0.50)&quot;</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range2, label <span class="op">=</span> <span class="st">&quot;Exponential(0.25)&quot;</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range3, label <span class="op">=</span> <span class="st">&quot;Exponential(0.10)&quot;</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax4)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>fig4</span></code></pre></div>
 <p><img src="figures/midterm-pres_5_1.svg" /></p>
 <p>Given that the Exp(0.1) distribution is almost completely under <span
 class="math inline">\(1\)</span> it will be an adequate prior for <span
@@ -2803,80 +2803,80 @@ href="https://docs.pymc.io/en/v3/">PyMC</a> in practice.</p>
 <p>Using the Metropolis algorithm to sample the target distribution and
 removing <em>burn-in</em> samples results in the following summary for
 our parameters:</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>methoda_yield <span class="op">=</span> methoda.yield <span class="op">/</span> <span class="fl">100</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>methodb_yield <span class="op">=</span> methodb.yield <span class="op">/</span> <span class="fl">100</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">likelihood</span>(param)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    singlelike1 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu1, sd), methoda_yield)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    singlelike2 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu2, sd), methodb_yield)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    singlelikelihood <span class="op">=</span> <span class="fu">vcat</span>(singlelike1, singlelike2)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    sumll <span class="op">=</span> <span class="fu">sum</span>(singlelikelihood)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(sumll)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">prior</span>(param)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    mu1prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu1)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    mu2prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu2)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    sdprior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Exponential</span>(<span class="fl">0.10</span>), sd)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(mu1prior <span class="op">+</span> mu2prior <span class="op">+</span> sdprior)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">posterior</span>(param)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">likelihood</span>(param) <span class="op">+</span> <span class="fu">prior</span>(param)</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">proposalfunction</span>(param)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># enforced positive support but not sure how other PPLs enforce this</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">abs</span>.(<span class="fu">rand</span>(<span class="fu">MvNormal</span>(param, [<span class="fl">0.001</span> <span class="fl">0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0.001</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0</span> <span class="fl">0.0005</span>])))</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, iterations)</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> <span class="fu">Array</span><span class="dt">{Float64,2}</span>(<span class="cn">undef</span>, iterations <span class="op">+</span> <span class="fl">1</span>, <span class="fl">3</span>)</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    chain[<span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> startvalue</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>iterations</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        proposal <span class="op">=</span> <span class="fu">proposalfunction</span>(chain[i,<span class="op">:</span>])</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        probab <span class="op">=</span> <span class="fu">exp</span>(<span class="fu">posterior</span>(proposal) <span class="op">-</span> <span class="fu">posterior</span>(chain[i,<span class="op">:</span>]))</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> <span class="fu">min</span>(<span class="fl">1</span>, probab)</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">rand</span>(<span class="fu">Uniform</span>()) <span class="op">&lt;=</span> r</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> proposal</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> chain[i,<span class="op">:</span>]</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chain</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>startvalue <span class="op">=</span> [<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.1</span>]</span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>chain_length <span class="op">=</span> <span class="fl">100_000</span></span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span>:seed!</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="fu">seed!</span>(<span class="fl">555</span>)</span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, chain_length)   </span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>burnIn <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Int</span>, chain_length <span class="op">/</span> <span class="fl">2</span>)</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>chain1 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">1</span>], burnIn)</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>chain2 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">2</span>], burnIn)</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>chain3 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">3</span>], burnIn)</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(</span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    mu_a <span class="op">=</span> <span class="fu">mean</span>(chain1),</span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    mu_astd <span class="op">=</span> <span class="fu">std</span>(chain1),</span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    mu_b <span class="op">=</span> <span class="fu">mean</span>(chain2),</span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    mu_bstd <span class="op">=</span> <span class="fu">std</span>(chain2),</span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> <span class="fu">mean</span>(chain3),</span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    sigma_std <span class="op">=</span> <span class="fu">std</span>(chain3)</span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>methoda_yield <span class="op">=</span> methoda.yield <span class="op">/</span> <span class="fl">100</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>methodb_yield <span class="op">=</span> methodb.yield <span class="op">/</span> <span class="fl">100</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">likelihood</span>(param)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    singlelike1 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu1, sd), methoda_yield)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    singlelike2 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu2, sd), methodb_yield)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    singlelikelihood <span class="op">=</span> <span class="fu">vcat</span>(singlelike1, singlelike2)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    sumll <span class="op">=</span> <span class="fu">sum</span>(singlelikelihood)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(sumll)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">prior</span>(param)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    mu1prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu1)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    mu2prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu2)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    sdprior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Exponential</span>(<span class="fl">0.10</span>), sd)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(mu1prior <span class="op">+</span> mu2prior <span class="op">+</span> sdprior)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">posterior</span>(param)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">likelihood</span>(param) <span class="op">+</span> <span class="fu">prior</span>(param)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">proposalfunction</span>(param)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># enforced positive support but not sure how other PPLs enforce this</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">abs</span>.(<span class="fu">rand</span>(<span class="fu">MvNormal</span>(param, [<span class="fl">0.001</span> <span class="fl">0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0.001</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0</span> <span class="fl">0.0005</span>])))</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, iterations)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> <span class="fu">Array</span><span class="dt">{Float64,2}</span>(<span class="cn">undef</span>, iterations <span class="op">+</span> <span class="fl">1</span>, <span class="fl">3</span>)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    chain[<span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> startvalue</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>iterations</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        proposal <span class="op">=</span> <span class="fu">proposalfunction</span>(chain[i,<span class="op">:</span>])</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        probab <span class="op">=</span> <span class="fu">exp</span>(<span class="fu">posterior</span>(proposal) <span class="op">-</span> <span class="fu">posterior</span>(chain[i,<span class="op">:</span>]))</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> <span class="fu">min</span>(<span class="fl">1</span>, probab)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">rand</span>(<span class="fu">Uniform</span>()) <span class="op">&lt;=</span> r</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> proposal</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> chain[i,<span class="op">:</span>]</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chain</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>startvalue <span class="op">=</span> [<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.1</span>]</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>chain_length <span class="op">=</span> <span class="fl">100_000</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span>:seed!</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="fu">seed!</span>(<span class="fl">555</span>)</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, chain_length)   </span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>burnIn <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Int</span>, chain_length <span class="op">/</span> <span class="fl">2</span>)</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>chain1 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">1</span>], burnIn)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>chain2 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">2</span>], burnIn)</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>chain3 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">3</span>], burnIn)</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    mu_a <span class="op">=</span> <span class="fu">mean</span>(chain1),</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    mu_astd <span class="op">=</span> <span class="fu">std</span>(chain1),</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    mu_b <span class="op">=</span> <span class="fu">mean</span>(chain2),</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    mu_bstd <span class="op">=</span> <span class="fu">std</span>(chain2),</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> <span class="fu">mean</span>(chain3),</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    sigma_std <span class="op">=</span> <span class="fu">std</span>(chain3)</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -2904,50 +2904,50 @@ class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href
 portion of our chain. A rule-of-thumb for Metropolis sampling is to only
 use half of your total samples and consider the first half the
 <em>burn-in</em> (exploratory) phase and discard those samples.</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>figs <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ga <span class="op">=</span> figs[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>gb <span class="op">=</span> figs[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>gc <span class="op">=</span> figs[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>axs1 <span class="op">=</span> <span class="fu">Axis</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>axs2 <span class="op">=</span> <span class="fu">Axis</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>axs3 <span class="op">=</span> <span class="fu">Axis</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs1, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">1</span>])</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs2, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">2</span>])</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs3, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">3</span>])</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs1, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs2, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs3, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">hidexdecorations!</span>.((axs1, axs2))</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>figs</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>figs <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ga <span class="op">=</span> figs[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>gb <span class="op">=</span> figs[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>gc <span class="op">=</span> figs[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>axs1 <span class="op">=</span> <span class="fu">Axis</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>axs2 <span class="op">=</span> <span class="fu">Axis</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>axs3 <span class="op">=</span> <span class="fu">Axis</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs1, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">1</span>])</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs2, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">2</span>])</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs3, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">3</span>])</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs1, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs2, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs3, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">hidexdecorations!</span>.((axs1, axs2))</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>figs</span></code></pre></div>
 <p><img src="figures/midterm-pres_7_1.svg" /></p>
 <h2 id="samples-from-the-joint-distribution">Samples from the joint
 distribution</h2>
 <p>Here are the marginal distributions for each of our estimated
 parameters:</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>figs2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">1920</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">1080</span><span class="op">/</span><span class="fl">2</span>))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ga2 <span class="op">=</span> figs2[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>gb2 <span class="op">=</span> figs2[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>gc2 <span class="op">=</span> figs2[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>axs11 <span class="op">=</span> <span class="fu">Axis</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>axs21 <span class="op">=</span> <span class="fu">Axis</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>axs31 <span class="op">=</span> <span class="fu">Axis</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs11, chain1)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs21, chain2)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs31, chain3)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">linkxaxes!</span>(axs11, axs21)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(axs31, (<span class="fl">0.0</span>, <span class="fl">0.1</span>)) </span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>.((axs11, axs21, axs31))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>figs2</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>figs2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">1920</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">1080</span><span class="op">/</span><span class="fl">2</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ga2 <span class="op">=</span> figs2[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>gb2 <span class="op">=</span> figs2[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>gc2 <span class="op">=</span> figs2[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>axs11 <span class="op">=</span> <span class="fu">Axis</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>axs21 <span class="op">=</span> <span class="fu">Axis</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>axs31 <span class="op">=</span> <span class="fu">Axis</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs11, chain1)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs21, chain2)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs31, chain3)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">linkxaxes!</span>(axs11, axs21)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(axs31, (<span class="fl">0.0</span>, <span class="fl">0.1</span>)) </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>.((axs11, axs21, axs31))</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>figs2</span></code></pre></div>
 <p><img src="figures/midterm-pres_8_1.svg" /></p>
 <h2 id="comparing-the-means-using-samples">Comparing the means using
 samples</h2>
@@ -2961,17 +2961,17 @@ how many samples are above <span class="math inline">\(0\)</span> and
 then taking the average of those results shows that <span
 class="math inline">\(80\%\)</span> of the probability mass is above
 zero.</p>
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode julia"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>meandiff <span class="op">=</span> (chain2 <span class="op">-</span> chain1) <span class="op">*</span> <span class="fl">100</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># @show probgt0 = mean(meandiff .&gt; 0) # just for checking</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fig5 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ax5 <span class="op">=</span> <span class="fu">Axis</span>(fig5[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> L<span class="st">&quot;\Pr(\mu_B - \mu_A \geq 0) = 80 %&quot;</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">density!</span>(meandiff, bandwidth <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span>(<span class="op">:</span>grey, <span class="fl">0.5</span>), strokewidth<span class="op">=</span><span class="fl">1</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax5, [<span class="fl">0.0</span>], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(<span class="op">-</span><span class="fl">8</span>, <span class="fl">8</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax5)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>fig5</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>meandiff <span class="op">=</span> (chain2 <span class="op">-</span> chain1) <span class="op">*</span> <span class="fl">100</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># @show probgt0 = mean(meandiff .&gt; 0) # just for checking</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>fig5 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ax5 <span class="op">=</span> <span class="fu">Axis</span>(fig5[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> L<span class="st">&quot;\Pr(\mu_B - \mu_A \geq 0) = 80 %&quot;</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">density!</span>(meandiff, bandwidth <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span>(<span class="op">:</span>grey, <span class="fl">0.5</span>), strokewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax5, [<span class="fl">0.0</span>], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(<span class="op">-</span><span class="fl">8</span>, <span class="fl">8</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax5)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>fig5</span></code></pre></div>
 <p><img src="figures/midterm-pres_9_1.svg" /></p>
 <h1 id="analysis-results-and-improvements">Analysis results and
 improvements</h1>
@@ -2990,7 +2990,7 @@ their options between method <span class="math inline">\(B\)</span> and
 method <span class="math inline">\(A\)</span>. Decide on what’s more
 economical and have some percentage to wrap their heads around about
 potential improvement.</p>
-<h2 id="potential-improvements">Potential Improvements</h2>
+<h2 id="improvements">Improvements</h2>
 <p>This particular example was given in the text by Box, Hunter, and
 Hunter to demonstrate a case where the <span
 class="math inline">\(t\)</span>-test may be an inappropriate
@@ -3013,7 +3013,7 @@ found</strong>.</p>
 </blockquote>
 <p>Moving forward we should account for this and attempt to model the
 autocorrelation that exists between successive yields.</p>
-<div class="sourceCode" id="cb10"><pre
+<div class="sourceCode" id="cb11"><pre
 class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

@@ -104,10 +104,6 @@ $$
 
 > This reference distribution assumes the random sampling model and the observed difference then has a significance probability of $19.5\%$ which would provide little evidence against the hypothesis that $\eta_B - \eta_A = 0$.
 
-## Visualizing the $t$-test results
-
-Scaling a $t$-distribution by the standard error of the difference between $\bar y_B$ and $\bar y_A$ and looking at the probability density that exists above our estimated mean difference of $1.3$ we can visualize the results of our test. Seeing approximately $19.5 \%$ of the probability mass above this difference:
-
 ```julia
 using Distributions
 
@@ -138,7 +134,13 @@ tstat = diff_ab / std_err
 
 # significance level
 sig_level = 1 - cdf(TDist(nu), tstat)
+```
 
+## Visualizing the $t$-test results
+
+Scaling a $t$-distribution by the standard error of the difference between $\bar y_B$ and $\bar y_A$ and looking at the probability density that exists above our estimated mean difference of $1.3$ we can visualize the results of our test. Seeing approximately $19.5 \%$ of the probability mass above this difference:
+
+```julia
 # plotting attributes
 fig2 = Figure(resolution = (600, 300))
 ax2 = Axis(fig2[1, 1], title = "Scaled t-distribution")
@@ -446,7 +448,7 @@ The bayesian approach gives us an $80 \%$ probability that method $B$ improves o
 
 In a business context I could see the bayesian result being far more useful than failing to reject our null hypothesis. A company can weigh their options between method $B$ and method $A$. Decide on what's more economical and have some percentage to wrap their heads around about potential improvement.
 
-## Potential Improvements
+## Improvements
 
 This particular example was given in the text by Box, Hunter, and Hunter to demonstrate a case where the $t$-test may be an inappropriate statistical test. The $t$-distribution may be a poor choice for a _reference_ distribution. The reason why this is the case is due to autocorrelation and Student's $t$ test assuming errors are independent and identically distributed (iid).
 
