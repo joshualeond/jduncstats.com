@@ -1533,8 +1533,7 @@ and Confidence Intervals</p>
 comparing two methods in a chemical manufacturing plant in an attempt to
 understand if one method has a <strong>significantly better</strong>
 yield than the other. I will present the data and the original model and
-then we’ll model this comparison using the Bayesian methods learned so
-far in this course.</p>
+then we’ll model this comparison using Bayesian methods.</p>
 <h4 id="roadmap">Roadmap</h4>
 <ol type="1">
 <li>The original question and the frequentist approach to comparing
@@ -1833,12 +1832,18 @@ following:</p>
 results in a non-conjugate case. So in this example it may make more
 sense to utilize Markov Chain Monte Carlo (MCMC) methods to estimate our
 joint probability model.</p>
-<p><em>Markov Chain Monte Carlo</em> gets its name from the <em>Markov
-property</em>:</p>
+<p><em>Markov Chain Monte Carlo</em> gets part of its name from the
+<em>Markov property</em>:</p>
 <blockquote>
 <p><em>Given the present, the future is independent of the
 past.</em></p>
 </blockquote>
+<p>I decided to implement the <em>Metropolis</em> algorithm as a
+pedagogical exercise below but I’d definitely recommend using
+probabilistic programming languages like <a
+href="https://mc-stan.org">Stan</a>, <a
+href="https://turing.ml/stable/">Turing</a>, or <a
+href="https://docs.pymc.io/en/v3/">PyMC</a> in practice.</p>
 <p>Using the Metropolis algorithm to sample the target distribution and
 removing <em>burn-in</em> samples results in the following summary for
 our parameters:</p>

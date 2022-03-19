@@ -21,7 +21,7 @@ Chapter 3: Comparing Two Entities: Reference Distributions, Tests, and Confidenc
 
 # Introduction
 
-In *Statistics for Experimenters* we are shown an example of comparing two methods in a chemical manufacturing plant in an attempt to understand if one method has a **significantly better** yield than the other. I will present the data and the original model and then we'll model this comparison using the Bayesian methods learned so far in this course.
+In *Statistics for Experimenters* we are shown an example of comparing two methods in a chemical manufacturing plant in an attempt to understand if one method has a **significantly better** yield than the other. I will present the data and the original model and then we'll model this comparison using Bayesian methods.
 
 #### Roadmap
 1. The original question and the frequentist approach to comparing means
@@ -267,9 +267,11 @@ $$
 
 Multiplying Beta and Exponential priors with a Normal likelihood results in a non-conjugate case. So in this example it may make more sense to utilize Markov Chain Monte Carlo (MCMC) methods to estimate our joint probability model. 
 
-_Markov Chain Monte Carlo_ gets its name from the _Markov property_:
+_Markov Chain Monte Carlo_ gets part of its name from the _Markov property_:
 
 > _Given the present, the future is independent of the past._
+
+I decided to implement the _Metropolis_ algorithm as a pedagogical exercise below but I'd definitely recommend using probabilistic programming languages like [Stan](https://mc-stan.org), [Turing](https://turing.ml/stable/), or [PyMC](https://docs.pymc.io/en/v3/) in practice.
 
 Using the Metropolis algorithm to sample the target distribution and removing _burn-in_ samples results in the following summary for our parameters:
 
