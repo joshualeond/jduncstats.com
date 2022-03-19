@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+
+  <!--radix_placeholder_meta_tags-->
+  <title>A Bayesian Approach to the t-test</title>
+
+  <meta property="description" itemprop="description" content="Comparing two methods in a chemical manufacturing plant in an attempt to understand if one has a **significantly better** yield than the other"/>
+
+
+  <!--  https://schema.org/Article -->
+  <meta property="article:published" itemprop="datePublished" content="2021-11-02"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-11-02"/>
+  <meta name="article:author" content="J. Duncan"/>
+
+  <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+  <meta property="og:title" content="A Bayesian Approach to the t-test"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:description" content="Comparing two methods in a chemical manufacturing plant in an attempt to understand if one has a **significantly better** yield than the other"/>
+  <meta property="og:locale" content="en_US"/>
+
+  <!--  https://dev.twitter.com/cards/types/summary -->
+  <meta property="twitter:card" content="summary"/>
+  <meta property="twitter:title" content="A Bayesian Approach to the t-test"/>
+  <meta property="twitter:description" content="Comparing two methods in a chemical manufacturing plant in an attempt to understand if one has a **significantly better** yield than the other"/>
+
+  <!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+  <script type="text/json" id="radix-rmarkdown-metadata">
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","date","description","author","preview","output"]}},"value":[{"type":"character","attributes":{},"value":["A Bayesian Approach to the t-test"]},{"type":"character","attributes":{},"value":["2021-11-02"]},{"type":"character","attributes":{},"value":["Comparing two methods in a chemical manufacturing plant in an attempt to understand if one has a **significantly better** yield than the other"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["J. Duncan"]},{"type":"character","attributes":{},"value":["https://jduncstats.com/posts/2021-11-02-a-bayesian-approach-to-the-t-test/"]}]}]},{"type":"character","attributes":{},"value":["featured.png"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]}]}]}]}
+  </script>
+  <!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["a-bayesian-approach-to-the-t-test_files/anchor-4.2.2/anchor.min.js","a-bayesian-approach-to-the-t-test_files/bowser-1.9.3/bowser.min.js","a-bayesian-approach-to-the-t-test_files/distill-2.2.21/template.v2.js","a-bayesian-approach-to-the-t-test_files/header-attrs-2.13/header-attrs.js","a-bayesian-approach-to-the-t-test_files/jquery-3.6.0/jquery-3.6.0.js","a-bayesian-approach-to-the-t-test_files/jquery-3.6.0/jquery-3.6.0.min.js","a-bayesian-approach-to-the-t-test_files/jquery-3.6.0/jquery-3.6.0.min.map","a-bayesian-approach-to-the-t-test_files/popper-2.6.0/popper.min.js","a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy-bundle.umd.min.js","a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy-light-border.css","a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy.css","a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy.umd.min.js","a-bayesian-approach-to-the-t-test_files/webcomponents-2.0.0/webcomponents.js","featured.png","figures/midterm-pres_2_1.svg","figures/midterm-pres_3_1.svg","figures/midterm-pres_4_1.svg","figures/midterm-pres_5_1.svg","figures/midterm-pres_6_1.svg","figures/midterm-pres_7_1.svg","figures/midterm-pres_8_1.svg","figures/midterm-pres_9_1.svg"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+  <!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+  <style type="text/css">
+
+  body {
+    background-color: white;
+  }
+
+  .pandoc-table {
+    width: 100%;
+  }
+
+  .pandoc-table>caption {
+    margin-bottom: 10px;
+  }
+
+  .pandoc-table th:not([align]) {
+    text-align: left;
+  }
+
+  .pagedtable-footer {
+    font-size: 15px;
+  }
+
+  d-byline .byline {
+    grid-template-columns: 2fr 2fr;
+  }
+
+  d-byline .byline h3 {
+    margin-block-start: 1.5em;
+  }
+
+  d-byline .byline .authors-affiliations h3 {
+    margin-block-start: 0.5em;
+  }
+
+  .authors-affiliations .orcid-id {
+    width: 16px;
+    height:16px;
+    margin-left: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    padding-bottom: 2px;
+  }
+
+  d-title .dt-tags {
+    margin-top: 1em;
+    grid-column: text;
+  }
+
+  .dt-tags .dt-tag {
+    text-decoration: none;
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0em 0.4em;
+    margin-right: 0.5em;
+    margin-bottom: 0.4em;
+    font-size: 70%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  d-article table.gt_table td,
+  d-article table.gt_table th {
+    border-bottom: none;
+  }
+
+  .html-widget {
+    margin-bottom: 2.0em;
+  }
+
+  .l-screen-inset {
+    padding-right: 16px;
+  }
+
+  .l-screen .caption {
+    margin-left: 10px;
+  }
+
+  .shaded {
+    background: rgb(247, 247, 247);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .shaded .html-widget {
+    margin-bottom: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .shaded .shaded-content {
+    background: white;
+  }
+
+  .text-output {
+    margin-top: 0;
+    line-height: 1.5em;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  d-article {
+    padding-top: 2.5rem;
+    padding-bottom: 30px;
+  }
+
+  d-appendix {
+    padding-top: 30px;
+  }
+
+  d-article>p>img {
+    width: 100%;
+  }
+
+  d-article h2 {
+    margin: 1rem 0 1.5rem 0;
+  }
+
+  d-article h3 {
+    margin-top: 1.5rem;
+  }
+
+  d-article iframe {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.0em;
+    width: 100%;
+  }
+
+  /* Tweak code blocks */
+
+  d-article div.sourceCode code,
+  d-article pre code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: auto;
+  }
+
+  d-article div.sourceCode {
+    background-color: white;
+  }
+
+  d-article div.sourceCode pre {
+    padding-left: 10px;
+    font-size: 12px;
+    border-left: 2px solid rgba(0,0,0,0.1);
+  }
+
+  d-article pre {
+    font-size: 12px;
+    color: black;
+    background: none;
+    margin-top: 0;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  d-article pre a {
+    border-bottom: none;
+  }
+
+  d-article pre a:hover {
+    border-bottom: none;
+    text-decoration: underline;
+  }
+
+  d-article details {
+    grid-column: text;
+    margin-bottom: 0.8em;
+  }
+
+  @media(min-width: 768px) {
+
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: visible !important;
+  }
+
+  d-article div.sourceCode pre {
+    padding-left: 18px;
+    font-size: 14px;
+  }
+
+  d-article pre {
+    font-size: 14px;
+  }
+
+  }
+
+  figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+
+  /* CSS for d-contents */
+
+  .d-contents {
+    grid-column: text;
+    color: rgba(0,0,0,0.8);
+    font-size: 0.9em;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 0.25em;
+    justify-self: start;
+  }
+
+  @media(min-width: 1000px) {
+    .d-contents.d-contents-float {
+      height: 0;
+      grid-column-start: 1;
+      grid-column-end: 4;
+      justify-self: center;
+      padding-right: 3em;
+      padding-left: 2em;
+    }
+  }
+
+  .d-contents nav h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+
+  .d-contents li {
+    list-style-type: none
+  }
+
+  .d-contents nav > ul {
+    padding-left: 0;
+  }
+
+  .d-contents ul {
+    padding-left: 1em
+  }
+
+  .d-contents nav ul li {
+    margin-top: 0.6em;
+    margin-bottom: 0.2em;
+  }
+
+  .d-contents nav a {
+    font-size: 13px;
+    border-bottom: none;
+    text-decoration: none
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .d-contents nav a:hover {
+    text-decoration: underline solid rgba(0, 0, 0, 0.6)
+  }
+
+  .d-contents nav > ul > li > a {
+    font-weight: 600;
+  }
+
+  .d-contents nav > ul > li > ul {
+    font-weight: inherit;
+  }
+
+  .d-contents nav > ul > li > ul > li {
+    margin-top: 0.2em;
+  }
+
+
+  .d-contents nav ul {
+    margin-top: 0;
+    margin-bottom: 0.25em;
+  }
+
+  .d-article-with-toc h2:nth-child(2) {
+    margin-top: 0;
+  }
+
+
+  /* Figure */
+
+  .figure {
+    position: relative;
+    margin-bottom: 2.5em;
+    margin-top: 1.5em;
+  }
+
+  .figure img {
+    width: 100%;
+  }
+
+  .figure .caption {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.5em;
+  }
+
+  .figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+
+  .figure .caption a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .figure .caption b,
+  .figure .caption strong, {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 1.0);
+  }
+
+  /* Citations */
+
+  d-article .citation {
+    color: inherit;
+    cursor: inherit;
+  }
+
+  div.hanging-indent{
+    margin-left: 1em; text-indent: -1em;
+  }
+
+  /* Citation hover box */
+
+  .tippy-box[data-theme~=light-border] {
+    background-color: rgba(250, 250, 250, 0.95);
+  }
+
+  .tippy-content > p {
+    margin-bottom: 0;
+    padding: 2px;
+  }
+
+
+  /* Tweak 1000px media break to show more text */
+
+  @media(min-width: 1000px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 16px;
+    }
+
+    .grid {
+      grid-column-gap: 16px;
+    }
+
+    d-article {
+      font-size: 1.06rem;
+      line-height: 1.7em;
+    }
+    figure .caption, .figure .caption, figure figcaption {
+      font-size: 13px;
+    }
+  }
+
+  @media(min-width: 1180px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 32px;
+    }
+
+    .grid {
+      grid-column-gap: 32px;
+    }
+  }
+
+
+  /* Get the citation styles for the appendix (not auto-injected on render since
+     we do our own rendering of the citation appendix) */
+
+  d-appendix .citation-appendix,
+  .d-appendix .citation-appendix {
+    font-size: 11px;
+    line-height: 15px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 18px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.02);
+    padding: 10px 18px;
+    border-radius: 3px;
+    color: rgba(150, 150, 150, 1);
+    overflow: hidden;
+    margin-top: -12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Include appendix styles here so they can be overridden */
+
+  d-appendix {
+    contain: layout style;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-top: 60px;
+    margin-bottom: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: rgba(0,0,0,0.5);
+    padding-top: 60px;
+    padding-bottom: 48px;
+  }
+
+  d-appendix h3 {
+    grid-column: page-start / text-start;
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 1em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.65);
+  }
+
+  d-appendix h3 + * {
+    margin-top: 1em;
+  }
+
+  d-appendix ol {
+    padding: 0 0 0 15px;
+  }
+
+  @media (min-width: 768px) {
+    d-appendix ol {
+      padding: 0 0 0 30px;
+      margin-left: -30px;
+    }
+  }
+
+  d-appendix li {
+    margin-bottom: 1em;
+  }
+
+  d-appendix a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  d-appendix > * {
+    grid-column: text;
+  }
+
+  d-appendix > d-footnote-list,
+  d-appendix > d-citation-list,
+  d-appendix > distill-appendix {
+    grid-column: screen;
+  }
+
+  /* Include footnote styles here so they can be overridden */
+
+  d-footnote-list {
+    contain: layout style;
+  }
+
+  d-footnote-list > * {
+    grid-column: text;
+  }
+
+  d-footnote-list a.footnote-backlink {
+    color: rgba(0,0,0,0.3);
+    padding-left: 0.5em;
+  }
+
+
+
+  /* Anchor.js */
+
+  .anchorjs-link {
+    /*transition: all .25s linear; */
+    text-decoration: none;
+    border-bottom: none;
+  }
+  *:hover > .anchorjs-link {
+    margin-left: -1.125em !important;
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  /* Social footer */
+
+  .social_footer {
+    margin-top: 30px;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.67);
+  }
+
+  .disqus-comments {
+    margin-right: 30px;
+  }
+
+  .disqus-comment-count {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+
+  #disqus_thread {
+    margin-top: 30px;
+  }
+
+  .article-sharing a {
+    border-bottom: none;
+    margin-right: 8px;
+  }
+
+  .article-sharing a:hover {
+    border-bottom: none;
+  }
+
+  .sidebar-section.subscribe {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+
+  .subscribe p {
+    margin-bottom: 0.5em;
+  }
+
+
+  .article-footer .subscribe {
+    font-size: 15px;
+    margin-top: 45px;
+  }
+
+
+  .sidebar-section.custom {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+
+  .custom p {
+    margin-bottom: 0.5em;
+  }
+
+  /* Styles for listing layout (hide title) */
+  .layout-listing d-title, .layout-listing .d-title {
+    display: none;
+  }
+
+  /* Styles for posts lists (not auto-injected) */
+
+
+  .posts-with-sidebar {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+
+  .posts-list .description h2,
+  .posts-list .description p {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .posts-list .description h2 {
+    font-weight: 700;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .posts-list h2.post-tag {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 12px;
+  }
+  .posts-list {
+    margin-top: 60px;
+    margin-bottom: 24px;
+  }
+
+  .posts-list .post-preview {
+    text-decoration: none;
+    overflow: hidden;
+    display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 24px 0;
+  }
+
+  .post-preview-last {
+    border-bottom: none !important;
+  }
+
+  .posts-list .posts-list-caption {
+    grid-column: screen;
+    font-weight: 400;
+  }
+
+  .posts-list .post-preview h2 {
+    margin: 0 0 6px 0;
+    line-height: 1.2em;
+    font-style: normal;
+    font-size: 24px;
+  }
+
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.4em;
+    font-size: 16px;
+  }
+
+  .posts-list .post-preview .thumbnail {
+    box-sizing: border-box;
+    margin-bottom: 24px;
+    position: relative;
+    max-width: 500px;
+  }
+  .posts-list .post-preview img {
+    width: 100%;
+    display: block;
+  }
+
+  .posts-list .metadata {
+    font-size: 12px;
+    line-height: 1.4em;
+    margin-bottom: 18px;
+  }
+
+  .posts-list .metadata > * {
+    display: inline-block;
+  }
+
+  .posts-list .metadata .publishedDate {
+    margin-right: 2em;
+  }
+
+  .posts-list .metadata .dt-authors {
+    display: block;
+    margin-top: 0.3em;
+    margin-right: 2em;
+  }
+
+  .posts-list .dt-tags {
+    display: block;
+    line-height: 1em;
+  }
+
+  .posts-list .dt-tags .dt-tag {
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0.3em 0.4em;
+    margin-right: 0.2em;
+    margin-bottom: 0.4em;
+    font-size: 60%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .posts-list img {
+    opacity: 1;
+  }
+
+  .posts-list img[data-src] {
+    opacity: 0;
+  }
+
+  .posts-more {
+    clear: both;
+  }
+
+
+  .posts-sidebar {
+    font-size: 16px;
+  }
+
+  .posts-sidebar h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  .sidebar-section {
+    margin-bottom: 30px;
+  }
+
+  .categories ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .categories li {
+    color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 0;
+  }
+
+  .categories li>a {
+    border-bottom: none;
+  }
+
+  .categories li>a:hover {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  }
+
+  .categories .active {
+    font-weight: 600;
+  }
+
+  .categories .category-count {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+
+  @media(min-width: 768px) {
+    .posts-list .post-preview h2 {
+      font-size: 26px;
+    }
+    .posts-list .post-preview .thumbnail {
+      float: right;
+      width: 30%;
+      margin-bottom: 0;
+    }
+    .posts-list .post-preview .description {
+      float: left;
+      width: 45%;
+    }
+    .posts-list .post-preview .metadata {
+      float: left;
+      width: 20%;
+      margin-top: 8px;
+    }
+    .posts-list .post-preview p {
+      margin: 0 0 12px 0;
+      line-height: 1.5em;
+      font-size: 16px;
+    }
+    .posts-with-sidebar .posts-list {
+      float: left;
+      width: 75%;
+    }
+    .posts-with-sidebar .posts-sidebar {
+      float: right;
+      width: 20%;
+      margin-top: 60px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+  }
+
+
+  /* Improve display for browsers without grid (IE/Edge <= 15) */
+
+  .downlevel {
+    line-height: 1.6em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+  }
+
+  .downlevel .d-title {
+    padding-top: 6rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .downlevel .d-title h1 {
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.1em;
+    margin: 0 0 0.5rem;
+  }
+
+  .downlevel .d-title p {
+    font-weight: 300;
+    font-size: 1.2rem;
+    line-height: 1.55em;
+    margin-top: 0;
+  }
+
+  .downlevel .d-byline {
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+    font-size: 0.8rem;
+    line-height: 1.8em;
+  }
+
+  .downlevel .section-separator {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .downlevel .d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+  }
+
+
+  .downlevel .d-appendix {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: none;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.5);
+    padding-top: 40px;
+    padding-bottom: 48px;
+  }
+
+  .downlevel .footnotes ol {
+    padding-left: 13px;
+  }
+
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  @media(min-width: 768px) {
+    .downlevel .base-grid,
+    .downlevel .distill-header,
+    .downlevel .d-title,
+    .downlevel .d-abstract,
+    .downlevel .d-article,
+    .downlevel .d-appendix,
+    .downlevel .distill-appendix,
+    .downlevel .d-byline,
+    .downlevel .d-footnote-list,
+    .downlevel .d-citation-list,
+    .downlevel .distill-footer,
+    .downlevel .appendix-bottom,
+    .downlevel .posts-container {
+    padding-left: 150px;
+    padding-right: 150px;
+    max-width: 900px;
+  }
+  }
+
+  .downlevel pre code {
+    display: block;
+    border-left: 2px solid rgba(0, 0, 0, .1);
+    padding: 0 0 0 20px;
+    font-size: 14px;
+  }
+
+  .downlevel code, .downlevel pre {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  .downlevel .posts-list .post-preview {
+    color: inherit;
+  }
+
+
+
+  </style>
+
+  <script type="application/javascript">
+
+  function is_downlevel_browser() {
+    if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                   window.navigator.userAgent)) {
+      return true;
+    } else {
+      return window.load_distill_framework === undefined;
+    }
+  }
+
+  // show body when load is complete
+  function on_load_complete() {
+
+    // add anchors
+    if (window.anchors) {
+      window.anchors.options.placement = 'left';
+      window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+    }
+
+
+    // set body to visible
+    document.body.style.visibility = 'visible';
+
+    // force redraw for leaflet widgets
+    if (window.HTMLWidgets) {
+      var maps = window.HTMLWidgets.findAll(".leaflet");
+      $.each(maps, function(i, el) {
+        var map = this.getMap();
+        map.invalidateSize();
+        map.eachLayer(function(layer) {
+          if (layer instanceof L.TileLayer)
+            layer.redraw();
+        });
+      });
+    }
+
+    // trigger 'shown' so htmlwidgets resize
+    $('d-article').trigger('shown');
+  }
+
+  function init_distill() {
+
+    init_common();
+
+    // create front matter
+    var front_matter = $('<d-front-matter></d-front-matter>');
+    $('#distill-front-matter').wrap(front_matter);
+
+    // create d-title
+    $('.d-title').changeElementType('d-title');
+
+    // create d-byline
+    var byline = $('<d-byline></d-byline>');
+    $('.d-byline').replaceWith(byline);
+
+    // create d-article
+    var article = $('<d-article></d-article>');
+    $('.d-article').wrap(article).children().unwrap();
+
+    // move posts container into article
+    $('.posts-container').appendTo($('d-article'));
+
+    // create d-appendix
+    $('.d-appendix').changeElementType('d-appendix');
+
+    // flag indicating that we have appendix items
+    var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+    // replace footnotes with <d-footnote>
+    $('.footnote-ref').each(function(i, val) {
+      appendix = true;
+      var href = $(this).attr('href');
+      var id = href.replace('#', '');
+      var fn = $('#' + id);
+      var fn_p = $('#' + id + '>p');
+      fn_p.find('.footnote-back').remove();
+      var text = fn_p.html();
+      var dtfn = $('<d-footnote></d-footnote>');
+      dtfn.html(text);
+      $(this).replaceWith(dtfn);
+    });
+    // remove footnotes
+    $('.footnotes').remove();
+
+    // move refs into #references-listing
+    $('#references-listing').replaceWith($('#refs'));
+
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      var id = $(this).attr('id');
+      $('.d-contents a[href="#' + id + '"]').parent().remove();
+      appendix = true;
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+    });
+
+    // show d-appendix if we have appendix content
+    $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+    // localize layout chunks to just output
+    $('.layout-chunk').each(function(i, val) {
+
+      // capture layout
+      var layout = $(this).attr('data-layout');
+
+      // apply layout to markdown level block elements
+      var elements = $(this).children().not('details, div.sourceCode, pre, script');
+      elements.each(function(i, el) {
+        var layout_div = $('<div class="' + layout + '"></div>');
+        if (layout_div.hasClass('shaded')) {
+          var shaded_content = $('<div class="shaded-content"></div>');
+          $(this).wrap(shaded_content);
+          $(this).parent().wrap(layout_div);
+        } else {
+          $(this).wrap(layout_div);
+        }
+      });
+
+
+      // unwrap the layout-chunk div
+      $(this).children().unwrap();
+    });
+
+    // remove code block used to force  highlighting css
+    $('.distill-force-highlighting-css').parent().remove();
+
+    // remove empty line numbers inserted by pandoc when using a
+    // custom syntax highlighting theme
+    $('code.sourceCode a:empty').remove();
+
+    // load distill framework
+    load_distill_framework();
+
+    // wait for window.distillRunlevel == 4 to do post processing
+    function distill_post_process() {
+
+      if (!window.distillRunlevel || window.distillRunlevel < 4)
+        return;
+
+      // hide author/affiliations entirely if we have no authors
+      var front_matter = JSON.parse($("#distill-front-matter").html());
+      var have_authors = front_matter.authors && front_matter.authors.length > 0;
+      if (!have_authors)
+        $('d-byline').addClass('hidden');
+
+      // article with toc class
+      $('.d-contents').parent().addClass('d-article-with-toc');
+
+      // strip links that point to #
+      $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+      // add orcid ids
+      $('.authors-affiliations').find('.author').each(function(i, el) {
+        var orcid_id = front_matter.authors[i].orcidID;
+        if (orcid_id) {
+          var a = $('<a></a>');
+          a.attr('href', 'https://orcid.org/' + orcid_id);
+          var img = $('<img></img>');
+          img.addClass('orcid-id');
+          img.attr('alt', 'ORCID ID');
+          img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+          a.append(img);
+          $(this).append(a);
+        }
+      });
+
+      // hide elements of author/affiliations grid that have no value
+      function hide_byline_column(caption) {
+        $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+      }
+
+      // affiliations
+      var have_affiliations = false;
+      for (var i = 0; i<front_matter.authors.length; ++i) {
+        var author = front_matter.authors[i];
+        if (author.affiliation !== "&nbsp;") {
+          have_affiliations = true;
+          break;
+        }
+      }
+      if (!have_affiliations)
+        $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+      // published date
+      if (!front_matter.publishedDate)
+        hide_byline_column("Published");
+
+      // document object identifier
+      var doi = $('d-byline').find('h3:contains("DOI")');
+      var doi_p = doi.next().empty();
+      if (!front_matter.doi) {
+        // if we have a citation and valid citationText then link to that
+        if ($('#citation').length > 0 && front_matter.citationText) {
+          doi.html('Citation');
+          $('<a href="#citation"></a>')
+            .text(front_matter.citationText)
+            .appendTo(doi_p);
+        } else {
+          hide_byline_column("DOI");
+        }
+      } else {
+        $('<a></a>')
+           .attr('href', "https://doi.org/" + front_matter.doi)
+           .html(front_matter.doi)
+           .appendTo(doi_p);
+      }
+
+       // change plural form of authors/affiliations
+      if (front_matter.authors.length === 1) {
+        var grid = $('.authors-affiliations');
+        grid.children('h3:contains("Authors")').text('Author');
+        grid.children('h3:contains("Affiliations")').text('Affiliation');
+      }
+
+      // remove d-appendix and d-footnote-list local styles
+      $('d-appendix > style:first-child').remove();
+      $('d-footnote-list > style:first-child').remove();
+
+      // move appendix-bottom entries to the bottom
+      $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+      $('.appendix-bottom').remove();
+
+      // hoverable references
+      $('span.citation[data-cites]').each(function() {
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
+        window.tippy(this, {
+          allowHTML: true,
+          content: refHtml,
+          maxWidth: 500,
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start'
+        });
+      });
+
+      // clear polling timer
+      clearInterval(tid);
+
+      // show body now that everything is ready
+      on_load_complete();
+    }
+
+    var tid = setInterval(distill_post_process, 50);
+    distill_post_process();
+
+  }
+
+  function init_downlevel() {
+
+    init_common();
+
+     // insert hr after d-title
+    $('.d-title').after($('<hr class="section-separator"/>'));
+
+    // check if we have authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+    // manage byline/border
+    if (!have_authors)
+      $('.d-byline').remove();
+    $('.d-byline').after($('<hr class="section-separator"/>'));
+    $('.d-byline a').remove();
+
+    // remove toc
+    $('.d-contents').remove();
+
+    // move appendix elements
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+    });
+
+
+    // inject headers into references and footnotes
+    var refs_header = $('<h3></h3>');
+    refs_header.text('References');
+    $('#refs').prepend(refs_header);
+
+    var footnotes_header = $('<h3></h3');
+    footnotes_header.text('Footnotes');
+    $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // remove appendix if it's empty
+    if ($('.d-appendix').children().length === 0)
+      $('.d-appendix').remove();
+
+    // prepend separator above appendix
+    $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+    // trim code
+    $('pre>code').each(function(i, val) {
+      $(this).html($.trim($(this).html()));
+    });
+
+    // move posts-container right before article
+    $('.posts-container').insertBefore($('.d-article'));
+
+    $('body').addClass('downlevel');
+
+    on_load_complete();
+  }
+
+
+  function init_common() {
+
+    // jquery plugin to change element types
+    (function($) {
+      $.fn.changeElementType = function(newType) {
+        var attrs = {};
+
+        $.each(this[0].attributes, function(idx, attr) {
+          attrs[attr.nodeName] = attr.nodeValue;
+        });
+
+        this.replaceWith(function() {
+          return $("<" + newType + "/>", attrs).append($(this).contents());
+        });
+      };
+    })(jQuery);
+
+    // prevent underline for linked images
+    $('a > img').parent().css({'border-bottom' : 'none'});
+
+    // mark non-body figures created by knitr chunks as 100% width
+    $('.layout-chunk').each(function(i, val) {
+      var figures = $(this).find('img, .html-widget');
+      if ($(this).attr('data-layout') !== "l-body") {
+        figures.css('width', '100%');
+      } else {
+        figures.css('max-width', '100%');
+        figures.filter("[width]").each(function(i, val) {
+          var fig = $(this);
+          fig.css('width', fig.attr('width') + 'px');
+        });
+
+      }
+    });
+
+    // auto-append index.html to post-preview links in file: protocol
+    // and in rstudio ide preview
+    $('.post-preview').each(function(i, val) {
+      if (window.location.protocol === "file:")
+        $(this).attr('href', $(this).attr('href') + "index.html");
+    });
+
+    // get rid of index.html references in header
+    if (window.location.protocol !== "file:") {
+      $('.distill-site-header a[href]').each(function(i,val) {
+        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+      });
+    }
+
+    // add class to pandoc style tables
+    $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+    $('.kable-table').children('table').addClass('pandoc-table');
+
+    // add figcaption style to table captions
+    $('caption').parent('table').addClass("figcaption");
+
+    // initialize posts list
+    if (window.init_posts_list)
+      window.init_posts_list();
+
+    // implmement disqus comment link
+    $('.disqus-comment-count').click(function() {
+      window.headroom_prevent_pin = true;
+      $('#disqus_thread').toggleClass('hidden');
+      if (!$('#disqus_thread').hasClass('hidden')) {
+        var offset = $(this).offset();
+        $(window).resize();
+        $('html, body').animate({
+          scrollTop: offset.top - 35
+        });
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (is_downlevel_browser())
+      init_downlevel();
+    else
+      window.addEventListener('WebComponentsReady', init_distill);
+  });
+
+  </script>
+
+  <!--/radix_placeholder_distill-->
+  <script src="a-bayesian-approach-to-the-t-test_files/header-attrs-2.13/header-attrs.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/popper-2.6.0/popper.min.js"></script>
+  <link href="a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="a-bayesian-approach-to-the-t-test_files/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/anchor-4.2.2/anchor.min.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/bowser-1.9.3/bowser.min.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="a-bayesian-approach-to-the-t-test_files/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+  <!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"A Bayesian Approach to the t-test","description":"Comparing two methods in a chemical manufacturing plant in an attempt to understand if one has a **significantly better** yield than the other","authors":[{"author":"J. Duncan","authorURL":"https://jduncstats.com/posts/2021-11-02-a-bayesian-approach-to-the-t-test/","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-11-02T00:00:00.000-05:00","citationText":"Duncan, 2021"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>A Bayesian Approach to the t-test</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p>Comparing two methods in a chemical manufacturing plant in an attempt
+to understand if one has a <strong>significantly better</strong> yield
+than the other</p>
+</div>
+
+<div class="d-byline">
+  J. Duncan <a
+href="https://jduncstats.com/posts/2021-11-02-a-bayesian-approach-to-the-t-test/"
+class="uri">https://jduncstats.com/posts/2021-11-02-a-bayesian-approach-to-the-t-test/</a> 
+  
+<br/>2021-11-02
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#the-original-question-and-the-t-test">The original
+question and the <span class="math inline">\(t\)</span>-test</a>
+<ul>
+<li><a href="#visualizing-the-data">Visualizing the data</a></li>
+<li><a href="#the-t-test-results">The <span
+class="math inline">\(t\)</span>-test results</a></li>
+<li><a href="#visualizing-the-t-test-results">Visualizing the <span
+class="math inline">\(t\)</span>-test results</a></li>
+</ul></li>
+<li><a href="#a-bayesian-approach">A Bayesian approach</a>
+<ul>
+<li><a href="#choosing-our-priors">Choosing our priors</a></li>
+<li><a href="#thinking-in-distributions">Thinking in
+distributions</a></li>
+<li><a href="#prior-for-the-variance">Prior for the variance</a></li>
+<li><a href="#our-probability-model">Our probability model</a></li>
+<li><a href="#mcmc-and-metropolis-sampling">MCMC and Metropolis
+sampling</a></li>
+<li><a href="#burn-in">Burn-in</a></li>
+<li><a href="#samples-from-the-joint-distribution">Samples from the
+joint distribution</a></li>
+<li><a href="#comparing-the-means-using-samples">Comparing the means
+using samples</a></li>
+</ul></li>
+<li><a href="#analysis-results-and-improvements">Analysis results and
+improvements</a>
+<ul>
+<li><a href="#summary-of-results">Summary of results</a></li>
+<li><a href="#potential-improvements">Potential Improvements</a></li>
+</ul></li>
+</ul>
+</nav>
+</div>
+<p>Based on the book by Box, Hunter, and Hunter: <em>Statistics for
+Experimenters</em></p>
+<p>Chapter 3: Comparing Two Entities: Reference Distributions, Tests,
+and Confidence Intervals</p>
+<h1 id="introduction">Introduction</h1>
+<p>In <em>Statistics for Experimenters</em> we are shown an example of
+comparing two methods in a chemical manufacturing plant in an attempt to
+understand if one method has a <strong>significantly better</strong>
+yield than the other. I will present the data and the original model and
+then we’ll model this comparison using the Bayesian methods learned so
+far in this course.</p>
+<h4 id="roadmap">Roadmap</h4>
+<ol type="1">
+<li>The original question and the frequentist approach to comparing
+means</li>
+<li>A Bayesian approach to the <span
+class="math inline">\(t\)</span>-test</li>
+<li>Summary of our analysis results and potential improvements</li>
+</ol>
+<h1 id="the-original-question-and-the-t-test">The original question and
+the <span class="math inline">\(t\)</span>-test</h1>
+<blockquote>
+<p>An experiment was performed on a manufacturing plant by making <em>in
+sequence</em> <span class="math inline">\(10\)</span> batches of a
+chemical using a standard production method <span
+class="math inline">\((A)\)</span> followed by <span
+class="math inline">\(10\)</span> batches using a modified method <span
+class="math inline">\((B)\)</span>. What evidence do the data provide
+that method <span class="math inline">\(B\)</span> gives higher yields
+than method <span class="math inline">\(A\)</span>?</p>
+</blockquote>
+<h2 id="visualizing-the-data">Visualizing the data</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">CairoMakie</span>, <span class="bu">Statistics</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare dataframe</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>time <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>method <span class="op">=</span> <span class="fu">repeat</span>([<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>], inner <span class="op">=</span> <span class="fl">10</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>yield <span class="op">=</span> [<span class="fl">89.7</span>, <span class="fl">81.4</span>, <span class="fl">84.5</span>, <span class="fl">84.8</span>, <span class="fl">87.3</span>, <span class="fl">79.7</span>, <span class="fl">85.1</span>, <span class="fl">81.7</span>, <span class="fl">83.7</span>, <span class="fl">84.5</span>, <span class="fl">84.7</span>, <span class="fl">86.1</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fl">83.2</span>, <span class="fl">91.9</span>, <span class="fl">86.3</span>, <span class="fl">79.3</span>, <span class="fl">82.6</span>, <span class="fl">89.1</span>, <span class="fl">83.7</span>, <span class="fl">88.5</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> <span class="fu">DataFrame</span>(time <span class="op">=</span> time, method <span class="op">=</span> method, yield <span class="op">=</span> yield)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">first</span>(data, <span class="fl">5</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>time</th>
+<th>method</th>
+<th>yield</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>A</td>
+<td>89.7</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>A</td>
+<td>81.4</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>A</td>
+<td>84.5</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>A</td>
+<td>84.8</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>A</td>
+<td>87.3</td>
+</tr>
+</tbody>
+</table>
+<p>The averages are shown for both of the methods so we have a crude
+difference in yield of around <span class="math inline">\(1.3\)</span>
+between these two methods. But is this average difference due to random
+chance?</p>
+<p><span class="math display">\[
+\bar y_A = 84.24, \bar y_B = 85.54
+\]</span></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot attributes</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>CairoMakie.<span class="fu">activate!</span>(<span class="kw">type</span> <span class="op">=</span> <span class="st">&quot;svg&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set_theme!</span>(<span class="fu">theme_minimal</span>())</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">650</span>, <span class="fl">300</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">Axis</span>(fig, xlabel <span class="op">=</span> <span class="st">&quot;time&quot;</span>, ylabel <span class="op">=</span> <span class="st">&quot;yield&quot;</span>, xticks <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the mean for each group</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>datagroup <span class="op">=</span> <span class="fu">groupby</span>(data, <span class="op">:</span>method)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>datamean <span class="op">=</span> <span class="fu">transform</span>(datagroup, <span class="op">:</span>yield <span class="op">=&gt;</span> mean)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>methoda <span class="op">=</span> datamean[datamean.method <span class="op">.==</span> <span class="st">&quot;A&quot;</span>,<span class="op">:</span>]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>methodb <span class="op">=</span> datamean[datamean.method <span class="op">.==</span> <span class="st">&quot;B&quot;</span>,<span class="op">:</span>]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># plot it out</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(methoda.time, methoda.yield, label <span class="op">=</span> <span class="st">&quot;Process A&quot;</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(methoda.time, methoda.yield_mean)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(methodb.time, methodb.yield, label <span class="op">=</span> <span class="st">&quot;Process B&quot;</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(methodb.time, methodb.yield_mean)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>fig[<span class="fl">2</span>,<span class="fl">1</span>] <span class="op">=</span> <span class="fu">Legend</span>(fig, ax, framevisible <span class="op">=</span> <span class="cn">false</span>, orientation <span class="op">=</span> <span class="op">:</span>horizontal)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div>
+<p><img src="figures/midterm-pres_2_1.svg" /></p>
+<h2 id="the-t-test-results">The <span
+class="math inline">\(t\)</span>-test results</h2>
+<p>Where the sample averages for each method are <span
+class="math inline">\(\bar y_A\)</span> and <span
+class="math inline">\(\bar y_B\)</span>, the population difference is
+given as <span class="math inline">\(\delta = \eta_B - \eta_A\)</span>,
+the pooled estimate of <span class="math inline">\(\sigma\)</span> is
+given as <span class="math inline">\(s\)</span>, and the number of
+observations for each method are <span
+class="math inline">\(n_A\)</span> and <span
+class="math inline">\(n_B\)</span>. Then we can calculate the <span
+class="math inline">\(t\)</span>-statistic:</p>
+<p><span class="math display">\[
+t_0 = \frac{(\bar y_B - \bar y_A) - \delta_0}{s \sqrt{1 / n_B + 1 /
+n_A}}
+\]</span></p>
+<p>For the <em>null hypothesis</em> we have <span
+class="math inline">\(\delta_0 = 0, t_0 = 1.30/1.47 = 0.88\)</span> with
+<span class="math inline">\(\nu = 18\)</span> degrees of freedom. Then
+we want the following for our significance level:</p>
+<p><span class="math display">\[
+\Pr(t \ge 0.88) = 19.5\%
+\]</span></p>
+<blockquote>
+<p>This reference distribution assumes the random sampling model and the
+observed difference then has a significance probability of <span
+class="math inline">\(19.5\%\)</span> which would provide little
+evidence against the hypothesis that <span class="math inline">\(\eta_B
+- \eta_A = 0\)</span>.</p>
+</blockquote>
+<h2 id="visualizing-the-t-test-results">Visualizing the <span
+class="math inline">\(t\)</span>-test results</h2>
+<p>Scaling a <span class="math inline">\(t\)</span>-distribution by the
+standard error of the difference between <span
+class="math inline">\(\bar y_B\)</span> and <span
+class="math inline">\(\bar y_A\)</span> and looking at the probability
+density that exists above our estimated mean difference of <span
+class="math inline">\(1.3\)</span> we can visualize the results of our
+test. Seeing approximately <span class="math inline">\(19.5 \%\)</span>
+of the probability mass above this difference:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># number of obs</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n_a <span class="op">=</span> <span class="fu">nrow</span>(methoda)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>n_b <span class="op">=</span> <span class="fu">nrow</span>(methodb)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># average yield per method</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>avg_a <span class="op">=</span> <span class="fu">mean</span>(methoda.yield)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>avg_b <span class="op">=</span> <span class="fu">mean</span>(methodb.yield)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>diff_ab <span class="op">=</span> avg_b <span class="op">-</span> avg_a</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># sample variance</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>s2_a <span class="op">=</span> <span class="fu">sum</span>((methoda.yield <span class="op">.-</span> avg_a)<span class="op">.^</span><span class="fl">2</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>s2_b <span class="op">=</span> <span class="fu">sum</span>((methodb.yield <span class="op">.-</span> avg_b)<span class="op">.^</span><span class="fl">2</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># degrees of freedom</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>nu <span class="op">=</span> n_a <span class="op">+</span> n_b <span class="op">-</span> <span class="fl">2</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># pooled estimate of σ^2</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>pools2 <span class="op">=</span> (s2_a <span class="op">+</span> s2_b) <span class="op">/</span> nu</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># estimated standard error of y_B - y_A</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>std_err <span class="op">=</span> <span class="fu">sqrt</span>(pools2<span class="op">/</span><span class="fl">5</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># t-statistic</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>tstat <span class="op">=</span> diff_ab <span class="op">/</span> std_err</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># significance level</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>sig_level <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu">cdf</span>(<span class="fu">TDist</span>(nu), tstat)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>fig2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">600</span>, <span class="fl">300</span>))</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig2[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">&quot;Scaled t-distribution&quot;</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># A scaled t-distribution by the standard error of y_B - y_A</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>scaled_dist <span class="op">=</span> <span class="fu">LocationScale</span>(<span class="fl">0.0</span>, std_err, <span class="fu">TDist</span>(nu))</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>xs2 <span class="op">=</span> <span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">5</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>post_range <span class="op">=</span> <span class="fu">pdf</span>.(scaled_dist, xs2)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>post_clip <span class="op">=</span> [x <span class="op">&lt;</span> diff_ab ? <span class="fl">0</span> <span class="op">:</span> <span class="fu">pdf</span>(scaled_dist, x) for x <span class="kw">in</span> xs2] </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs2, post_range)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="fu">band!</span>(xs2, <span class="fl">0</span>, post_clip)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax2, [diff_ab], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax2)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>fig2</span></code></pre></div>
+<p><img src="figures/midterm-pres_3_1.svg" /></p>
+<h1 id="a-bayesian-approach">A Bayesian approach</h1>
+<h2 id="choosing-our-priors">Choosing our priors</h2>
+<p>Choosing our priors is the first step in this approach. Since we’ll
+be modeling the average yield for each method I will begin by
+considering how <em>yield</em> is <a
+href="https://chem.libretexts.org/Courses/Sacramento_City_College/SCC%3A_CHEM_300_-_beginning_Chemistry/SCC%3A_CHEM_300_-_beginning_Chemistry_(Faculty)/08%3A_Quantities_in_Chemical_Reactions/8.06%3A_Limiting_Reactant%2C_Theoretical_Yield%2C_and_Percent_Yield_from_Initial_Masses_of_Reactants">defined</a>
+and what that can tell us about its order of magnitude.</p>
+<p>Percent yield is a measurement of how successful a chemical reaction
+has been:</p>
+<blockquote>
+<p>…the <strong>theoretical yield</strong>, the maximum amount of
+product that can be formed from the given amounts of reactants. The
+<strong>actual yield</strong> is the amount of product that is actually
+formed when the reaction is carried out in the laboratory. The
+<strong>percent yield</strong> is the ratio of the actual yield to the
+theoretical yield, expressed as a percentage. <span
+class="math display">\[
+\text{Percent Yield} = \frac{\text{Actual Yield}}{\text{Theoretical
+Yield}} \times 100\%
+\]</span></p>
+</blockquote>
+<h2 id="thinking-in-distributions">Thinking in distributions</h2>
+<p>Considering that yield here is a <em>percentage</em> I’d think a
+decent prior probability distribution for the average yield would be a
+<em>Beta</em> distribution:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig3 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax3 <span class="op">=</span> <span class="fu">Axis</span>(fig3[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>beta_dist <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">1</span>, <span class="fl">1</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>beta_dist2 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">2</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>beta_dist3 <span class="op">=</span> <span class="fu">Beta</span>(<span class="fl">2</span>, <span class="fl">5</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>xs3 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>post_range2 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist, xs3)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>post_range3 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist2, xs3)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>post_range4 <span class="op">=</span> <span class="fu">pdf</span>.(beta_dist3, xs3)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range2, label <span class="op">=</span> <span class="st">&quot;Beta(1, 1)&quot;</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range3, label <span class="op">=</span> <span class="st">&quot;Beta(2, 2)&quot;</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs3, post_range4, label <span class="op">=</span> <span class="st">&quot;Beta(2, 5)&quot;</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax3)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>fig3</span></code></pre></div>
+<p><img src="figures/midterm-pres_4_1.svg" /></p>
+<p>Since percent yield could reasonably be anywhere between <span
+class="math inline">\(0\)</span> and <span
+class="math inline">\(1\)</span> but with those outcomes being very
+unlikely I think a Beta(2, 2) is an adequate <em>weakly informative</em>
+prior.</p>
+<h2 id="prior-for-the-variance">Prior for the variance</h2>
+<p>We will be modeling the variance as being pooled between both
+methods: we will have two means but one shared variance. The variance
+must be positive and since our means are scaled between <span
+class="math inline">\([0,1]\)</span> then the standard deviation should
+be close to this range.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting attributes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig4 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax4 <span class="op">=</span> <span class="fu">Axis</span>(fig4[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>exp_dist <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.50</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>exp_dist2 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.25</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>exp_dist3 <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">.10</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get density line and clipped values</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>xs4 <span class="op">=</span> <span class="fl">0</span>.<span class="op">:</span><span class="fl">0.001</span><span class="op">:</span><span class="fl">1</span>.</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>prior_range <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist, xs4)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>prior_range2 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist2, xs4)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>prior_range3 <span class="op">=</span> <span class="fu">pdf</span>.(exp_dist3, xs4)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range, label <span class="op">=</span> <span class="st">&quot;Exponential(0.50)&quot;</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range2, label <span class="op">=</span> <span class="st">&quot;Exponential(0.25)&quot;</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(xs4, prior_range3, label <span class="op">=</span> <span class="st">&quot;Exponential(0.10)&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax4)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>fig4</span></code></pre></div>
+<p><img src="figures/midterm-pres_5_1.svg" /></p>
+<p>Given that the Exp(0.1) distribution is almost completely under <span
+class="math inline">\(1\)</span> it will be an adequate prior for <span
+class="math inline">\(\sigma\)</span>.</p>
+<h2 id="our-probability-model">Our probability model</h2>
+<p><span class="math inline">\(\mu_A\)</span> and <span
+class="math inline">\(\mu_B\)</span> are the estimated population means
+for each of the methods and they have a shared variance term <span
+class="math inline">\(\sigma^2\)</span>. The priors for these are the
+following:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\mu_A \sim \text{Beta}(2,2) \\
+&amp;\mu_B \sim \text{Beta}(2,2) \\
+&amp;\sigma \sim \text{Exp}(0.10)
+\end{aligned}
+\]</span></p>
+<p>The likelihood is broken into two parts for each of the methods:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;y_A \sim \text{Normal}(\mu_A, \sigma) \\
+&amp;y_B \sim \text{Normal}(\mu_B, \sigma)
+\end{aligned}
+\]</span></p>
+<h2 id="mcmc-and-metropolis-sampling">MCMC and Metropolis sampling</h2>
+<p>Multiplying Beta and Exponential priors with a Normal likelihood
+results in a non-conjugate case. So in this example it may make more
+sense to utilize Markov Chain Monte Carlo (MCMC) methods to estimate our
+joint probability model.</p>
+<p><em>Markov Chain Monte Carlo</em> gets its name from the <em>Markov
+property</em>:</p>
+<blockquote>
+<p><em>Given the present, the future is independent of the
+past.</em></p>
+</blockquote>
+<p>Using the Metropolis algorithm to sample the target distribution and
+removing <em>burn-in</em> samples results in the following summary for
+our parameters:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>methoda_yield <span class="op">=</span> methoda.yield <span class="op">/</span> <span class="fl">100</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>methodb_yield <span class="op">=</span> methodb.yield <span class="op">/</span> <span class="fl">100</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">likelihood</span>(param)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    singlelike1 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu1, sd), methoda_yield)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    singlelike2 <span class="op">=</span> <span class="fu">logpdf</span>.(<span class="fu">Normal</span>(mu2, sd), methodb_yield)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    singlelikelihood <span class="op">=</span> <span class="fu">vcat</span>(singlelike1, singlelike2)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    sumll <span class="op">=</span> <span class="fu">sum</span>(singlelikelihood)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(sumll)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">prior</span>(param)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    mu1 <span class="op">=</span> param[<span class="fl">1</span>]</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    mu2 <span class="op">=</span> param[<span class="fl">2</span>]</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    sd <span class="op">=</span> param[<span class="fl">3</span>]</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    mu1prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu1)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    mu2prior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Beta</span>(<span class="fl">2</span>,<span class="fl">2</span>), mu2)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    sdprior <span class="op">=</span> <span class="fu">logpdf</span>(<span class="fu">Exponential</span>(<span class="fl">0.10</span>), sd)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(mu1prior <span class="op">+</span> mu2prior <span class="op">+</span> sdprior)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">posterior</span>(param)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">likelihood</span>(param) <span class="op">+</span> <span class="fu">prior</span>(param)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">proposalfunction</span>(param)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># enforced positive support but not sure how other PPLs enforce this</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">abs</span>.(<span class="fu">rand</span>(<span class="fu">MvNormal</span>(param, [<span class="fl">0.001</span> <span class="fl">0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0.001</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0</span> <span class="fl">0.0005</span>])))</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, iterations)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> <span class="fu">Array</span><span class="dt">{Float64,2}</span>(<span class="cn">undef</span>, iterations <span class="op">+</span> <span class="fl">1</span>, <span class="fl">3</span>)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    chain[<span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> startvalue</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>iterations</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        proposal <span class="op">=</span> <span class="fu">proposalfunction</span>(chain[i,<span class="op">:</span>])</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        probab <span class="op">=</span> <span class="fu">exp</span>(<span class="fu">posterior</span>(proposal) <span class="op">-</span> <span class="fu">posterior</span>(chain[i,<span class="op">:</span>]))</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        r <span class="op">=</span> <span class="fu">min</span>(<span class="fl">1</span>, probab)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">rand</span>(<span class="fu">Uniform</span>()) <span class="op">&lt;=</span> r</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> proposal</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>            chain[i<span class="op">+</span><span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> chain[i,<span class="op">:</span>]</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chain</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>startvalue <span class="op">=</span> [<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.1</span>]</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>chain_length <span class="op">=</span> <span class="fl">100_000</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span>:seed!</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="fu">seed!</span>(<span class="fl">555</span>)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> <span class="fu">run_metropolis_MCMC</span>(startvalue, chain_length)   </span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>burnIn <span class="op">=</span> <span class="fu">convert</span>(<span class="dt">Int</span>, chain_length <span class="op">/</span> <span class="fl">2</span>)</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>chain1 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">1</span>], burnIn)</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>chain2 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">2</span>], burnIn)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>chain3 <span class="op">=</span> <span class="fu">last</span>(chain[<span class="op">:</span>,<span class="fl">3</span>], burnIn)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="fu">DataFrame</span>(</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    mu_a <span class="op">=</span> <span class="fu">mean</span>(chain1),</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    mu_astd <span class="op">=</span> <span class="fu">std</span>(chain1),</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    mu_b <span class="op">=</span> <span class="fu">mean</span>(chain2),</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    mu_bstd <span class="op">=</span> <span class="fu">std</span>(chain2),</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> <span class="fu">mean</span>(chain3),</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    sigma_std <span class="op">=</span> <span class="fu">std</span>(chain3)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>mu_a</th>
+<th>mu_astd</th>
+<th>mu_b</th>
+<th>mu_bstd</th>
+<th>sigma</th>
+<th>sigma_std</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.841692</td>
+<td>0.0112674</td>
+<td>0.854442</td>
+<td>0.0113898</td>
+<td>0.0352205</td>
+<td>0.00627626</td>
+</tr>
+</tbody>
+</table>
+<h2 id="burn-in">Burn-in</h2>
+<p>After utilizing MCMC to sample this model we should throw away some
+portion of our chain. A rule-of-thumb for Metropolis sampling is to only
+use half of your total samples and consider the first half the
+<em>burn-in</em> (exploratory) phase and discard those samples.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>figs <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ga <span class="op">=</span> figs[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>gb <span class="op">=</span> figs[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>gc <span class="op">=</span> figs[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>axs1 <span class="op">=</span> <span class="fu">Axis</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>axs2 <span class="op">=</span> <span class="fu">Axis</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>axs3 <span class="op">=</span> <span class="fu">Axis</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs1, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">1</span>])</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs2, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">2</span>])</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(axs3, <span class="fl">1</span><span class="op">:</span><span class="fl">1</span><span class="op">:</span>(chain_length<span class="op">+</span><span class="fl">1</span>), chain[<span class="op">:</span>,<span class="fl">3</span>])</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs1, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs2, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">vspan!</span>(axs3, [<span class="fl">0</span>, chain_length<span class="op">/</span><span class="fl">2</span>], [<span class="fl">0</span>, <span class="fl">1</span>], color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.2</span>))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">hidexdecorations!</span>.((axs1, axs2))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>figs</span></code></pre></div>
+<p><img src="figures/midterm-pres_7_1.svg" /></p>
+<h2 id="samples-from-the-joint-distribution">Samples from the joint
+distribution</h2>
+<p>Here are the marginal distributions for each of our estimated
+parameters:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>figs2 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">1920</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">1080</span><span class="op">/</span><span class="fl">2</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ga2 <span class="op">=</span> figs2[<span class="fl">1</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>gb2 <span class="op">=</span> figs2[<span class="fl">2</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>gc2 <span class="op">=</span> figs2[<span class="fl">3</span>, <span class="fl">1</span>] <span class="op">=</span> <span class="fu">GridLayout</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>axs11 <span class="op">=</span> <span class="fu">Axis</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>axs21 <span class="op">=</span> <span class="fu">Axis</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>axs31 <span class="op">=</span> <span class="fu">Axis</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs11, chain1)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs21, chain2)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">hist!</span>(axs31, chain3)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">linkxaxes!</span>(axs11, axs21)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(axs31, (<span class="fl">0.0</span>, <span class="fl">0.1</span>)) </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>.((axs11, axs21, axs31))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(ga2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_A&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gb2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\mu_B&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Label</span>(gc2[<span class="fl">1</span>, <span class="fl">1</span>, <span class="fu">Top</span>()], L<span class="st">&quot;\sigma&quot;</span>, valign <span class="op">=</span> <span class="op">:</span>bottom, textsize <span class="op">=</span> <span class="fl">30</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>figs2</span></code></pre></div>
+<p><img src="figures/midterm-pres_8_1.svg" /></p>
+<h2 id="comparing-the-means-using-samples">Comparing the means using
+samples</h2>
+<p>Now that we have samples for the mean of both methods how can we
+compare them? Simply by taking a difference of the samples we will get a
+distribution comparing the two means.</p>
+<p>What’s gained from this approach is that we can now see the
+probability of method <span class="math inline">\(B\)</span> having an
+increased yield to method <span class="math inline">\(A\)</span>. Seeing
+how many samples are above <span class="math inline">\(0\)</span> and
+then taking the average of those results shows that <span
+class="math inline">\(80\%\)</span> of the probability mass is above
+zero.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>meandiff <span class="op">=</span> (chain2 <span class="op">-</span> chain1) <span class="op">*</span> <span class="fl">100</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># @show probgt0 = mean(meandiff .&gt; 0) # just for checking</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fig5 <span class="op">=</span> <span class="fu">Figure</span>(resolution <span class="op">=</span> (<span class="fl">550</span>, <span class="fl">250</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ax5 <span class="op">=</span> <span class="fu">Axis</span>(fig5[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> L<span class="st">&quot;\Pr(\mu_B - \mu_A \geq 0) = 80 %&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">density!</span>(meandiff, bandwidth <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span>(<span class="op">:</span>grey, <span class="fl">0.5</span>), strokewidth<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">vlines!</span>(ax5, [<span class="fl">0.0</span>], color <span class="op">=</span> <span class="op">:</span>black, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">xlims!</span>(<span class="op">-</span><span class="fl">8</span>, <span class="fl">8</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hideydecorations!</span>(ax5)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>fig5</span></code></pre></div>
+<p><img src="figures/midterm-pres_9_1.svg" /></p>
+<h1 id="analysis-results-and-improvements">Analysis results and
+improvements</h1>
+<h2 id="summary-of-results">Summary of results</h2>
+<p>The frequentist <span class="math inline">\(t\)</span>-test approach
+results in a <em>non-significant</em> value. We fail to reject our null
+hypothesis that these samples come from a single <em>common</em>
+population distribution.</p>
+<p>The bayesian approach gives us an <span class="math inline">\(80
+\%\)</span> probability that method <span
+class="math inline">\(B\)</span> improves overall yield compared to
+method <span class="math inline">\(A\)</span>.</p>
+<p>In a business context I could see the bayesian result being far more
+useful than failing to reject our null hypothesis. A company can weigh
+their options between method <span class="math inline">\(B\)</span> and
+method <span class="math inline">\(A\)</span>. Decide on what’s more
+economical and have some percentage to wrap their heads around about
+potential improvement.</p>
+<h2 id="potential-improvements">Potential Improvements</h2>
+<p>This particular example was given in the text by Box, Hunter, and
+Hunter to demonstrate a case where the <span
+class="math inline">\(t\)</span>-test may be an inappropriate
+statistical test. The <span
+class="math inline">\(t\)</span>-distribution may be a poor choice for a
+<em>reference</em> distribution. The reason why this is the case is due
+to autocorrelation and Student’s <span class="math inline">\(t\)</span>
+test assuming errors are independent and identically distributed
+(iid).</p>
+<p>The exact reason behind the correlated errors was given:</p>
+<blockquote>
+<p>In this particular process the yield was determined by measuring the
+volume of liquid product in each successive batch, but because of the
+design of the system, a certain amount of product was left in the pipes
+and pumps at each determination. Consequently, if slightly less was
+pumped out on a particular day, the recorded yield would be low but on
+the following day it would tend to be high… <strong>Such an effect would
+produce a negative correlation between successive yields such as that
+found</strong>.</p>
+</blockquote>
+<p>Moving forward we should account for this and attempt to model the
+autocorrelation that exists between successive yields.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>

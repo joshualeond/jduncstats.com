@@ -20,19 +20,19 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,11 +52,11 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -77,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
 <title>jduncstats: Kernel Density Estimation from Scratch</title>
@@ -463,7 +464,7 @@ d-title {
 
 </style>
 
-<script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
 <link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
 <script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1870,7 +1871,10 @@ function init_distill() {
 
     // hoverable references
     $('span.citation[data-cites]').each(function() {
-      var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+      var refs = $(this).attr('data-cites').split(" ");
+      var refHtml = refs.map(function(ref) {
+        return "<p>" + $('#ref-' + ref).html() + "</p>";
+      }).join("\n");
       window.tippy(this, {
         allowHTML: true,
         content: refHtml,
@@ -2360,7 +2364,8 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
-  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/header-attrs-2.13/header-attrs.js"></script>
+  <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2387,7 +2392,7 @@ gtag('config', 'UA-136620931-1');
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Kernel Density Estimation from Scratch","description":"Implementing KDE with Julia","authors":[{"author":"J. Duncan","authorURL":"https://jduncstats.com/post/2019-03-16_kde-scratch/","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2019-03-16T00:00:00.000+00:00","citationText":"Duncan, 2019"}
+{"title":"Kernel Density Estimation from Scratch","description":"Implementing KDE with Julia","authors":[{"author":"J. Duncan","authorURL":"https://jduncstats.com/post/2019-03-16_kde-scratch/","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2019-03-16T00:00:00.000-05:00","citationText":"Duncan, 2019"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2427,20 +2432,38 @@ gtag('config', 'UA-136620931-1');
 </div>
 
 <div class="d-byline">
-  J. Duncan <a href="https://jduncstats.com/post/2019-03-16_kde-scratch/" class="uri">https://jduncstats.com/post/2019-03-16_kde-scratch/</a> 
+  J. Duncan <a
+href="https://jduncstats.com/post/2019-03-16_kde-scratch/"
+class="uri">https://jduncstats.com/post/2019-03-16_kde-scratch/</a> 
   
 <br/>03-16-2019
 </div>
 
 <div class="d-article">
 <h2 id="motivation">Motivation</h2>
-<p>Why am I writing about KDE’s? At the recommendation of Will Kurt’s <a href="https://www.countbayesie.com/">probability blog</a> I’ve been reading a great book on data analysis by Philipp K. Janert:</p>
+<p>Why am I writing about KDE’s? At the recommendation of Will Kurt’s <a
+href="https://www.countbayesie.com/">probability blog</a> I’ve been
+reading a great book on data analysis by Philipp K. Janert:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="kernel-density-estimation-from-scratch_files/figure-html5/janert.jpg" width="50%" /></p>
 </div>
-<p>This book has a great intro to KDEs that explain the motivation. My own abbreviated version are that KDEs provide a useful technique to visualize a variables distribution. Visualizing your data is an important step to take early in the data analysis stage. In fact, there are many metrics that we commonly use to understand a variable that have an implicit assumption that your data are <code>unimodal</code> (having a single peak). If your data doesn’t have this structure then you may be mislead by measures of central tendency (mean/median/mode), outliers, or other statistical methods (linear regression, t-tests, etc.).</p>
-<p>This post’s structure follows closely with how I commonly learn topics. I start at a high level, using a pre-canned solution for the algorithm, and then work backward to find out what’s going on underneath.</p>
-<p>I use a small example I discovered on the <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">Wikipedia page</a> for KDEs. It uses a handful of data points for a single variable:</p>
+<p>This book has a great intro to KDEs that explain the motivation. My
+own abbreviated version are that KDEs provide a useful technique to
+visualize a variables distribution. Visualizing your data is an
+important step to take early in the data analysis stage. In fact, there
+are many metrics that we commonly use to understand a variable that have
+an implicit assumption that your data are <code>unimodal</code> (having
+a single peak). If your data doesn’t have this structure then you may be
+mislead by measures of central tendency (mean/median/mode), outliers, or
+other statistical methods (linear regression, t-tests, etc.).</p>
+<p>This post’s structure follows closely with how I commonly learn
+topics. I start at a high level, using a pre-canned solution for the
+algorithm, and then work backward to find out what’s going on
+underneath.</p>
+<p>I use a small example I discovered on the <a
+href="https://en.wikipedia.org/wiki/Kernel_density_estimation">Wikipedia
+page</a> for KDEs. It uses a handful of data points for a single
+variable:</p>
 <table>
 <thead>
 <tr class="header">
@@ -2475,40 +2498,73 @@ gtag('config', 'UA-136620931-1');
 </tr>
 </tbody>
 </table>
-<p>Let’s start with a basic <code>dot</code> plot of these points. I’ll be using the <code>Julia Programming Language</code> for these examples.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1"></a>using StatsPlots</span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># initialize an array of the samples</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>x = [-<span class="fl">2.1</span>; -<span class="fl">1.3</span>; -<span class="fl">0.4</span>; <span class="fl">1.9</span>; <span class="fl">5.1</span>; <span class="fl">6.2</span>];</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># plot it out</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>scatter(x, zeros(length(x)), legend = false)</span></code></pre></div>
-<p><img src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_1_1.svg" /></p>
+<p>Let’s start with a basic <code>dot</code> plot of these points. I’ll
+be using the <code>Julia Programming Language</code> for these
+examples.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">StatsPlots</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize an array of the samples</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> [<span class="op">-</span><span class="fl">2.1</span>; <span class="op">-</span><span class="fl">1.3</span>; <span class="op">-</span><span class="fl">0.4</span>; <span class="fl">1.9</span>; <span class="fl">5.1</span>; <span class="fl">6.2</span>];</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot it out</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter</span>(x, <span class="fu">zeros</span>(<span class="fu">length</span>(x)), legend <span class="op">=</span> <span class="cn">false</span>)</span></code></pre></div>
+<p><img
+src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_1_1.svg" /></p>
 <h2 id="kde-with-kerneldensity.jl">KDE with KernelDensity.jl</h2>
-<p>Now applying the quick and easy solution: a <a href="https://github.com/JuliaStats/KernelDensity.jl">package</a>. This package has a function named <code>kde</code> that takes a one dimensional array (or vector), a bandwidth argument, and a chosen kernel (we’ll use the default). So let’s see it:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">import</span> KernelDensity</span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a>KernelDensity.kde(x, bandwidth = sqrt(<span class="fl">2.25</span>)) |&gt;</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  x -&gt; plot!(x, legend = false)</span></code></pre></div>
-<p><img src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_2_1.svg" /></p>
-<p>There we go, we’ve applied KDE to these data points and we can now see the <code>bimodal</code> nature of this data. If all we wanted to do was visualize the distribution then we’re done. I’d like to dig a bit deeper though.</p>
+<p>Now applying the quick and easy solution: a <a
+href="https://github.com/JuliaStats/KernelDensity.jl">package</a>. This
+package has a function named <code>kde</code> that takes a one
+dimensional array (or vector), a bandwidth argument, and a chosen kernel
+(we’ll use the default). So let’s see it:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">KernelDensity</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>KernelDensity.<span class="fu">kde</span>(x, bandwidth <span class="op">=</span> <span class="fu">sqrt</span>(<span class="fl">2.25</span>)) <span class="op">|&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  x <span class="op">-&gt;</span> <span class="fu">plot!</span>(x, legend <span class="op">=</span> <span class="cn">false</span>)</span></code></pre></div>
+<p><img
+src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_2_1.svg" /></p>
+<p>There we go, we’ve applied KDE to these data points and we can now
+see the <code>bimodal</code> nature of this data. If all we wanted to do
+was visualize the distribution then we’re done. I’d like to dig a bit
+deeper though.</p>
 <h2 id="kde-with-distributions.jl">KDE with Distributions.jl</h2>
-<p>What is the <code>kernel</code> part of this about? What was the default kernel we used in the previous section? The <code>kde</code> function from the package used a default kernel associated with the Normal distribution. But to understand what this all means we need to take a look at the definition of Kernel Density Estimation:</p>
+<p>What is the <code>kernel</code> part of this about? What was the
+default kernel we used in the previous section? The <code>kde</code>
+function from the package used a default kernel associated with the
+Normal distribution. But to understand what this all means we need to
+take a look at the definition of Kernel Density Estimation:</p>
 <p><span class="math display">\[
-D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x - x_i}{h}\right)
+D_h(x; {x_i}) = \sum_{i=1}^n \frac{1}{nh} K\left(\frac{x -
+x_i}{h}\right)
 \]</span></p>
-<p>Breaking down this formula a bit: The kernel is the function shown above as <code>$K$</code> and Janert describes it like so:</p>
+<p>Breaking down this formula a bit: The kernel is the function shown
+above as <code>$K$</code> and Janert describes it like so:</p>
 <blockquote>
-<p>To form a KDE, we place a <em>kernel</em> —that is, a smooth, strongly peaked function—at the position of each data point. We then add up the contributions from all kernels to obtain a smooth curve, which we can evaluate at any point along the <em>x</em> axis</p>
+<p>To form a KDE, we place a <em>kernel</em> —that is, a smooth,
+strongly peaked function—at the position of each data point. We then add
+up the contributions from all kernels to obtain a smooth curve, which we
+can evaluate at any point along the <em>x</em> axis</p>
 </blockquote>
-<p>We are effectively calculating weighted distances from our data points to points along the <em>x</em> axis. There is a great interactive introduction to kernel density estimation <a href="https://mathisonian.github.io/kde/">here</a>. I highly recommend it because you can play with bandwidth, select different kernel methods, and check out the resulting effects.</p>
-<p>As I mentioned before, the default <code>kernel</code> for this package is the Normal (or Gaussian) probability density function (pdf):</p>
+<p>We are effectively calculating weighted distances from our data
+points to points along the <em>x</em> axis. There is a great interactive
+introduction to kernel density estimation <a
+href="https://mathisonian.github.io/kde/">here</a>. I highly recommend
+it because you can play with bandwidth, select different kernel methods,
+and check out the resulting effects.</p>
+<p>As I mentioned before, the default <code>kernel</code> for this
+package is the Normal (or Gaussian) probability density function
+(pdf):</p>
 <p><span class="math display">\[
 K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
 \]</span></p>
-<p>Since we are calculating pdfs I’ll use the <a href="https://github.com/JuliaStats/Distributions.jl">Distributions.jl</a> package to create each distribution, calculate the densities, and sum the results.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1"></a>using Distributions</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>dists = Normal.(x, sqrt(<span class="fl">2.25</span>))</span></code></pre></div>
+<p>Since we are calculating pdfs I’ll use the <a
+href="https://github.com/JuliaStats/Distributions.jl">Distributions.jl</a>
+package to create each distribution, calculate the densities, and sum
+the results.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dists <span class="op">=</span> <span class="fu">Normal</span>.(x, <span class="fu">sqrt</span>(<span class="fl">2.25</span>))</span></code></pre></div>
 <pre><code>6-element Array{Distributions.Normal{Float64},1}:
  Distributions.Normal{Float64}(μ=-2.1, σ=1.5)
  Distributions.Normal{Float64}(μ=-1.3, σ=1.5)
@@ -2516,50 +2572,80 @@ K(x) = \frac{1}{\sqrt{2\pi}}\text{exp}\left(-\frac{1}{2}x^2\right)
  Distributions.Normal{Float64}(μ=1.9, σ=1.5)
  Distributions.Normal{Float64}(μ=5.1, σ=1.5)
  Distributions.Normal{Float64}(μ=6.2, σ=1.5)</code></pre>
-<p>Here we see a neat feature of the Julia language. Any Julia function can be vectorized (or broadcasted) by the application of the <code>.</code> (or “dot”) operator. See <a href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion">this</a> blog post if you want to learn more about it. Above we applied the <code>Normal</code> method element-wise creating an array of Normal distributions. The mean of our individual distributions being our data points and a variance of <code>2.25</code> (aka our chosen bandwidth). Let’s plot each of these distributions:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1"></a>plot(dists, legend = false)</span></code></pre></div>
-<p><img src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_4_1.svg" /></p>
-<p>Summing up their probability densities across all of <code>x</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># create an iterator</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>x_d = range(-<span class="fl">7</span>, <span class="fl">11</span>, length = <span class="fl">100</span>)</span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># find the kde with a gaussian kernel</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>dens = sum(pdf.(eachdist, x_d) <span class="kw">for</span> eachdist <span class="kw">in</span> dists)</span>
-<span id="cb6-5"><a href="#cb6-5"></a></span>
-<span id="cb6-6"><a href="#cb6-6"></a>plot!(x_d, dens)</span></code></pre></div>
-<p><img src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_5_1.svg" /></p>
-<p>The resulting shape of the KDE is identical to the one we first calculated. We could stop here except this is really just a special case where we are using the gaussian kernel. Let’s extrapolate a bit so we could use different kernels.</p>
+<p>Here we see a neat feature of the Julia language. Any Julia function
+can be vectorized (or broadcasted) by the application of the
+<code>.</code> (or “dot”) operator. See <a
+href="https://julialang.org/blog/2018/05/extensible-broadcast-fusion">this</a>
+blog post if you want to learn more about it. Above we applied the
+<code>Normal</code> method element-wise creating an array of Normal
+distributions. The mean of our individual distributions being our data
+points and a variance of <code>2.25</code> (aka our chosen bandwidth).
+Let’s plot each of these distributions:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dists, legend <span class="op">=</span> <span class="cn">false</span>)</span></code></pre></div>
+<p><img
+src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_4_1.svg" /></p>
+<p>Summing up their probability densities across all of
+<code>x</code>.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create an iterator</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>x_d <span class="op">=</span> <span class="fu">range</span>(<span class="op">-</span><span class="fl">7</span>, <span class="fl">11</span>, length <span class="op">=</span> <span class="fl">100</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># find the kde with a gaussian kernel</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>dens <span class="op">=</span> <span class="fu">sum</span>(<span class="fu">pdf</span>.(eachdist, x_d) <span class="cf">for</span> eachdist <span class="kw">in</span> dists)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(x_d, dens)</span></code></pre></div>
+<p><img
+src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_5_1.svg" /></p>
+<p>The resulting shape of the KDE is identical to the one we first
+calculated. We could stop here except this is really just a special case
+where we are using the gaussian kernel. Let’s extrapolate a bit so we
+could use different kernels.</p>
 <h2 id="kernel-density-from-scratch">Kernel Density from Scratch</h2>
-<p>To apply a new kernel method we can just write the KDE code from scratch. Below I’ve defined the KDE function as <code>D</code> and the kernel argument as <code>K</code> to mimic the math above.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># define some kernels:</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co"># gaussian kernel</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a>kgauss(x) = <span class="fl">1</span>/sqrt(<span class="fl">2</span>π) * exp(-<span class="fl">1</span>/<span class="fl">2</span> * x^<span class="fl">2</span>)</span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># boxcar</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a>kbox(x) = abs(x) &lt;= <span class="fl">1</span> ? <span class="fl">1</span>/<span class="fl">2</span> : <span class="fl">0</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># triangular</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a>ktri(x) = abs(x) &lt;= <span class="fl">1</span> ? <span class="fl">1</span> - abs(x) : <span class="fl">0</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a></span>
-<span id="cb7-9"><a href="#cb7-9"></a><span class="co"># define the KDE function</span></span>
-<span id="cb7-10"><a href="#cb7-10"></a>D(x, h, xi, K) =</span>
-<span id="cb7-11"><a href="#cb7-11"></a>  <span class="fl">1</span>/(length(xi) * h) * sum(K.((x .- xi) / h))</span>
-<span id="cb7-12"><a href="#cb7-12"></a></span>
-<span id="cb7-13"><a href="#cb7-13"></a><span class="co"># evaluate KDE along the x-axis using comprehensions</span></span>
-<span id="cb7-14"><a href="#cb7-14"></a>dens = [D(xstep, sqrt(<span class="fl">2.25</span>), x, K) <span class="kw">for</span> xstep <span class="kw">in</span> x_d, K <span class="kw">in</span> (kgauss, kbox, ktri)]</span>
-<span id="cb7-15"><a href="#cb7-15"></a></span>
-<span id="cb7-16"><a href="#cb7-16"></a><span class="co"># visualize the kernels</span></span>
-<span id="cb7-17"><a href="#cb7-17"></a>plot(x_d, dens, label = [<span class="st">&quot;Gaussian&quot;</span>, <span class="st">&quot;Box&quot;</span>, <span class="st">&quot;Triangular&quot;</span>])</span></code></pre></div>
-<p><img src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_6_1.svg" /></p>
-<p>In my example above I used some shorthand Julia syntax. The <code>?:</code> syntax is called a ternary operator and makes a conditional <code>if-else</code> statement more compact. I also used Julia’s <code>Assignment</code> form for my function definitions above because it looks a lot more like the math involved. You could have easily defined each of these functions to look more like so:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">function</span> foo(x)</span>
-<span id="cb8-2"><a href="#cb8-2"></a>  <span class="kw">if</span> ...</span>
-<span id="cb8-3"><a href="#cb8-3"></a>    ...</span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="kw">else</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>    ...</span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="kw">end</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>  <span class="kw">return</span> ...</span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">end</span></span></code></pre></div>
+<p>To apply a new kernel method we can just write the KDE code from
+scratch. Below I’ve defined the KDE function as <code>D</code> and the
+kernel argument as <code>K</code> to mimic the math above.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define some kernels:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gaussian kernel</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kgauss</span>(x) <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu">sqrt</span>(<span class="fl">2</span>π) <span class="op">*</span> <span class="fu">exp</span>(<span class="op">-</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span> <span class="op">*</span> x<span class="op">^</span><span class="fl">2</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># boxcar</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kbox</span>(x) <span class="op">=</span> <span class="fu">abs</span>(x) <span class="op">&lt;=</span> <span class="fl">1</span> ? <span class="fl">1</span><span class="op">/</span><span class="fl">2</span> <span class="op">:</span> <span class="fl">0</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># triangular</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ktri</span>(x) <span class="op">=</span> <span class="fu">abs</span>(x) <span class="op">&lt;=</span> <span class="fl">1</span> ? <span class="fl">1</span> <span class="op">-</span> <span class="fu">abs</span>(x) <span class="op">:</span> <span class="fl">0</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># define the KDE function</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">D</span>(x, h, xi, K) <span class="op">=</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1</span><span class="op">/</span>(<span class="fu">length</span>(xi) <span class="op">*</span> h) <span class="op">*</span> <span class="fu">sum</span>(<span class="fu">K</span>.((x <span class="op">.-</span> xi) <span class="op">/</span> h))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluate KDE along the x-axis using comprehensions</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>dens <span class="op">=</span> [<span class="fu">D</span>(xstep, <span class="fu">sqrt</span>(<span class="fl">2.25</span>), x, K) for xstep <span class="kw">in</span> x_d, K <span class="kw">in</span> (kgauss, kbox, ktri)]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the kernels</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_d, dens, label <span class="op">=</span> [<span class="st">&quot;Gaussian&quot;</span>, <span class="st">&quot;Box&quot;</span>, <span class="st">&quot;Triangular&quot;</span>])</span></code></pre></div>
+<p><img
+src="kernel-density-estimation-from-scratch_files/figure-html5/2019-03-16_kde-scratch_6_1.svg" /></p>
+<p>In my example above I used some shorthand Julia syntax. The
+<code>?:</code> syntax is called a ternary operator and makes a
+conditional <code>if-else</code> statement more compact. I also used
+Julia’s <code>Assignment</code> form for my function definitions above
+because it looks a lot more like the math involved. You could have
+easily defined each of these functions to look more like so:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">foo</span>(x)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">...</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">end</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">...</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 <h2 id="whats-next">What’s next?</h2>
-<p>A short post on cumulative distribution functions (cdf) using Julia will likely follow this one. Janert introduces both kdes and cdfs in his chapter <strong>A Single Variable: Shape and Distribution</strong> and they complement each other really well. Thanks for reading!</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>A short post on cumulative distribution functions (cdf) using Julia
+will likely follow this one. Janert introduces both kdes and cdfs in his
+chapter <strong>A Single Variable: Shape and Distribution</strong> and
+they complement each other really well. Thanks for reading!</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
