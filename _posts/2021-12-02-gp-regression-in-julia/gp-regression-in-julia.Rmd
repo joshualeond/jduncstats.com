@@ -106,6 +106,7 @@ $$
 $$
 
 The prior mean and standard deviations are assumed to be:
+
 - mean prior $\mu_G = 0$
 - our scale parameter $\sigma_G = 2.5 ^\circ C$
 
