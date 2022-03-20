@@ -14,7 +14,7 @@ knitr::include_graphics(here::here("personal_picture.jpeg"))
 </div>
   
 <div class = "pull-right">
-Hey, I’m Josh Duncan, a former controls engineer that found a passion in data science and statistics. This blog is a platform for extending my data science education. I’m currently on a Bayesian modeling journey so you’ll likely see posts on learning bayes.
+Hey, I’m Josh Duncan, a former controls engineer that's passionate about data science and statistics. This blog is a platform for extending my education. I’m currently on a Bayesian modeling journey so you’ll likely see posts on learning Bayes.
 </div>
 </div>
 
