@@ -4,7 +4,7 @@ description: |
   Modeling the temperature along a pipeline using non-parametrics
 author: J. Duncan
 date: 2021-12-02
-preview: figures/pipeline-example.png
+preview: figures/gp-featured.png
 output:
   distill::distill_article:
     self_contained: false
@@ -22,7 +22,7 @@ Based on the book by James-A Goulet: *Probabilistic Machine Learning for Civil E
 
 A Gaussian process regression is a _non-parametric_ bayesian approach to regression modeling. With it we're able to relax some of the assumptions of linear regression and model more complex relationships. This post works through an example of modeling the temperature of a pipeline at specific locations along the pipeline: $x$ km.
 
-![Figure from Probabilistic Machine Learning for Civil Engineers](figures/pipeline-example.png){width=65% .external}   
+![Figure from Probabilistic Machine Learning for Civil Engineers](figures/pipeline-example.png){width=70% .external}   
 
 #### Roadmap
 1. Our modeling example and Gaussian process regression
@@ -52,7 +52,7 @@ x |  temperature |
 
 > A Gaussian process is a multivariate Normal random variable deﬁned over a domain described by covariates.
 
-## GP: mathematical formulation
+### GP: mathematical formulation
 
 In linear regression our observation model is the following and our observed covariates $x$ are assumed to be exact and free of observation error. The model is 	$g(x) = b_0 + b_1 x$ when using a linear basis function.
 
@@ -68,7 +68,7 @@ $$
 
 Where the Gaussian process $g(\mathbf{x}): \mathbf{G(x)} \sim \mathcal N(g(\mathbf{x}); \mathbf{\mu_G, \Sigma_G})$ and $\mathbf {\mu_G}$ is the mean vector $[\mathbf{\mu_G}]_i = \mathbf{\mu_G}(x_i)$ and the covariance matrix $\mathbf {\Sigma_G}$ is: $[\mathbf{\Sigma_G}]_{ij} = \rho(x_i, x_j) \cdot \sigma_G(x_i) \cdot \sigma_G(x_j)$
 
-## The Kernel
+### The Kernel
 
 A Gaussian process regression is a _kernel_ regression. Where the _kernel_ is a function that relates our covariates pairwise by distance. Our predictions combine our observations with weights that depend on observed and predicted input locations. This kernel function was seen above as $\rho(x_i, x_j)$ in defining our covariance matrix $\mathbf{\Sigma_G}$.
 
@@ -81,6 +81,21 @@ $$
 What's seen in the denominator is our _length-scale_, $\ell$, which is a _hyperparameter_ (yes there are some parameters in this non-parametric approach) for the Gaussian process and describes a decay of correlation between the covariates. 
 
 In our example this could be seen as how much does the temperature at position $x_i$ tell us about the temperature at position $x_j$? If they are $1$km apart vs being $100$km apart how much correlation should exist between the two points?
+
+```julia
+# define our kernel function
+function square_exp(xi, xj; length_scale = 25.0) 
+	return exp(-1/2 * (xi - xj)^2/length_scale^2)
+end
+	
+# our covariate: distance
+x = 0:1:100 
+	
+# covariance matrix under different length-scales
+cov_mat1 = square_exp.(x, x', length_scale = 1.0) * 2.5^2
+cov_mat2 = square_exp.(x, x', length_scale = 10.0) * 2.5^2
+cov_mat3 = square_exp.(x, x', length_scale = 100.0) * 2.5^2
+```
 
 ## Prior knowledge
 
@@ -96,23 +111,10 @@ The prior mean and standard deviations are assumed to be:
 
 With this info we can begin by sampling realizations from our Gaussian process prior under different length-scales.
 
-## Prior sampling and length-scales
+### Prior sampling and length-scales
 
 ```julia
 using Distributions, LinearAlgebra, Colors
-	
-# define our kernel function
-function square_exp(xi, xj; length_scale = 25.0) 
-	return exp(-1/2 * (xi - xj)^2/length_scale^2)
-end
-	
-# our covariate: distance
-x = 0:1:100 
-	
-# covariance matrix under different length-scales
-cov_mat1 = square_exp.(x, x', length_scale = 1.0) * 2.5^2
-cov_mat2 = square_exp.(x, x', length_scale = 10.0) * 2.5^2
-cov_mat3 = square_exp.(x, x', length_scale = 100.0) * 2.5^2
 	
 # add jitter to diagonal for linalg stability
 d1 = MvNormal(cov_mat1 + 1e-10*I) 
@@ -165,8 +167,6 @@ figs1
 
 ![](figures/gp-julia_update_2_1.svg)
 
-
-
 ## Posterior knowledge
 
 Now if we introduce data, $\mathcal D$, then we can obtain the _posterior_ PDF $f(\mathbf{g_* | x_*}, \mathcal D)$. Our prior knowledge changes given that we have new observed $\mathbf{x}$ locations and prediction locations: $\mathbf{x_*}$
@@ -194,8 +194,6 @@ $$
 \end{aligned}
 $$
 
-## $n=1$
-
 ```julia
 function gp(x_obs, x_pred, y_obs, σ_g)
 	# do the matrix algebra to get our posterior distribution
@@ -209,7 +207,11 @@ function gp(x_obs, x_pred, y_obs, σ_g)
 
     return μ_post, Σ_post
 end
-	
+```
+
+### $n=1$
+
+```julia
 # get our realizations
 gp_μ1, gp_Σ1 = gp(data.x[1], x, data.temperature[1], 2.5)
 post1 = MvNormal(gp_μ1, Matrix(Hermitian(gp_Σ1 + 1e-10I)))
@@ -232,7 +234,7 @@ fig21
 
 
 
-## $n=2$
+### $n=2$
 
 ```julia
 # get our realizations
@@ -257,7 +259,7 @@ fig22
 
 
 
-## $n=3$
+### $n=3$
 
 ```julia
 # get our realizations
@@ -310,7 +312,7 @@ $$
 \mathbf \Sigma_Y = \mathbf \Sigma_G + \sigma_{V}^2 \mathbf I = \rho(\mathbf x, \mathbf{x'}) + \sigma_{V}^2 \mathbf I
 $$
 
-## Assuming $\sigma_V = 0.5$
+### Assuming $\sigma_V = 0.5$
 
 ```julia
 function gp_noise(x_obs, x_pred, y_obs, σ_g, σ_v)
@@ -359,7 +361,7 @@ Where $\ell$ is our length-scale in the kernel function, $\sigma_G$ is the gauss
 
 Our conditional distribution before was solved analytically when we fixed $\mathbf \theta$ assuming each of them were known. If we wanted to estimate these parameters from our data we could use maximum likelihood (MLE) or Markov chain Monte Carlo (MCMC) methods.
 
-## Prior for our length-scale: $\ell$
+### Prior for our length-scale: $\ell$
 
 The length-scale is more intuitive as a positive number and we can think of it in our units of distance (kilometers) in this example. When we have a length-scale around $100$ then we have almost parallel lines from $0$ to $100$ km. In our example it doesn't align with intuition to say that the temperature at either end of the pipeline should be correlated as highly as locations closer to each other. So we will give more weight to lower length-scales.
 
@@ -378,7 +380,7 @@ fp
 
 
 
-## Estimating our length-scale 
+### Estimating our length-scale 
 
 Assuming that $\sigma_G = 2.5 ^\circ C$ and $\sigma_V = 0.5$ as we did before but this time we want to use the data to estimate our length-scale $\ell$ we have:
 
@@ -395,12 +397,7 @@ A limitation of this modeling procedure that I ran into rather quickly is that b
 
 Due to this limitation it's common in practice to use approximate methods instead of full bayes when the number of observations exceed $1000$.
 
-## Marginal distribution of $\ell$
-
-Including $80 \%$ highest posterior density (HPD) region:
-
 ```julia
-# Turing is probabilistic programming language similar to Stan
 using Turing, FillArrays
 
 @model function myGPnoncent(y, x)
@@ -422,7 +419,13 @@ end
 x = 0:1:100
 gpmod = myGPnoncent(data.temperature, x)
 chain = sample(gpmod, NUTS(0.65), 200)
+```
 
+### Marginal distribution of $\ell$
+
+Including $80 \%$ highest posterior density (HPD) region:
+
+```julia
 using KernelDensity
 
 post_length = vcat(chain[Symbol("length_par")]...)
