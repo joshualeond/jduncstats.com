@@ -12,14 +12,14 @@
       "title": "Blog Posts",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2022-03-18T23:59:45-05:00"
+      "last_modified": "2022-03-20T16:50:55-05:00"
     },
     {
       "path": "index.html",
       "title": "jduncstats",
       "author": [],
-      "contents": "\n\n\n\n\n\n\nJoshua DuncanSr. Business Analyst\n\n\n\nHey, I’m Josh Duncan, a former controls engineer that found a passion\nin data science and statistics. This blog is a platform for extending my\ndata science education. I’m currently on a Bayesian modeling journey so\nyou’ll likely see posts on learning bayes.\n\n\n\nEducation\nGraduate School, Non-Matriculated, Statistics\nLouisiana State University, 2021\nMS in Analytics\nLouisiana State University, 2017\nBS in Electrical Engineering\nLouisiana State University, 2014\nRecent Roles\nSr. Business Analyst\nCF Industries\nStatistical Data Analyst\nRain Carbon\nAnalytics Engineer\nInCentrik\n\n\n\n\n",
-      "last_modified": "2022-03-19T00:03:40-05:00"
+      "contents": "\n\n\n\n\n\n\nJoshua DuncanSr. Business Analyst\n\n\n\nHey, I’m Josh Duncan, a former controls engineer that’s passionate\nabout data science and statistics. This blog is a platform for extending\nmy education. I’m currently on a Bayesian modeling journey so you’ll\nlikely see posts on learning Bayes.\n\n\n\nEducation\nGraduate School, Non-Matriculated, Statistics\nLouisiana State University, 2021\nMS in Analytics\nLouisiana State University, 2017\nBS in Electrical Engineering\nLouisiana State University, 2014\nRecent Roles\nSr. Business Analyst\nCF Industries\nStatistical Data Analyst\nRain Carbon\nAnalytics Engineer\nInCentrik\n\n\n\n\n",
+      "last_modified": "2022-03-20T16:56:05-05:00"
     }
   ],
   "collections": ["posts/posts.json", "bayes-hackr/bayes-hackr.json"]
